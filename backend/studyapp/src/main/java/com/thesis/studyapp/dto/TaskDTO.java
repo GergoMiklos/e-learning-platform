@@ -1,9 +1,8 @@
-package com.thesis.studyapp.web.dto;
+package com.thesis.studyapp.dto;
 
 import lombok.Data;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
-import org.neo4j.ogm.annotation.NodeEntity;
 
 import java.util.List;
 

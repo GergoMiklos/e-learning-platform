@@ -15,15 +15,14 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
     List<Group> findByName(String name);
 
 //MŰKÖDIK, de minden nested objectre null!!!
-
     @Depth(2)
-    @Query("MATCH (g:Group)-[gr:GROUPUSER]->(u:User)" +
+    @Query("MATCH (g:Group)-[:GROUPUSER]->(u:User)" +
             " WHERE id(u)=$0" +
             " RETURN g")
     List<Group> findByUserId(Long userid);
 
     @Depth(2)
-    @Query("MATCH (g:Group)-[gr:GROUPADMIN]->(u:User)" +
+    @Query("MATCH (g:Group)-[:GROUPADMIN]->(u:User)" +
             " WHERE id(u)=$0" +
             " RETURN g")
     List<Group> findByAdminId(Long userid);

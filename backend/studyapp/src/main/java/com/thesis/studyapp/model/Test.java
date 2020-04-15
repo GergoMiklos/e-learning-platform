@@ -1,5 +1,6 @@
 package com.thesis.studyapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
@@ -19,6 +20,10 @@ public @Data class Test {
 
     @Relationship(type = "TESTTASK", direction = Relationship.OUTGOING)
     private List<TestTaskState> tasks;
+
+    @JsonIgnore
+    @Relationship(type = "TESTOWNER", direction = Relationship.OUTGOING)
+    private User owner;
 
     public void addTask(TestTaskState task) {
         if (tasks == null) {

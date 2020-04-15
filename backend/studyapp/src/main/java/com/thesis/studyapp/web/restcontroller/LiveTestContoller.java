@@ -1,9 +1,8 @@
-package com.thesis.studyapp.web.controller;
+package com.thesis.studyapp.web.restcontroller;
 
 import com.thesis.studyapp.dao.LiveTestRepo;
-import com.thesis.studyapp.dao.UserRepo;
-import com.thesis.studyapp.web.dto.LiveTestDTO;
-import com.thesis.studyapp.web.dto.UserDTO;
+import com.thesis.studyapp.dto.LiveTestDTO;
+import com.thesis.studyapp.service.LiveTestService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,25 +17,20 @@ import java.util.List;
 public class LiveTestContoller {
 
     @Autowired
-    LiveTestRepo liveTestRepo;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    LiveTestService liveTestService;
 
     @GetMapping("livetests/id/{id}")
     public LiveTestDTO getLiveTestById(@PathVariable Long id) {
-        return modelMapper.map(liveTestRepo.findById(id).get(), LiveTestDTO.class);
+        return liveTestService.getLiveTestById(id);
     }
 
     @GetMapping("livetests/groupid/{groupid}")
     public List<LiveTestDTO> getLiveTestByGroupId(@PathVariable Long groupid) {
-        Type listType = new TypeToken<List<LiveTestDTO>>() {}.getType();
-        return modelMapper.map(liveTestRepo.findByGroupId(groupid), listType);
+        return liveTestService.getLiveTestByGroupId(groupid);
     }
 
     @GetMapping("livetests/userid/{userid}")
     public List<LiveTestDTO> getLiveTestByUserId(@PathVariable Long userid) {
-        Type listType = new TypeToken<List<LiveTestDTO>>() {}.getType();
-        return modelMapper.map(liveTestRepo.findByUserId(userid), listType);
+        return liveTestService.getLiveTestByUserId(userid);
     }
 }

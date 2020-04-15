@@ -30,6 +30,14 @@ public @Data class User {
     private List<Group> managedGroups;
 
     @JsonIgnore
+    @Relationship(type = "TASKOWNER", direction = Relationship.INCOMING)
+    private List<Task> createdTasks;
+
+    @JsonIgnore
+    @Relationship(type = "TESTOWNER", direction = Relationship.INCOMING)
+    private List<Test> createdTests;
+
+    @JsonIgnore
     @Relationship(type = "LIVETESTUSER", direction = Relationship.INCOMING)
     private List<LiveTestUserState> liveTestUserStates;
 
@@ -52,6 +60,20 @@ public @Data class User {
             liveTestUserStates = new ArrayList<>();
         }
         liveTestUserStates.add(liveTestUserState);
+    }
+
+    public void addCreatedTask(Task task) {
+        if (createdTasks == null) {
+            createdTasks = new ArrayList<>();
+        }
+        createdTasks.add(task);
+    }
+
+    public void addCreatedTest(Test test) {
+        if (createdTests == null) {
+            createdTests = new ArrayList<>();
+        }
+        createdTests.add(test);
     }
 
 

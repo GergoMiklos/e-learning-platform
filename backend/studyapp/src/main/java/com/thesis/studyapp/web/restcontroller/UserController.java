@@ -1,13 +1,10 @@
-package com.thesis.studyapp.web.controller;
+package com.thesis.studyapp.web.restcontroller;
 
 import com.thesis.studyapp.dao.UserRepo;
-import com.thesis.studyapp.model.Group;
-import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.web.dto.GroupDTO;
-import com.thesis.studyapp.web.dto.UserDTO;
+import com.thesis.studyapp.dto.UserDTO;
+import com.thesis.studyapp.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,19 +13,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    UserRepo userRepo;
-
-    @Autowired
-    private ModelMapper modelMapper;
+    UserService userService;
 
     @GetMapping("users/id/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
-        return modelMapper.map(userRepo.findById(id).get(), UserDTO.class);
+        return userService.getUserById(id);
     }
 
     @GetMapping("users/username/{username}")
     public UserDTO getUserByUserName(@PathVariable String username) {
-        return modelMapper.map(userRepo.findByUserName(username).get(), UserDTO.class);
+        return userService.getUserByUserName(username);
     }
 
 }

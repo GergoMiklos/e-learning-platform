@@ -1,7 +1,5 @@
-package com.thesis.studyapp.web.dto;
+package com.thesis.studyapp.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,15 +28,21 @@ public class LiveTestUserStateDTO {
 
     TaskDTO currentTask;
 
-    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-    private UserDTO user;
+  //  @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+  //  private UserDTO user;
+    private String userUserName;
+    private String userUserFullname;
+    private Long userId;
+
     //username
     //userfullname
     //userid
 
 
-    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-    LiveTestDTO liveTest;
+    //@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+    //LiveTestDTO liveTest;
+    private String liveTestName;
+    private Long liveTestId;
     //livetestname
     //livetestid
 
