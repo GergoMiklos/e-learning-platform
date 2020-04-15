@@ -1,6 +1,8 @@
 package com.thesis.studyapp.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
@@ -17,11 +19,14 @@ public @Data class GroupDTO {
 
     private String name;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     private List<GroupUserStateDTO> users;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     private List<UserDTO> admins;
 
-    private List<LiveTestDTO> liveTestDTOS;
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+    private List<LiveTestDTO> liveTests;
 
     public void addUser(GroupUserStateDTO user) {
         if (users == null) {
@@ -38,10 +43,10 @@ public @Data class GroupDTO {
     }
 
     public void addLiveTest(LiveTestDTO liveTestDTO) {
-        if (liveTestDTOS == null) {
-            liveTestDTOS = new ArrayList<>();
+        if (liveTests == null) {
+            liveTests = new ArrayList<>();
         }
-        liveTestDTOS.add(liveTestDTO);
+        liveTests.add(liveTestDTO);
     }
 
 }

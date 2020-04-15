@@ -2,6 +2,7 @@ package com.thesis.studyapp;
 
 import com.thesis.studyapp.dao.UserRepo;
 import com.thesis.studyapp.model.*;
+import org.neo4j.driver.Session;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

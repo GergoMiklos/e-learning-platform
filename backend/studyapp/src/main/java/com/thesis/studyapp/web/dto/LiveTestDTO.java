@@ -1,6 +1,8 @@
 package com.thesis.studyapp.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
@@ -22,17 +24,23 @@ public @Data class LiveTestDTO {
     private int maxTimeForTest;
     private int maxTimeForTasks;
 
-    private GroupDTO groupDTO;
+    //private GroupDTO groupDTO;//?? KELL-E
+    //Ha pl valaki lekér egy livetestDTO-t (findbyid), jöjjön vele GUS és LTUS és Test dto-k is
+    //De nemfindbyid-ra hogy a faszomba ott ilyet nem tudsz :(
+    //DE  TUDSZ  !!! PATH= (STACKOVERFLOW)
+    //TODO
 
     private TestDTO test;
+    //minden?
 
-    private List<LiveTestUserStateDTO> liveTestUserStateDTOS;
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+    private List<LiveTestUserStateDTO> liveTestUserState;
 
     public void addLiveTestSate(LiveTestUserStateDTO liveTestUserStateDTO) {
-        if (liveTestUserStateDTOS == null) {
-            liveTestUserStateDTOS = new ArrayList<>();
+        if (liveTestUserState == null) {
+            liveTestUserState = new ArrayList<>();
         }
-        liveTestUserStateDTOS.add(liveTestUserStateDTO);
+        liveTestUserState.add(liveTestUserStateDTO);
     }
 
 }

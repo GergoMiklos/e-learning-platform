@@ -13,20 +13,21 @@ import java.util.List;
 @NodeEntity
 public @Data class Group {
     @Id
+    //@GeneratedValue(strategy = CustomIdStrategy.class)
     @GeneratedValue
     private Long id;
 
     private String name;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Relationship(type = "GROUPUSER", direction = Relationship.OUTGOING)
     private List<GroupUserState> users;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Relationship(type = "GROUPADMIN", direction = Relationship.OUTGOING)
     private List<User> admins;
 
-    @JsonIgnore
+    //@JsonIgnore
     @Relationship(type = "GROUPLIVETEST", direction = Relationship.INCOMING)
     private List<LiveTest> liveTests;
 

@@ -1,5 +1,7 @@
 package com.thesis.studyapp.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +15,12 @@ public class TestTaskStateDTO {
 
     private int Level;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     private TestDTO test;
 
-    private TaskDTO taskDTO;
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+    private TaskDTO task;
+    //taskquestion/id/...minden!
 
-    //private Task task;
 
 }

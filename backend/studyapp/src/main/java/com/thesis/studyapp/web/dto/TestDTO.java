@@ -1,5 +1,7 @@
 package com.thesis.studyapp.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
@@ -16,6 +18,7 @@ public @Data class TestDTO {
 
     private String name;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     private List<TestTaskStateDTO> tasks;
 
     public void addTask(TestTaskStateDTO task) {
