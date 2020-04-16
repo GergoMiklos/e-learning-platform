@@ -3,13 +3,10 @@ package com.thesis.studyapp.service;
 import com.thesis.studyapp.dao.GroupRepo;
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.model.Group;
-import com.thesis.studyapp.model.GroupUserState;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.lang.reflect.Type;
 import java.util.List;

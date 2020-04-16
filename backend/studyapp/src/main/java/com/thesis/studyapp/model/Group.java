@@ -6,9 +6,12 @@ import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.springframework.data.annotation.QueryAnnotation;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @NodeEntity
 public @Data class Group {
@@ -23,11 +26,11 @@ public @Data class Group {
     @Relationship(type = "GROUPUSER", direction = Relationship.OUTGOING)
     private List<GroupUserState> users;
 
-    //@JsonIgnore
+
     @Relationship(type = "GROUPADMIN", direction = Relationship.OUTGOING)
     private List<User> admins;
 
-    //@JsonIgnore
+
     @Relationship(type = "GROUPLIVETEST", direction = Relationship.INCOMING)
     private List<LiveTest> liveTests;
 

@@ -23,8 +23,10 @@ public class StudyappApplication {
 			//			userRepo.deleteAll();
 
 			User user = new User(); user.setUserName("User");
+			User user2 = new User(); user2.setUserName("User2");
 			Group group = new Group(); group.setName("Group");
 			GroupUserState groupUserState = new GroupUserState();
+			GroupUserState groupUserState2 = new GroupUserState();
 
 			Task task = new Task(); task.setQuestion("Task");
 			Test test = new Test(); test.setName("Test");
@@ -35,9 +37,13 @@ public class StudyappApplication {
 			LiveTest liveTest = new LiveTest(); liveTest.setName("LiveTest");
 			LiveTestUserState liveTestUserState = new LiveTestUserState();
 
+			user2.addManagedGroup(group);
 			user.addGroup(groupUserState);
+			user2.addGroup(groupUserState2);
 			groupUserState.setGroup(group);
 			groupUserState.setUser(user);
+			groupUserState2.setGroup(group);
+			groupUserState2.setUser(user2);
 			group.addLiveTest(liveTest);
 			liveTest.addLiveTestSate(liveTestUserState);
 			liveTestUserState.setUser(user);
@@ -48,6 +54,7 @@ public class StudyappApplication {
 			testTaskState.setTask(task);
 
 			userRepo.save(user);
+			userRepo.save(user2);
 		};
 	}
 }

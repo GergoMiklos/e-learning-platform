@@ -1,9 +1,7 @@
 package com.thesis.studyapp.web.restcontroller;
 
-import com.thesis.studyapp.dao.UserRepo;
 import com.thesis.studyapp.dto.UserDTO;
 import com.thesis.studyapp.service.UserService;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -32,7 +32,7 @@ public class CommandLineTest {
             user.addGroup(groupUserState);
             groupUserState.setGroup(group);
             groupUserState.setUser(user);
-            group.addLiveTest(liveTest);
+            //group.addLiveTest(liveTest);
             liveTest.addLiveTestSate(liveTestUserState);
             liveTestUserState.setUser(user);
             liveTestUserState.setLiveTest(liveTest);

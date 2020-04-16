@@ -24,9 +24,9 @@ public @Data class LiveTest {
     private int maxTimeForTest;
     private int maxTimeForTasks;
 
-    @JsonIgnore
-    @Relationship(type = "GROUPLIVETEST", direction = Relationship.INCOMING)
-    private Group group;
+//    @JsonIgnore
+//    @Relationship(type = "GROUPLIVETEST", direction = Relationship.INCOMING)
+//    private Group group;
 
     @Relationship(type = "LIVETESTTEST", direction = Relationship.OUTGOING)
     private Test test;
@@ -35,11 +35,6 @@ public @Data class LiveTest {
     @Relationship(type = "LIVETESTUSER", direction = Relationship.OUTGOING)
     private List<LiveTestUserState> liveTestUserStates;
 
-
-
-    public void createUuid() {
-        uuid = UUID.randomUUID().toString();
-    }
 
     public void addLiveTestSate(LiveTestUserState liveTestUserState) {
         if (liveTestUserStates == null) {
