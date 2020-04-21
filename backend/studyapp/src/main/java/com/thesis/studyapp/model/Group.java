@@ -1,7 +1,5 @@
 package com.thesis.studyapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,12 +7,9 @@ import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
-import org.springframework.data.annotation.QueryAnnotation;
-import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 //Nem akarunk mindent mindenkinek kiadni, érdemes úgy alakítani a Rel. Dir-eket, hogy eszerint működjön (User és Admin outgoing, többi incoming)
 @NodeEntity
@@ -26,6 +21,7 @@ public class Group {
     private Long id;
 
     private String name;
+    private String description;
 
     @Relationship(type = "GROUPUSER", direction = Relationship.INCOMING)
     private List<User> users;

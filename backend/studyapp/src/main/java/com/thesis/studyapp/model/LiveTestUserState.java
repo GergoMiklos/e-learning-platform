@@ -1,11 +1,12 @@
 package com.thesis.studyapp.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.ListResourceBundle;
 
 //Todo sok minden
 @RelationshipEntity(type = "LIVETESTUSER")

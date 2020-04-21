@@ -8,7 +8,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.Date;
-import java.util.List;
 
 @NodeEntity
 public @Data class News {

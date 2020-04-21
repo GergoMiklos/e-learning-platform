@@ -1,19 +1,15 @@
 package com.thesis.studyapp.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.neo4j.ogm.annotation.*;
 
 import java.util.Date;
 import java.util.List;
 
 @Getter @Setter @NoArgsConstructor
 public class LiveTestUserStateDTO {
-    @Id
-    @GeneratedValue
+
     private Long id;
 
     private int currentLevel;
@@ -31,11 +27,10 @@ public class LiveTestUserStateDTO {
     TaskDTO currentTask;
 
     //Todo tartalmazás mapping helyett
-  //  @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-  //  private UserDTO user;
-    private String userUserName;
-    private String userFullName;
-    private Long userId;
+    private UserDTO user;
+//    private String userUserName;
+//    private String userFullName;
+//    private Long userId;
     //username
     //userfullname
     //userid
