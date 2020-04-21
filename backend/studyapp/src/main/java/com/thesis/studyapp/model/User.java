@@ -2,6 +2,9 @@ package com.thesis.studyapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -11,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NodeEntity
-public @Data class User {
+@Getter @Setter @NoArgsConstructor
+public class User {
     @Id
     @GeneratedValue
     private Long id;
@@ -22,11 +26,11 @@ public @Data class User {
     private String password;
 
     @JsonIgnore
-    @Relationship(type = "GROUPUSER", direction = Relationship.INCOMING)
-    private List<GroupUserState> groups;
+    @Relationship(type = "GROUPUSER", direction = Relationship.OUTGOING)
+    private List<Group> groups;
 
     @JsonIgnore
-    @Relationship(type = "GROUPADMIN", direction = Relationship.INCOMING)
+    @Relationship(type = "GROUPADMIN", direction = Relationship.OUTGOING)
     private List<Group> managedGroups;
 
     @JsonIgnore
@@ -41,7 +45,7 @@ public @Data class User {
     @Relationship(type = "LIVETESTUSER", direction = Relationship.INCOMING)
     private List<LiveTestUserState> liveTestUserStates;
 
-    public void addGroup(GroupUserState group) {
+    public void addGroup(Group group) {
         if (groups == null) {
             groups = new ArrayList<>();
         }

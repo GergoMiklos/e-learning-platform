@@ -11,8 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 public @Data class LiveTestDTO {
-    @Id
-    @GeneratedValue
     private Long id;;
 
     private String name;
@@ -20,23 +18,13 @@ public @Data class LiveTestDTO {
     private int maxTimeForTest;
     private int maxTimeForTasks;
 
-    //private GroupDTO groupDTO;//?? KELL-E
-    //Ha pl valaki lekér egy livetestDTO-t (findbyid), jöjjön vele GUS és LTUS és Test dto-k is
-    //De nemfindbyid-ra hogy a faszomba ott ilyet nem tudsz :(
-    //DE  TUDSZ  !!! PATH= (STACKOVERFLOW)
-    //TODO
-
     private TestDTO test;
-    //minden?
+    //Todo modelmapper minden, id, name? Szerintem igen
 
+    //TODO LTS kelleni fog, ne LTSbyLTid legyen, hanem ez!
+    //De akkor itt null lesz ha grouppal kérdezzük le !!!
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     private List<LiveTestUserStateDTO> liveTestUserState;
 
-    public void addLiveTestSate(LiveTestUserStateDTO liveTestUserStateDTO) {
-        if (liveTestUserState == null) {
-            liveTestUserState = new ArrayList<>();
-        }
-        liveTestUserState.add(liveTestUserStateDTO);
-    }
 
 }

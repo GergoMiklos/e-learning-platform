@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GroupService {
@@ -21,12 +22,13 @@ public class GroupService {
         return convertToDTO(groupRepo.findByUserId(userId));
     }
 
-    public List<GroupDTO> getGroupsByAdminId(Long userId) { ;
+    public List<GroupDTO> getGroupsByAdminId(Long userId) {
         return convertToDTO(groupRepo.findByAdminId(userId));
     }
 
     public GroupDTO getGroupById(Long id) {
-        return convertToDTO(groupRepo.findById(id).get());
+        Optional<Group> group = groupRepo.findById(id);
+        return group.map(this::convertToDTO).orElse(null);
     }
 
 
@@ -43,7 +45,7 @@ public class GroupService {
     }
 
     private Group convertToEntity(GroupDTO group) {
-        //TODO
+        //TODO minden convertToEntity
         //groupRepobol lekérdezés, hiányzó adatok kiegészítése!
         return modelMapper.map(group, Group.class);
     }

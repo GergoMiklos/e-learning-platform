@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LiveTestUserStateService {
@@ -18,7 +19,12 @@ public class LiveTestUserStateService {
     LiveTestUserStateRepo liveTestUseStateRepo;
 
     public LiveTestUserStateDTO getLiveTestUserStateById(Long id) {
-        return convertToDTO(liveTestUseStateRepo.findById(id).get());
+        Optional<LiveTestUserState> ltus = liveTestUseStateRepo.findById(id);
+        return ltus.map(this::convertToDTO).orElse(null);
+    }
+
+    public List<LiveTestUserStateDTO> getLiveTestUserStatesByLiveTest(Long liveTestId) {
+        return convertToDTO(liveTestUseStateRepo.findByLiveTestId(liveTestId));
     }
 
 

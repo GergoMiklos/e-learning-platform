@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface LiveTestRepo extends Neo4jRepository<LiveTest, Long> {
 
-    @Query("MATCH (g:Group)-[:GROUPLIVETEST]-(lt:LiveTest)" +
-            " WHERE id(g)=$0" +
-            " RETURN lt")
-    List<LiveTest> findByGroupId(Long groupid);
-
-    @Query("MATCH (u:User)-[:GROUPUSER]-(:Group)-[:GROUPLIVETEST]-(lt:LiveTest)" +
-            " WHERE id(u)=$0" +
-            " RETURN lt")
-    List<LiveTest> findByUserId(Long userid);
+//    @Query("MATCH (g:Group)-[:GROUPLIVETEST]-(lt:LiveTest)" +
+//            " WHERE id(g)=$0" +
+//            " RETURN lt")
+//    List<LiveTest> findByGroupId(Long groupid);
+//
+//    @Query("MATCH (u:User)-[:GROUPUSER]-(:Group)-[:GROUPLIVETEST]-(lt:LiveTest)" +
+//            " WHERE id(u)=$0" +
+//            " RETURN lt")
+//    List<LiveTest> findByUserId(Long userid);
 }

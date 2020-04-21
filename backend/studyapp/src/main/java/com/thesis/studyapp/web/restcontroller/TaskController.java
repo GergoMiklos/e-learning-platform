@@ -20,9 +20,9 @@ public class TaskController {
         return taskService.getTaskById(id);
     }
 
-    @GetMapping("tasks/testid/{id}")
-    public List<TaskDTO> getTasksByTestId(@PathVariable Long id) {
-        return taskService.getTasksByTestId(id);
-    }
+//    @GetMapping("tasks/testid/{id}")
+//    public List<TaskDTO> getTasksByTestId(@PathVariable Long id) {
+//        return taskService.getTasksByTestId(id);
+//    }
 
 }

@@ -2,6 +2,9 @@ package com.thesis.studyapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -13,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+//Nem akarunk mindent mindenkinek kiadni, érdemes úgy alakítani a Rel. Dir-eket, hogy eszerint működjön (User és Admin outgoing, többi incoming)
 @NodeEntity
-public @Data class Group {
+@Getter @Setter @NoArgsConstructor
+public class Group {
     @Id
     //@GeneratedValue(strategy = CustomIdStrategy.class)
     @GeneratedValue
@@ -22,19 +27,19 @@ public @Data class Group {
 
     private String name;
 
-    //@JsonIgnore
-    @Relationship(type = "GROUPUSER", direction = Relationship.OUTGOING)
-    private List<GroupUserState> users;
+    @Relationship(type = "GROUPUSER", direction = Relationship.INCOMING)
+    private List<User> users;
 
-
-    @Relationship(type = "GROUPADMIN", direction = Relationship.OUTGOING)
+    @Relationship(type = "GROUPADMIN", direction = Relationship.INCOMING)
     private List<User> admins;
 
-
-    @Relationship(type = "GROUPLIVETEST", direction = Relationship.INCOMING)
+    @Relationship(type = "GROUPLIVETEST", direction = Relationship.OUTGOING)
     private List<LiveTest> liveTests;
 
-    public void addUser(GroupUserState user) {
+    @Relationship(type = "GROUPNEWS", direction = Relationship.OUTGOING)
+    private List<News> news;
+
+    public void addUser(User user) {
         if (users == null) {
             users = new ArrayList<>();
         }
@@ -53,6 +58,13 @@ public @Data class Group {
             liveTests = new ArrayList<>();
         }
         liveTests.add(liveTest);
+    }
+
+    public void addNews(News newNews) {
+        if (news == null) {
+            news = new ArrayList<>();
+        }
+        news.add(newNews);
     }
 
 }

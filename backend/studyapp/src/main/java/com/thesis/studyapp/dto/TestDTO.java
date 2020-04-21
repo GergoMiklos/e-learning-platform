@@ -19,11 +19,4 @@ public @Data class TestDTO {
     @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     private List<TestTaskStateDTO> tasks;
 
-    public void addTask(TestTaskStateDTO task) {
-        if (tasks == null) {
-            tasks = new ArrayList<>();
-        }
-        tasks.add(task);
-    }
-
 }

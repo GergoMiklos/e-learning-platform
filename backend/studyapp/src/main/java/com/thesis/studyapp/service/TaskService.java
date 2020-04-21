@@ -20,8 +20,7 @@ public class TaskService {
 
     public TaskDTO getTaskById(Long id) {
         Optional<Task> task = taskRepo.findById(id);
-        //if(task.isPresent())
-        return convertToDTO(task.get());
+        return task.map(this::convertToDTO).orElse(null);
     }
 
     public List<TaskDTO> getTasksByTestId(Long testId) {

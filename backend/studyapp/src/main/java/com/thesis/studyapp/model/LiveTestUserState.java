@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListResourceBundle;
 
+//Todo sok minden
 @RelationshipEntity(type = "LIVETESTUSER")
 @Getter @Setter @NoArgsConstructor
 public class LiveTestUserState {

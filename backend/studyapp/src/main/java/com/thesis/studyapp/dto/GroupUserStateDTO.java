@@ -1,10 +1,15 @@
 package com.thesis.studyapp.dto;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.neo4j.ogm.annotation.*;
 
+
+//Ez már nem kell model szerint
+//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Getter @Setter @NoArgsConstructor
 public class GroupUserStateDTO {
     @Id
@@ -27,7 +32,7 @@ public class GroupUserStateDTO {
     private String userUserName;
     private String userUserFullname;
     private Long userId;
-    //userusername
+    //username
     //userfullname
     //userid
 

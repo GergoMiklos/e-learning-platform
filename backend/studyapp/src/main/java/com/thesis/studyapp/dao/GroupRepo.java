@@ -18,10 +18,10 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
 //    @Query("MATCH (:User)-[gr:GROUPUSER]-(g:Group)-[:GROUPUSER]-(u:User)" +
 ////            " WHERE id(u)=$0" +
 ////            " RETURN collect(g.id, g.name, collect(gr) as users")
-    @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group) OPTIONAL MATCH p = (:User)--(g:Group)--(:LiveTest)--(:Test) WHERE id(u)=$0 RETURN p")
+    @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group) OPTIONAL MATCH p = (g:Group)--() WHERE id(u)=$0 RETURN p")
     List<Group> findByUserId(Long userid);
 
     @Depth(2)
-    @Query("MATCH (u:User)-[:GROUPADMIN]-(g:Group) OPTIONAL MATCH p = (:User)--(g:Group)--(:LiveTest) WHERE id(u)=$0 RETURN p")
+    @Query("MATCH (u:User)-[:GROUPADMIN]-(g:Group) OPTIONAL MATCH p = (g:Group)--() WHERE id(u)=$0 RETURN p")
     List<Group> findByAdminId(Long userid);
 }

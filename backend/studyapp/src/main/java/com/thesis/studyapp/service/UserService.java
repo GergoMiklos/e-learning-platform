@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -18,11 +19,13 @@ public class UserService {
     UserRepo userRepo;
 
     public UserDTO getUserById(Long id) {
-        return convertToDTO(userRepo.findById(id).get());
+        Optional<User> user = userRepo.findById(id);
+        return user.map(this::convertToDTO).orElse(null);
     }
 
     public UserDTO getUserByUserName(String userName) {
-        return convertToDTO(userRepo.findByUserName(userName).get());
+        Optional<User> user = userRepo.findByUserName(userName);
+        return user.map(this::convertToDTO).orElse(null);
     }
 
 

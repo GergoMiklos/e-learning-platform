@@ -8,7 +8,6 @@ import org.neo4j.ogm.annotation.Id;
 
 import java.util.List;
 
-//@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
 public @Data class UserDTO {
     @Id
     @GeneratedValue
@@ -18,38 +17,16 @@ public @Data class UserDTO {
     private String fullName;
     private String email;
 
-    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-    //@JsonIgnore
-    private List<GroupUserStateDTO> groups;
+//    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+//    //@JsonIgnore
+//    private List<GroupUserStateDTO> groups;
 
     //@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
     //@JsonIgnore
     //private List<GroupDTO> managedGroups;
 
-    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-    //@JsonIgnore
-    private List<LiveTestUserStateDTO> liveTestUserStates;
-
-//    public void addGroup(GroupUserStateDTO group) {
-//        if (groups == null) {
-//            groups = new ArrayList<>();
-//        }
-//        groups.add(group);
-//    }
-
-//    public void addManagedGroup(GroupDTO groupDTO) {
-//        if (managedGroups == null) {
-//            managedGroups = new ArrayList<>();
-//        }
-//        managedGroups.add(groupDTO);
-//    }
-
-//    public void addLiveTestState(LiveTestUserStateDTO liveTestUserStateDTO) {
-//        if (liveTestUserStates == null) {
-//            liveTestUserStates = new ArrayList<>();
-//        }
-//        liveTestUserStates.add(liveTestUserStateDTO);
-//    }
-
+//    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+//    //@JsonIgnore
+//    private List<LiveTestUserStateDTO> liveTestUserStates;
 
 }

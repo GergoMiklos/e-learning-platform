@@ -20,13 +20,13 @@ public class LiveTestContoller {
         return liveTestService.getLiveTestById(id);
     }
 
-    @GetMapping("livetests/groupid/{groupid}")
-    public List<LiveTestDTO> getLiveTestByGroupId(@PathVariable Long groupid) {
-        return liveTestService.getLiveTestByGroupId(groupid);
-    }
-
-    @GetMapping("livetests/userid/{userid}")
-    public List<LiveTestDTO> getLiveTestByUserId(@PathVariable Long userid) {
-        return liveTestService.getLiveTestByUserId(userid);
-    }
+//    @GetMapping("livetests/groupid/{groupid}")
+//    public List<LiveTestDTO> getLiveTestByGroupId(@PathVariable Long groupid) {
+//        return liveTestService.getLiveTestByGroupId(groupid);
+//    }
+//
+//    @GetMapping("livetests/userid/{userid}")
+//    public List<LiveTestDTO> getLiveTestByUserId(@PathVariable Long userid) {
+//        return liveTestService.getLiveTestByUserId(userid);
+//    }
 }

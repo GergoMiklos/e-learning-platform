@@ -20,8 +20,8 @@ public class TestService {
 
     public TestDTO getTestById(Long id) {
         Optional<Test> test = testRepo.findById(id);
-        //if(test.isPresent())
-        return modelMapper.map(test.get(), TestDTO.class);
+        return test.map(this::convertToDTO).orElse(null);
+
     }
 
     //Ilyenkor mit kéne csinálni, ha nem tudjuk hánnyal térünk vissza, de mi csak 1et szeretnénk???

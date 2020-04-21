@@ -37,9 +37,13 @@ public class StudyappApplication {
 			LiveTest liveTest = new LiveTest(); liveTest.setName("LiveTest");
 			LiveTestUserState liveTestUserState = new LiveTestUserState();
 
+			News news = new News();
+			news.setTitle("News Title");
+			group.addNews(news);
+
 			user2.addManagedGroup(group);
-			user.addGroup(groupUserState);
-			user2.addGroup(groupUserState2);
+			user.addGroup(group);
+			user2.addGroup(group);
 			groupUserState.setGroup(group);
 			groupUserState.setUser(user);
 			groupUserState2.setGroup(group);

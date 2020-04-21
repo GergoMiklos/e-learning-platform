@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LiveTestService {
@@ -18,16 +19,17 @@ public class LiveTestService {
     LiveTestRepo liveTestRepo;
 
     public LiveTestDTO getLiveTestById(Long id) {
-        return convertToDTO(liveTestRepo.findById(id).get());
+        Optional<LiveTest> lt = liveTestRepo.findById(id);
+        return lt.map(this::convertToDTO).orElse(null);
     }
 
-    public List<LiveTestDTO> getLiveTestByGroupId(Long groupId) {
-        return convertToDTO(liveTestRepo.findByGroupId(groupId));
-    }
-
-    public List<LiveTestDTO> getLiveTestByUserId(Long userId) {
-        return convertToDTO(liveTestRepo.findByUserId(userId));
-    }
+//    public List<LiveTestDTO> getLiveTestByGroupId(Long groupId) {
+//        return convertToDTO(liveTestRepo.findByGroupId(groupId));
+//    }
+//
+//    public List<LiveTestDTO> getLiveTestByUserId(Long userId) {
+//        return convertToDTO(liveTestRepo.findByUserId(userId));
+//    }
 
 
     @Autowired
