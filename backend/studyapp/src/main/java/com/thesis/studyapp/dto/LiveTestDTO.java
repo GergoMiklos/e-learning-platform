@@ -16,11 +16,11 @@ public @Data class LiveTestDTO {
 
     //private TestDTO test;
     private String testId;
-    private String testName;
+    //private String testName;
     //Todo modelmapper minden, id, name? Szerintem igen
 
     //TODO LTS kelleni fog, ne LTSbyLTid legyen, hanem ez!
-    //De akkor itt null lesz ha grouppal kérdezzük le !!!? Leszarom
+    //De akkor itt null lesz ha grouppal kérdezzük le !!!? Leszarom xdd
     private List<LiveTestUserStateDTO> liveTestUserState;
 
 

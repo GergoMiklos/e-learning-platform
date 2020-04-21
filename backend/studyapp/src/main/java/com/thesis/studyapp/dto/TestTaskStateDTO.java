@@ -14,7 +14,7 @@ public class TestTaskStateDTO {
 //    private TestDTO test;
 
     private TaskDTO task;
-    //TODO szerintem inkább task tartalmazás
+    //TODO szerintem inkább task tartalmazás?
     //hamár úgyis rel., jön vele a depth-szel
 //    private Long taskId;
 //    private String taskQuestion;

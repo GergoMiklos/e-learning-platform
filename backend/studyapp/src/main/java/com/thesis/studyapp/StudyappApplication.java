@@ -25,8 +25,6 @@ public class StudyappApplication {
 			User user = new User(); user.setUserName("User");
 			User user2 = new User(); user2.setUserName("User2");
 			Group group = new Group(); group.setName("Group");
-			GroupUserState groupUserState = new GroupUserState();
-			GroupUserState groupUserState2 = new GroupUserState();
 
 			Task task = new Task(); task.setQuestion("Task");
 			Test test = new Test(); test.setName("Test");
@@ -44,10 +42,6 @@ public class StudyappApplication {
 			user2.addManagedGroup(group);
 			user.addGroup(group);
 			user2.addGroup(group);
-			groupUserState.setGroup(group);
-			groupUserState.setUser(user);
-			groupUserState2.setGroup(group);
-			groupUserState2.setUser(user2);
 			group.addLiveTest(liveTest);
 			liveTest.addLiveTestSate(liveTestUserState);
 			liveTestUserState.setUser(user);
