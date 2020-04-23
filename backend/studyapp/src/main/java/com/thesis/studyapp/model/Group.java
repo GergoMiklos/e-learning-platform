@@ -35,6 +35,8 @@ public class Group {
     @Relationship(type = "GROUPNEWS", direction = Relationship.OUTGOING)
     private List<News> news;
 
+    public List<Long> userIds;
+
     public void addUser(User user) {
         if (users == null) {
             users = new ArrayList<>();

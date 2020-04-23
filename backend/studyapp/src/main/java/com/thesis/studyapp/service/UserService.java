@@ -19,13 +19,25 @@ public class UserService {
     UserRepo userRepo;
 
     public UserDTO getUserById(Long id) {
+        System.out.println("UserService: getUserById");
         Optional<User> user = userRepo.findById(id);
         return user.map(this::convertToDTO).orElse(null);
     }
 
     public UserDTO getUserByUserName(String userName) {
+        System.out.println("UserService: getUserByUserName");
         Optional<User> user = userRepo.findByUserName(userName);
         return user.map(this::convertToDTO).orElse(null);
+    }
+
+    public List<UserDTO> getUserByGroupId(Long groupId) {
+        System.out.println("UserService: getUserByGroupId");
+        return convertToDTO(userRepo.findByGroupId(groupId));
+    }
+
+    public List<UserDTO> getUserByGroupIds(List<Long> groupIds) {
+        System.out.println("UserService: getUserByGroupIdsss!");
+        return convertToDTO(userRepo.findByGroupIds(groupIds));
     }
 
 

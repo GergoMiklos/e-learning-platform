@@ -19,16 +19,23 @@ public class GroupService {
     private GroupRepo groupRepo;
 
     public List<GroupDTO> getGroupsByUserId(Long userId) {
+        System.out.println("GroupService: getGroupsByUserId");
         return convertToDTO(groupRepo.findByUserId(userId));
     }
 
     public List<GroupDTO> getGroupsByAdminId(Long userId) {
+        System.out.println("GroupService: getGroupsByAdminId");
         return convertToDTO(groupRepo.findByAdminId(userId));
     }
 
     public GroupDTO getGroupById(Long id) {
+        System.out.println("GroupService: getGroupById");
         Optional<Group> group = groupRepo.findById(id);
         return group.map(this::convertToDTO).orElse(null);
+    }
+
+    public GroupDTO getGroupDTObyId(Long id) {
+        return groupRepo.findByDTOId(id);
     }
 
 
