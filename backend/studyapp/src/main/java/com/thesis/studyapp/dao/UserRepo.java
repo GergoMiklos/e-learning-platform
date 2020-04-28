@@ -20,4 +20,7 @@ public interface UserRepo extends Neo4jRepository<User, Long> {
     @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group) WHERE id(g) IN $0 RETURN u")
     List<User> findByGroupIds(List<Long> groupIds);
 
+    @Query("MATCH (u:User) WHERE id(u) IN $0 RETURN u")
+    List<User> findByIds(List<Long> ids);
+
 }

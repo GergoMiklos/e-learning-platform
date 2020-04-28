@@ -20,7 +20,7 @@ public class GroupService {
 
     public List<GroupDTO> getGroupsByUserId(Long userId) {
         System.out.println("GroupService: getGroupsByUserId");
-        return convertToDTO(groupRepo.findByUserId(userId));
+        return groupRepo.findByUserId(userId);
     }
 
     public List<GroupDTO> getGroupsByAdminId(Long userId) {

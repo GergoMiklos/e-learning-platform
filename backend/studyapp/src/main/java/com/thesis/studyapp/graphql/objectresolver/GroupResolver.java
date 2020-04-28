@@ -7,6 +7,7 @@ import com.thesis.studyapp.service.UserService;
 import graphql.execution.batched.Batched;
 import org.dataloader.BatchLoader;
 import org.dataloader.DataLoader;
+import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,25 +20,25 @@ public class GroupResolver implements GraphQLResolver<GroupDTO> {
     @Autowired
     UserService userService;
 
-//LISTÁKRA NEM TUDOM BATChOLNI :(
-    public List<UserDTO> users(GroupDTO groupDTO) {
+    @Autowired
+    DataLoaderRegistry dataLoaderRegistry;
 
-//        BatchLoader<Long, UserDTO> userBatchLoader = new BatchLoader<Long, UserDTO>() {
-//            @Override
-//            public CompletionStage<List<UserDTO>> load(List<Long> groupIds) {
-//                return CompletableFuture.supplyAsync(() -> {
-//                    return userService.getUserByGroupIds(groupIds);
-//                });
-//            }
-//        };
-//        DataLoader<Long, UserDTO> userLoader = DataLoader.newDataLoader(userBatchLoader);
-        System.out.println("GroupResolver: users");
-        if(groupDTO.getUsers() == null)
-        //return userLoader.load(groupDTO.getId());
-            return userService.getUserByGroupId(groupDTO.getId());
-        else
-            return groupDTO.getUsers();
+//LISTÁKRA NEM TUDOM BATChOLNI :(
+    public CompletableFuture<List<UserDTO>> users(GroupDTO groupDTO) {
+        if(groupDTO.getUsers() == null) {
+            System.out.println("GroupResolver: users");
+            DataLoader<Long, UserDTO> userloader = dataLoaderRegistry.getDataLoader("userloader");
+            return userloader.loadMany(groupDTO.getUserIds());
+        }
+        else {
+            return CompletableFuture.completedFuture(groupDTO.getUsers());
+        }
     }
 
+    public CompletableFuture<List<UserDTO>> admins(GroupDTO groupDTO) {
+        System.out.println("GroupResolver: users");
+        DataLoader<Long, UserDTO> userloader = dataLoaderRegistry.getDataLoader("userloader");
+        return userloader.loadMany(groupDTO.getAdminIds());
+    }
 
 }

@@ -1,8 +1,11 @@
 package com.thesis.studyapp.dto;
 
 import lombok.Data;
+import org.neo4j.ogm.annotation.PostLoad;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @QueryResult
@@ -22,6 +25,8 @@ public @Data class GroupDTO {
     private List<NewsDTO> news;
 
     private List<Long> userIds;
+    private List<Long> adminIds;
+
 
 
 }

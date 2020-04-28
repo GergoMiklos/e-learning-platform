@@ -40,6 +40,13 @@ public class UserService {
         return convertToDTO(userRepo.findByGroupIds(groupIds));
     }
 
+    public List<UserDTO> getUserByIds(List<Long> ids) {
+        System.out.println("UserService: getUserIdsss!");
+        List<User> u = userRepo.findByIds(ids);
+        System.out.println("UserService ids size: " + u.size());
+        return convertToDTO(u);
+    }
+
 
 
     @Autowired

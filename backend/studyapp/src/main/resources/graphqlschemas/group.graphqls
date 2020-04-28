@@ -3,8 +3,12 @@ type Group {
     id: ID!
     name: String
     users: [User]
+    admins: [User]
+    userIds: [String]
 }
 
-type Query {
+extend type Query {
     group(id: ID!): Group
+    userGroups(id: ID!): [Group]
+    groupDTO(id: ID!): Group
 }
