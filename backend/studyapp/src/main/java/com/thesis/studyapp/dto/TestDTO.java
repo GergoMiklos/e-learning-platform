@@ -1,9 +1,11 @@
 package com.thesis.studyapp.dto;
 
 import lombok.Data;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.List;
 
+@QueryResult
 public @Data class TestDTO {
 
     private Long id;
@@ -11,6 +13,7 @@ public @Data class TestDTO {
     private String name;
     private String description;
 
-    private List<TestTaskStateDTO> tasks;
+    private List<TaskDTO> tasks;
+    private List<Long> taskIds;
 
 }

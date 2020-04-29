@@ -2,6 +2,7 @@ package com.thesis.studyapp.graphql.queryresolver;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import com.thesis.studyapp.dao.GroupRepo;
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.dto.UserDTO;
 import com.thesis.studyapp.service.GroupService;
@@ -22,45 +23,19 @@ public class GroupQuery implements GraphQLQueryResolver, GraphQLMutationResolver
     @Autowired
     private GroupService groupService;
     @Autowired
-    private DataLoaderRegistry dataLoaderRegistry;
+    private GroupRepo groupRepo;
 
-    private DataLoaderDispatcherInstrumentation instrumentation;
 
     public GroupDTO getGroup(Long id) {
-        return groupService.getGroupById(id);
+        return groupRepo.findByGroupId(id).orElse(null);
     }
 
-    public List<GroupDTO> getUserGroups(Long id) throws InterruptedException {
-        //dataLoaderRegistry.dispatchAll();
+    public List<GroupDTO> getUserGroups(Long id) {
         System.out.println("GroupQueryResolver: getUserGroups");
-        List<GroupDTO> result = groupService.getGroupsByUserId(id);
-//        System.out.println("Dispatch now!");
-//        dataLoaderRegistry.dispatchAll();
-//        System.out.println("Dispatch finished for:");
-//        for(String s : dataLoaderRegistry.getKeys()) {
-//            System.out.println("  " + s);
-//            dataLoaderRegistry.getDataLoader(s).dispatchAndJoin();
-//        }
-//        DataLoader<Object, Object> userloader = dataLoaderRegistry.getDataLoader("userloader");
-        //userloader.dispatchAndJoin();
-//        System.out.println("GroupQuery result:");
-//        for(GroupDTO g : result) {
-//            System.out.println("result id: " + g.getId());
-//            System.out.println("result userids: " + g.getUserIds());
-//            System.out.println("result users: " + g.getUsers());
-//        }
-
-        System.out.println("result back!");
-        return result;
+        return groupRepo.findByUserId(id);
     }
 
-    public GroupDTO getGroupDTO(Long id) {
-        System.out.println("GroupQueryResolver: getGroupDTO");
-        GroupDTO result = groupService.getGroupDTObyId(id);
-
-        dataLoaderRegistry.dispatchAll();
-        return result;
-
+    public List<GroupDTO> getByManyGroupIds(List<Long> groupIds) {
+        return groupRepo.findByManyIds(groupIds);
     }
-
 }

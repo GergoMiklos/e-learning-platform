@@ -24,7 +24,7 @@ public class LiveTestUserStateService {
     }
 
     public List<LiveTestUserStateDTO> getLiveTestUserStatesByLiveTest(Long liveTestId) {
-        return convertToDTO(liveTestUseStateRepo.findByLiveTestId(liveTestId));
+        return null;//convertToDTO(liveTestUseStateRepo.findByLiveTestId(liveTestId));
     }
 
 

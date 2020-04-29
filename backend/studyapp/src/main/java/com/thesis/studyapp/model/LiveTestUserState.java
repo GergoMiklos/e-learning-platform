@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 //Todo sok minden
-@RelationshipEntity(type = "LIVETESTUSER")
+@RelationshipEntity(type = "LIVETESTSTATE")
 @Getter @Setter @NoArgsConstructor
 public class LiveTestUserState {
     @Id

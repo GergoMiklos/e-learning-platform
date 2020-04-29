@@ -1,0 +1,14 @@
+type Test {
+    id: ID!
+    name: String
+    description: String
+    tasks: [Task]
+}
+
+type Task {
+    id: ID!
+    question: String
+    answers: [String]
+    solution: Int
+    level: Int
+}

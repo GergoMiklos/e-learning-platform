@@ -3,10 +3,12 @@ package com.thesis.studyapp.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.Date;
 import java.util.List;
 
+@QueryResult
 @Getter @Setter @NoArgsConstructor
 public class LiveTestUserStateDTO {
 
@@ -21,31 +23,18 @@ public class LiveTestUserStateDTO {
     private Date timeStartedTest;
     private Date timeStartedLastTask;
 
-    List<Long> completedTasksId;
-    List<Long> failedTasksId;
+    List<Long> completedTaskIds;
+    List<Long> failedTaskIds;
 
     TaskDTO currentTask;
-
-    //Todo tartalmazás mapping helyett
     private UserDTO user;
-//    private String userUserName;
-//    private String userFullName;
-//    private Long userId;
-    //username
-    //userfullname
-    //userid
+    LiveTestDTO liveTest;
 
-
-    //@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-    //LiveTestDTO liveTest;
-    //Itt jó a mapping, mert liveTest tartalmaz???
-    private String liveTestName;
-    private Long liveTestId;
 
 
 
     public enum State {
-        NOT_STARTED, PROBlEM, FINISHED, IN_PROGRESS
+        NOT_STARTED, PROBLEM, FINISHED, IN_PROGRESS
     }
 
 }

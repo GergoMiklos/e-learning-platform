@@ -1,9 +1,11 @@
 package com.thesis.studyapp.dto;
 
 import lombok.Data;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.List;
 
+@QueryResult
 public @Data class TaskDTO {
 
     private Long id;

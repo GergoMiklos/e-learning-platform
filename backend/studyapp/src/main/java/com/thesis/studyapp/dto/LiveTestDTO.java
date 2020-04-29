@@ -1,10 +1,12 @@
 package com.thesis.studyapp.dto;
 
 import lombok.Data;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.Date;
 import java.util.List;
 
+@QueryResult
 public @Data class LiveTestDTO {
     private Long id;;
 
@@ -14,14 +16,11 @@ public @Data class LiveTestDTO {
     private int maxTimeForTest;
     private int maxTimeForTasks;
 
-    //private TestDTO test;
-    private String testId;
-    //private String testName;
-    //Todo modelmapper minden, id, name? Szerintem igen
+    private TestDTO test;
+    private List<LiveTestUserStateDTO> liveTestUserStates;
 
-    //TODO LTS kelleni fog, ne LTSbyLTid legyen, hanem ez!
-    //De akkor itt null lesz ha grouppal kérdezzük le !!!? Leszarom xdd
-    private List<LiveTestUserStateDTO> liveTestUserState;
+    private Long testId;
+    private List<Long> liveTestUserStateIds;
 
 
 }

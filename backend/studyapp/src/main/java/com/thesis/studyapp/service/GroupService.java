@@ -25,7 +25,7 @@ public class GroupService {
 
     public List<GroupDTO> getGroupsByAdminId(Long userId) {
         System.out.println("GroupService: getGroupsByAdminId");
-        return convertToDTO(groupRepo.findByAdminId(userId));
+        return convertToDTO(groupRepo.findByAdminId2(userId));
     }
 
     public GroupDTO getGroupById(Long id) {

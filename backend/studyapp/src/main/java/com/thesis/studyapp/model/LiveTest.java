@@ -37,7 +37,7 @@ public class LiveTest {
     private Test test;
 
     @JsonIgnore
-    @Relationship(type = "LIVETESTUSER", direction = Relationship.OUTGOING)
+    @Relationship(type = "LIVETESTSTATE", direction = Relationship.OUTGOING)
     private List<LiveTestUserState> liveTestUserStates;
 
 

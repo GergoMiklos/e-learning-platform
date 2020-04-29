@@ -2,9 +2,13 @@ type User {
     id: ID!
     userName: String
     fullName: String
+    groups: [Group]
+    managedGroups: [Group]
+    createdTasks: [Task]
+    createdTests: [Test]
 }
 
 
 type Query {
-    user(id: ID!): User
+    getUserById(id: ID!): User
 }
