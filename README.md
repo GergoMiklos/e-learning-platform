@@ -1,4 +1,4 @@
 Miklós Gergő 
-# Önálló laboratórium reopsitory
+# Önálló laboratórium repository
 
 Dokumentáció hamarosan
