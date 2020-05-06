@@ -17,6 +17,7 @@ public @Data class Test {
     private Long id;
 
     private String name;
+    private String description;
 
     @Relationship(type = "TESTTASK", direction = Relationship.OUTGOING)
     private List<TestTaskState> tasks;

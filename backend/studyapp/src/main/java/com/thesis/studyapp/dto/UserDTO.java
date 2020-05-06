@@ -1,32 +1,30 @@
 package com.thesis.studyapp.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.thesis.studyapp.model.LiveTestUserState;
+import com.thesis.studyapp.model.Task;
+import com.thesis.studyapp.model.Test;
 import lombok.Data;
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.List;
 
+@QueryResult
 public @Data class UserDTO {
-    @Id
-    @GeneratedValue
     private Long id;
 
     private String userName;
     private String fullName;
-    private String email;
 
-//    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-//    //@JsonIgnore
-//    private List<GroupUserStateDTO> groups;
+    private List<GroupDTO> groups;
+    private List<GroupDTO> managedGroups;
+    private List<LiveTestUserStateDTO> liveTestUserStates;
+    private List<TestDTO> createdTests;
+    private List<TaskDTO> createdTasks;
 
-    //@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-    //@JsonIgnore
-    //private List<GroupDTO> managedGroups;
-
-//    @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-//    //@JsonIgnore
-//    private List<LiveTestUserStateDTO> liveTestUserStates;
+    private List<Long> groupIds;
+    private List<Long> managedGroupIds;
+    private List<Long> liveTestUserStateIds;
+    private List<Long> createdTestIds;
+    private List<Long> createdTaskIds;
 
 }

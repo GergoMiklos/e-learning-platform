@@ -19,16 +19,23 @@ public class GroupService {
     private GroupRepo groupRepo;
 
     public List<GroupDTO> getGroupsByUserId(Long userId) {
-        return convertToDTO(groupRepo.findByUserId(userId));
+        System.out.println("GroupService: getGroupsByUserId");
+        return groupRepo.findByUserId(userId);
     }
 
     public List<GroupDTO> getGroupsByAdminId(Long userId) {
-        return convertToDTO(groupRepo.findByAdminId(userId));
+        System.out.println("GroupService: getGroupsByAdminId");
+        return convertToDTO(groupRepo.findByAdminId2(userId));
     }
 
     public GroupDTO getGroupById(Long id) {
+        System.out.println("GroupService: getGroupById");
         Optional<Group> group = groupRepo.findById(id);
         return group.map(this::convertToDTO).orElse(null);
+    }
+
+    public GroupDTO getGroupDTObyId(Long id) {
+        return groupRepo.findByDTOId(id);
     }
 
 
@@ -47,12 +54,13 @@ public class GroupService {
     private Group convertToEntity(GroupDTO group) {
         //TODO minden convertToEntity
         //groupRepobol lekérdezés, hiányzó adatok kiegészítése!
+        //Ez így tulajdonképpen egy update, csak még nem mentünk rá!!!
         return modelMapper.map(group, Group.class);
     }
 
     private List<Group> convertToEntity(List<GroupDTO> group) {
         //TODO
-        //groupRepobol lekérdezés, hiányzó adatok kiegészítése!
+        //Ezt inkább foreach-csel!
         Type listType = new TypeToken<List<Group>>() {}.getType();
         return modelMapper.map(group, listType);
     }

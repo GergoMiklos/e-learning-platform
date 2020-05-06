@@ -1,25 +1,29 @@
 package com.thesis.studyapp.dto;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
-import org.neo4j.ogm.annotation.GeneratedValue;
-import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.PostLoad;
+import org.springframework.data.neo4j.annotation.QueryResult;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+@QueryResult
 public @Data class GroupDTO {
 
     private Long id;
 
     private String name;
+    private String description;
 
     private List<UserDTO> users;
-
     private List<UserDTO> admins;
-
     private List<LiveTestDTO> liveTests;
+    private List<NewsDTO> news;
 
+    private List<Long> userIds;
+    private List<Long> adminIds;
+    private List<Long> liveTestIds;
+    private List<Long> newsIds;
 
 }

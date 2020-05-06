@@ -1,7 +1,6 @@
 package com.thesis.studyapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import org.neo4j.ogm.annotation.Relationship;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 
 @NodeEntity
@@ -25,6 +23,7 @@ public class LiveTest {
     private String uuid;
 
     private String name;
+    private String description;
     private Date creationDate;
     private int maxTimeForTest;
     private int maxTimeForTasks;
@@ -38,7 +37,7 @@ public class LiveTest {
     private Test test;
 
     @JsonIgnore
-    @Relationship(type = "LIVETESTUSER", direction = Relationship.OUTGOING)
+    @Relationship(type = "LIVETESTSTATE", direction = Relationship.OUTGOING)
     private List<LiveTestUserState> liveTestUserStates;
 
 

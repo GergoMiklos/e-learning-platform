@@ -1,0 +1,21 @@
+
+type Group {
+    id: ID!
+    name: String
+    users: [User]
+    admins: [User]
+    news: [News]
+    userIds: [String]
+    liveTests: [LiveTest]
+}
+
+type News {
+    id: ID!
+    title: String
+    description: String
+}
+
+extend type Query {
+    group(id: ID!): Group
+    userGroups(id: ID!): [Group]
+}

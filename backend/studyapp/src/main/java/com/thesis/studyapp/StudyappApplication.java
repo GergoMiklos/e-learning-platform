@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class StudyappApplication {
+	public static boolean HUGETEST = false;
 
 	public static void main(String[] args) {
 		SpringApplication.run(StudyappApplication.class, args);
@@ -24,9 +25,10 @@ public class StudyappApplication {
 
 			User user = new User(); user.setUserName("User");
 			User user2 = new User(); user2.setUserName("User2");
+			User user3 = new User(); user3.setUserName("User3");
+			User user4 = new User(); user4.setUserName("User4");
 			Group group = new Group(); group.setName("Group");
-			GroupUserState groupUserState = new GroupUserState();
-			GroupUserState groupUserState2 = new GroupUserState();
+			Group group2 = new Group(); group2.setName("Group2");
 
 			Task task = new Task(); task.setQuestion("Task");
 			Test test = new Test(); test.setName("Test");
@@ -43,11 +45,12 @@ public class StudyappApplication {
 
 			user2.addManagedGroup(group);
 			user.addGroup(group);
+			user.addGroup(group2);
 			user2.addGroup(group);
-			groupUserState.setGroup(group);
-			groupUserState.setUser(user);
-			groupUserState2.setGroup(group);
-			groupUserState2.setUser(user2);
+			user2.addGroup(group2);
+			user3.addGroup(group);
+			user4.addGroup(group2);
+
 			group.addLiveTest(liveTest);
 			liveTest.addLiveTestSate(liveTestUserState);
 			liveTestUserState.setUser(user);
@@ -59,6 +62,16 @@ public class StudyappApplication {
 
 			userRepo.save(user);
 			userRepo.save(user2);
+			userRepo.save(user3);
+			userRepo.save(user4);
+
+			if(HUGETEST) {
+				for(int i = 1; i < 100; i++) {
+					user = new User(); user.setUserName("UserTest" + i);
+					user.addGroup(group);
+					userRepo.save(user);
+				}
+			}
 		};
 	}
 }

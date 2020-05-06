@@ -1,5 +1,6 @@
 package com.thesis.studyapp.web.restcontroller;
 
+import com.thesis.studyapp.dao.GroupRepo;
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import java.util.List;
 public class GroupController {
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private GroupRepo groupRepo;
 
     @GetMapping("/groups/userid/{userid}")
     public List<GroupDTO> getGroupsByUserId(@PathVariable Long userid) {
@@ -28,6 +31,11 @@ public class GroupController {
     @GetMapping("/groups/id/{id}")
     public GroupDTO getGroupsById(@PathVariable Long id) {
         return groupService.getGroupById(id);
+    }
+
+    @GetMapping("/groupDTO")
+    public GroupDTO getGroupsById() {
+        return groupRepo.findByDTOId(new Long(3));
     }
 
 

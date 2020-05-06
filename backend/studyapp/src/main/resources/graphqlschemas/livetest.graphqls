@@ -1,0 +1,11 @@
+
+type LiveTest {
+    id: ID!
+    name: String
+    description: String
+    liveTestUserStates: [LiveTestUserState]
+}
+
+type LiveTestUserState {
+    id: ID!
+}
