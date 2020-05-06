@@ -1,4 +1,5 @@
 # thesis_studyapp
-Szakdogám repo-ja
+Miklós Gergő 
+# önálló laboratórium reopsitory
 
 Dokumentáció hamarosan
