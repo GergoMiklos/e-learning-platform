@@ -1,5 +1,4 @@
-# thesis_studyapp
 Miklós Gergő 
-# önálló laboratórium reopsitory
+# Önálló laboratórium reopsitory
 
 Dokumentáció hamarosan
