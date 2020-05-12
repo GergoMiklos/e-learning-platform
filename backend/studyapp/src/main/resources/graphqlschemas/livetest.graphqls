@@ -1,11 +1,13 @@
 
 type LiveTest {
     id: ID!
-    name: String
-    description: String
-    liveTestUserStates: [LiveTestUserState]
+    test: Test
+    liveTestStates: [LiveTestState]
 }
 
-type LiveTestUserState {
+type LiveTestState {
     id: ID!
+    test: Test
+    user: User
+    currentTask: Task
 }

@@ -21,6 +21,7 @@ public class Group {
     private Long id;
 
     private String name;
+    private String code;
     private String description;
 
     @Relationship(type = "GROUPUSER", direction = Relationship.INCOMING)
@@ -33,9 +34,7 @@ public class Group {
     private List<LiveTest> liveTests;
 
     @Relationship(type = "GROUPNEWS", direction = Relationship.OUTGOING)
-    private List<News> news;
-
-    public List<Long> userIds;
+    private News news;
 
     public void addUser(User user) {
         if (users == null) {
@@ -58,11 +57,5 @@ public class Group {
         liveTests.add(liveTest);
     }
 
-    public void addNews(News newNews) {
-        if (news == null) {
-            news = new ArrayList<>();
-        }
-        news.add(newNews);
-    }
 
 }

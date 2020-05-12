@@ -1,14 +1,13 @@
 type User {
     id: ID!
-    userName: String
-    fullName: String
+    name: String
+    code: String
     groups: [Group]
     managedGroups: [Group]
-    createdTasks: [Task]
     createdTests: [Test]
 }
 
 
-type Query {
-    getUserById(id: ID!): User
+extend type Query {
+    user: User
 }

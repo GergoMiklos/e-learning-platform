@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {BrowserRouter as Router, Route, Switch, Link} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import NavBarComp from "./NavBarComp";
 import LearnListComp from "./LearnListComp";
 import TeachListComp from "./TeachListComp";
@@ -30,7 +30,7 @@ class AppComp extends Component {
                     <Route path="/teach/group/:groupid/edit" component={EditGroupComp}/>
                     <Route path="/teach/group/:groupid" component={TeachGroupComp}/>
                     <Route path="/teach/test/new" component={NewTestComp}/>
-                    <Route path="/teach/test/:id/edit" component={EditTestComp}/>
+                    <Route path="/teach/test/:testid/edit" component={EditTestComp}/>
                     <Route path="/teach/test/:testid/tasks/new" component={NewTaskComp}/>
                     <Route path="/teach/test/:testid/tasks" component={TaskListComp}/>
                     <Route path="/group/test/:id" component={NewGroupComp}/>

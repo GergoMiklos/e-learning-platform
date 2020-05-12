@@ -10,17 +10,15 @@ import java.util.List;
 public @Data class LiveTestDTO {
     private Long id;;
 
-    private String name;
-    private String description;
     private Date creationDate;
     private int maxTimeForTest;
     private int maxTimeForTasks;
 
     private TestDTO test;
-    private List<LiveTestUserStateDTO> liveTestUserStates;
+    private List<LiveTestStateDTO> liveTestStates;
 
     private Long testId;
-    private List<Long> liveTestUserStateIds;
+    private List<Long> liveTestStateIds;
 
 
 }

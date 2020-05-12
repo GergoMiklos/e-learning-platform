@@ -1,4 +1,4 @@
-package com.thesis.studyapp.graphql.objectresolver;
+package com.thesis.studyapp.objectresolver;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.dto.GroupDTO;
@@ -18,8 +18,8 @@ public class TestResolver implements GraphQLResolver<TestDTO> {
     @Autowired
     DataLoaderRegistry dataLoaderRegistry;
 
-    public CompletableFuture<List<TaskDTO>> groups(TestDTO testDTO) {
-        DataLoader<Long, TaskDTO> taskloader = dataLoaderRegistry.getDataLoader("taskoader");
+    public CompletableFuture<List<TaskDTO>> tasks(TestDTO testDTO) {
+        DataLoader<Long, TaskDTO> taskloader = dataLoaderRegistry.getDataLoader("taskloader");
         return taskloader.loadMany(testDTO.getTaskIds());
     }
 }

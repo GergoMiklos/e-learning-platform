@@ -1,21 +1,55 @@
 import React, { Component } from 'react'
+import gql from "graphql-tag";
+import client from "../ApolloClient";
+
+const USER = gql`    {
+    user {
+        id
+        managedGroups {
+            id
+            name
+        }
+        createdTests {
+            id
+            name
+        }
+    }
+}`;
 
 class TeachListComp extends Component {
     constructor(props){
         super(props)
         this.state = {
-            hideNews : false,
-            groups : [
-                {id: 1, description: 'Learn React', name: 'My Group 1'},
-                {id: 2, description: 'Learn about India', name: 'My Group 2'},
-                {id: 3, description: 'Learn Dance', name: 'My Group 3'}
-            ],
-            tests: [{id: 1, name: "Test 1", description: "hellóbeló g1"},
-                    {id: 2, name: "Test 2 (Nehéz)", description: "kobaka g2"}]
-        }
+            user: null
+        };
+    }
+
+    componentDidMount() {
+        this.refreshGroups();
+    }
+
+    refreshGroups = () => {
+        client
+            .query({
+                query: USER
+            })
+            .then(result => {
+                console.log(result);
+                if(!result.data.user) {
+                    console.log("GraphQL query no result");
+                } else {
+                    this.setState({user: result.data.user});
+                }
+            })
+            .catch(errors => {
+                console.log(errors);
+            });
     }
 
     render() {
+        if(!this.state.user) {
+            return (<div></div>)
+        }
         return (
             <div className="container">
                 <div className="row rounded shadow my-3 p-3">
@@ -25,13 +59,14 @@ class TeachListComp extends Component {
                     </button>
                 </div>
 
+                {this.state.user.managedGroups &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped table-hover rounded shadow">
                         <tbody>
                         {
-                            this.state.groups.map(
+                            this.state.user.managedGroups.map(
                                 group =>
-                                    <tr onClick={() => this.groupClicked(group.id)}>
+                                    <tr key={group.id} onClick={() => this.groupClicked(group.id)}>
                                         <td>
                                             <strong>{group.name}</strong>
                                             <div>{group.description}</div>
@@ -41,7 +76,7 @@ class TeachListComp extends Component {
                         }
                         </tbody>
                     </table>
-                </div>
+                </div> }
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-10">My Tests</h1>
@@ -50,13 +85,14 @@ class TeachListComp extends Component {
                     </button>
                 </div>
 
+                {this.state.user.createdTests &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped table-hover rounded shadow">
                         <tbody>
                         {
-                            this.state.tests.map(
+                            this.state.user.createdTests.map(
                                 test =>
-                                    <tr onClick={() => this.testClicked(test.id)}>
+                                    <tr key={test.id} onClick={() => this.testClicked(test.id)}>
                                         <td>
                                             <strong>{test.name}</strong>
                                         </td>
@@ -65,7 +101,7 @@ class TeachListComp extends Component {
                         }
                         </tbody>
                     </table>
-                </div>
+                </div> }
             </div>
         );
     }

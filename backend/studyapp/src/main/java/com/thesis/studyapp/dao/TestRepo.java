@@ -14,12 +14,22 @@ public interface TestRepo extends Neo4jRepository<Test, Long> {
 
     Test findByName(String name);
 
-    @Query("MATCH (lt:LiveTest)-[:LIVETESTTEST]->(t:Test)" +
-            " WHERE id(lt)=$0" +
-            " RETURN t")
-    Optional<Test> getTestByLiveTestId(Long livetestid);
+    @Query("MATCH (lt:LiveTest)-[:LIVETESTTEST]->(t:Test) " +
+            "WHERE id(lt) = $0 " +
+            "WITH t, " +
+            "[(t:Test)--(tsk:Task) | id(tsk)] AS taskIds " +
+            "RETURN id(t) AS id, t.name AS name, t.description AS description, taskIds")
+    Optional<TestDTO> getByLiveTestId(Long liveTestId);
 
     @Query("MATCH (t:Test) WHERE id(t) IN $0 " +
-            "RETURN id(t) AS id, t.name AS name")
+            "WITH t, " +
+            "[(t:Test)--(tsk:Task) | id(tsk)] AS taskIds " +
+            "RETURN id(t) AS id, t.name AS name, t.description AS description, taskIds")
     List<TestDTO> getByManyIds(List<Long> ids);
+
+    @Query("MATCH (t:Test) WHERE id(t) IN $0 " +
+            "WITH t, " +
+            "[(t:Test)--(tsk:Task) | id(tsk)] AS taskIds " +
+            "RETURN id(t) AS id, t.name AS name, t.description AS description, taskIds")
+    Optional<TestDTO> getById(Long id);
 }

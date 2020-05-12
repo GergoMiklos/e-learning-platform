@@ -15,8 +15,7 @@ public @Data class News {
     @GeneratedValue
     private Long id;
 
-    private String title;
-    private String description;
+    private String text;
     private Date creationDate;
 
     @JsonIgnore

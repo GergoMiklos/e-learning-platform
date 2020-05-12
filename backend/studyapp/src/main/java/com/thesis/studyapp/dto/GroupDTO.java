@@ -14,16 +14,17 @@ public @Data class GroupDTO {
     private Long id;
 
     private String name;
+    private String code;
     private String description;
 
     private List<UserDTO> users;
     private List<UserDTO> admins;
     private List<LiveTestDTO> liveTests;
-    private List<NewsDTO> news;
+    private NewsDTO news;
 
     private List<Long> userIds;
     private List<Long> adminIds;
     private List<Long> liveTestIds;
-    private List<Long> newsIds;
+    private Long newsId;
 
 }

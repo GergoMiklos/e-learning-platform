@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 //Todo sok minden
-@RelationshipEntity(type = "LIVETESTSTATE")
+@NodeEntity
 @Getter @Setter @NoArgsConstructor
-public class LiveTestUserState {
+public class LiveTestState {
     @Id
     @GeneratedValue
     private Long id;
@@ -31,10 +31,10 @@ public class LiveTestUserState {
     @Relationship(type="CURRENTTASK", direction = Relationship.OUTGOING)
     Task currentTask;
 
-    @EndNode
+    @Relationship(type="USERSTATE", direction = Relationship.INCOMING)
     private User user;
 
-    @StartNode
+    @Relationship(type="TESTSTATE", direction = Relationship.INCOMING)
     LiveTest liveTest;
 
 

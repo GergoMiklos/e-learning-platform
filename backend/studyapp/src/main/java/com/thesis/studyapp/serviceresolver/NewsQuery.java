@@ -1,4 +1,4 @@
-package com.thesis.studyapp.graphql.queryresolver;
+package com.thesis.studyapp.serviceresolver;
 
 import com.thesis.studyapp.dao.NewsRepo;
 import com.thesis.studyapp.dto.NewsDTO;
@@ -13,6 +13,6 @@ public class NewsQuery {
     NewsRepo newsRepo;
 
     public List<NewsDTO> getByManyNewsIds(List<Long> newsIds) {
-        return newsRepo.findByManyNewsIds(newsIds);
+        return newsRepo.getByManyIds(newsIds);
     }
 }

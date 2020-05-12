@@ -16,50 +16,46 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
 
     List<Group> findByName(String name);
 
-//TODO nem kell mindig minden id
+//TODO nem kell mindig minden id PL User és Admin
     @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group) WHERE id(u) = $0 " +
             "WITH g, " +
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
-            "[(g)--(n:News) | id(n)] AS newsIds, " +
-            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
-            "RETURN id(g) as id, g.name as name, userIds, adminIds, newsIds, liveTestIds")
-    List<GroupDTO> findByUserId(Long userId);
+            "head([(g)--(n:News) | id(n)]) AS newsId, " +
+            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestId " +
+            "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
+            "newsId, userIds, adminIds, liveTestIds")
+    List<GroupDTO> getByUserId(Long userId);
 
     @Query("MATCH (u:User)-[:GROUPADMIN]-(g:Group) WHERE id(u) = $0 " +
             "WITH g, " +
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
-            "[(g)--(n:News) | id(n)] AS newsIds, " +
+            "head([(g)--(n:News) | id(n)]) AS newsId, " +
             "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
-            "RETURN id(g) as id, g.name as name, userIds, adminIds, newsIds, liveTestIds")
-    List<GroupDTO> findByAdminId(Long userId);
+            "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
+            "newsId, userIds, adminId, liveTestIds")
+    List<GroupDTO> getByAdminId(Long userId);
 
     //ELÉG CSAK EZ + IN
     @Query("MATCH (g:Group) WHERE id(g) = $0 " +
             "WITH g, " +
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
-            "[(g)--(n:News) | id(n)] AS newsIds, " +
+            "head([(g)--(n:News) | id(n)]) AS newsId, " +
             "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
-            "RETURN id(g) as id, g.name as name, userIds, adminIds, newsIds, liveTestIds")
-    Optional<GroupDTO> findByGroupId(Long groupId);
+            "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
+            "newsId, userIds, adminIds, liveTestIds")
+    Optional<GroupDTO> getById(Long groupId);
 
-
-
-    @Depth(2)
-    @Query("MATCH (u:User)-[:GROUPADMIN]-(g:Group) OPTIONAL MATCH p = (g:Group)--() WHERE id(u)=$0 RETURN p")
-    List<Group> findByAdminId2(Long userid);
-
-    @Query("MATCH (g:Group)-[:GROUPUSER]-(us:User) WHERE id(g)=26 RETURN id(g) as id, g.name as name, collect(id(us)) as userIds")
-    GroupDTO findByDTOId(Long id);
 
     @Query("MATCH (g:Group) WHERE id(g) IN $0 " +
             "WITH g, " +
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
-            "[(g)--(n:News) | id(n)] AS newsIds, " +
+            "head([(g)--(n:News) | id(n)]) AS newsId, " +
             "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
-            "RETURN id(g) as id, g.name as name, userIds, adminIds, newsIds, liveTestIds")
-    List<GroupDTO> findByManyIds(List<Long> groupIds);
+            "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
+            "newsId, userIds, adminIds, liveTestIds")
+    List<GroupDTO> getByManyIds(List<Long> groupIds);
 }

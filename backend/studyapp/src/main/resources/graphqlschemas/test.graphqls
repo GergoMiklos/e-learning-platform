@@ -12,3 +12,8 @@ type Task {
     solution: Int
     level: Int
 }
+
+extend type Query {
+    test(id: ID!): Test
+    tasks: [Task]
+}

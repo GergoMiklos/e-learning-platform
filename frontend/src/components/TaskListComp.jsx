@@ -1,27 +1,64 @@
 import React, { Component } from 'react'
+import gql from "graphql-tag";
+import client from "../ApolloClient";
+
+const TASKS = gql`{
+    tasks {
+        id
+        question
+        answers
+    }
+}`;
 
 class TaskListComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
             selected: null,
-            tasks : [{
-                id: 1,
-                question: 'Mi a jó válasz?',
-                answers: ['A válasz', 'B válasz', 'C válasz', 'D válasz']
-            },
-                {
-                    id: 2,
-                    question: 'Mi a jó már megint?',
-                    answers: ['A válasz', 'B válasz', 'C válasz', 'Dddd válasz']
-                }
-
-            ],
+            tasks: null
         };
+    }
+
+    taskClicked = (id) => {
+        console.log("Test " + id + " clicked!");
+        if(this.state.selected === id) {
+            this.setState({selected: null});
+        } else {
+            this.setState({selected: id});
+        }
+    }
+
+    newTask= () => {
+        this.props.history.push(`/teach/test/${this.props.match.params.testid}/tasks/new`)
+    }
+
+    componentDidMount() {
+        this.refreshTasks();
+    }
+
+    refreshTasks = () => {
+        client
+            .query({
+                query: TASKS
+            })
+            .then(result => {
+                console.log(result);
+                if(!result.data.tasks) {
+                    console.log("GraphQL query no result");
+                } else {
+                    this.setState({tasks: result.data.tasks});
+                }
+            })
+            .catch(errors => {
+                console.log(errors);
+            });
     }
 
 
     render() {
+        if(!this.state.tasks) {
+            return (<div></div>)
+        }
         return (
             <div className="container">
 
@@ -36,7 +73,7 @@ class TaskListComp extends Component {
                         {
                             this.state.tasks.map(
                                 task =>
-                                    <tr onClick={() => this.taskClicked(task.id)}>
+                                    <tr key={task.id} onClick={() => this.taskClicked(task.id)}>
                                         <td>
                                             <div className="container">
                                                 <div className="row">
@@ -59,19 +96,6 @@ class TaskListComp extends Component {
                 </div>
             </div>
         );
-    }
-
-    taskClicked = (id) => {
-        console.log("Test " + id + " clicked!");
-        if(this.state.selected === id) {
-            this.setState({selected: null});
-        } else {
-            this.setState({selected: id});
-        }
-    }
-
-    newTask= () => {
-        this.props.history.push(`/teach/test/${this.props.match.params.testid}/tasks/new`)
     }
 
 }

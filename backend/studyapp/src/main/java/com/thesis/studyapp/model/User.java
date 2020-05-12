@@ -19,8 +19,8 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    private String userName;
-    private String fullName;
+    private String name;
+    private String code;
     private String email;
     private String password;
 
@@ -41,8 +41,8 @@ public class User {
     private List<Test> createdTests;
 
     @JsonIgnore
-    @Relationship(type = "LIVETESTSTATE", direction = Relationship.INCOMING)
-    private List<LiveTestUserState> liveTestUserStates;
+    @Relationship(type = "USERSTATE", direction = Relationship.INCOMING)
+    private List<LiveTestState> liveTestStates;
 
     public void addGroup(Group group) {
         if (groups == null) {
@@ -58,11 +58,11 @@ public class User {
         managedGroups.add(group);
     }
 
-    public void addLiveTestState(LiveTestUserState liveTestUserState) {
-        if (liveTestUserStates == null) {
-            liveTestUserStates = new ArrayList<>();
+    public void addLiveTestState(LiveTestState liveTestState) {
+        if (liveTestStates == null) {
+            liveTestStates = new ArrayList<>();
         }
-        liveTestUserStates.add(liveTestUserState);
+        liveTestStates.add(liveTestState);
     }
 
     public void addCreatedTask(Task task) {
