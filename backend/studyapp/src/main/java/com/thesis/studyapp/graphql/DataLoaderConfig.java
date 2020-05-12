@@ -1,22 +1,16 @@
 package com.thesis.studyapp.graphql;
 
-import com.thesis.studyapp.dao.NewsRepo;
 import com.thesis.studyapp.dto.*;
-import com.thesis.studyapp.graphql.queryresolver.*;
-import com.thesis.studyapp.service.UserService;
+import com.thesis.studyapp.serviceresolver.*;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
-import org.checkerframework.checker.signature.qual.FieldDescriptorForArray;
 import org.dataloader.BatchLoader;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -39,7 +33,7 @@ public class DataLoaderConfig {
     @Autowired
     TaskQuery taskQuery;
     @Autowired
-    LiveTestUserStateQuery liveTestUserStateQuery;
+    LiveTestStateQuery liveTestStateQuery;
 
     @Bean
     public DataLoaderRegistry dataLoaderRegistry() {
@@ -50,7 +44,7 @@ public class DataLoaderConfig {
         dataLoaderRegistry.register("grouploader", groupLoader());
         dataLoaderRegistry.register("testloader", testLoader());
         dataLoaderRegistry.register("taskloader", taskLoader());
-        dataLoaderRegistry.register("livetestuserstateloader", liveTestUserStateLoader());
+        dataLoaderRegistry.register("liveteststateloader", liveTestStateLoader());
         dataLoaderRegistry.register("livetestloader", liveTestLoader());
         return dataLoaderRegistry;
     }
@@ -166,15 +160,15 @@ public class DataLoaderConfig {
         return DataLoader.newDataLoader(newsBatchLoader);
     }
 
-    private DataLoader<Long, LiveTestUserStateDTO> liveTestUserStateLoader() {
-        BatchLoader<Long, LiveTestUserStateDTO> newsBatchLoader = new BatchLoader<Long, LiveTestUserStateDTO>() {
+    private DataLoader<Long, LiveTestStateDTO> liveTestStateLoader() {
+        BatchLoader<Long, LiveTestStateDTO> newsBatchLoader = new BatchLoader<Long, LiveTestStateDTO>() {
             @Override
-            public CompletionStage<List<LiveTestUserStateDTO>> load(List<Long> groupIds) {
+            public CompletionStage<List<LiveTestStateDTO>> load(List<Long> groupIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<LiveTestUserStateDTO> tests = liveTestUserStateQuery.getByManyIds(groupIds);
-                    List<LiveTestUserStateDTO> result = new ArrayList<>();
+                    List<LiveTestStateDTO> tests = liveTestStateQuery.getByManyIds(groupIds);
+                    List<LiveTestStateDTO> result = new ArrayList<>();
                     for(Long id: groupIds) {
-                        for (LiveTestUserStateDTO t : tests) {
+                        for (LiveTestStateDTO t : tests) {
                             if(t.getId().equals(id)) {
                                 result.add(t);
                                 break;

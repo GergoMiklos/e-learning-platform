@@ -1,21 +1,32 @@
 import React, { Component } from 'react'
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import gql from "graphql-tag";
+import client from "../ApolloClient";
 
-class TeachGroupComp extends Component {
+const GROUP = gql`
+    query Group($id: ID!) {
+        group(id: $id) {
+            id
+            name
+            description
+            admins {
+                id
+                name
+                code
+            }
+            users {
+                id
+                name
+                code
+            }
+        }
+    }`;
+
+class EditGroupComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            group: {
-                id: 1, description: 'Learn React', name: 'Group 1', code: 'ASD123',
-                news: [{id: 1, description: "hellóbeló g1"}, {id: 2, description: "kobaka g2"}],
-                tests: [{id: 1, name: "Test 1", description: "hellóbeló g1"},
-                    {id: 2, name: "Test 2 (Nehéz)", description: "kobaka g2"}],
-                users: [{id: 1, name: "Aladár Béla", code: "ASD123"},
-                    {id: 2, name: "Szirmai Réka", code: "VFG78D"},
-                    {id: 3, name: "Szirmai CSóka", code: "RFGCCC"}],
-                admins: [{id: 1, name: "Aladár Béla", code: "ASD123"},
-                    {id: 2, name: "Szirmai Réka", code: "VFG78D"}]
-            }
+            group: null
         };
     }
 
@@ -34,7 +45,35 @@ class TeachGroupComp extends Component {
 
     }
 
+    componentDidMount() {
+        this.refreshGroup();
+    }
+
+    refreshGroup = () => {
+        client
+            .query({
+                query: GROUP,
+                variables: {id: this.props.match.params.groupid}
+            })
+            .then(result => {
+                console.log(result);
+                if(!result.data.group) {
+                    console.log("GraphQL query no result");
+                } else {
+                    this.setState({group: result.data.group});
+                }
+            })
+            .catch(errors => {
+                console.log(errors);
+            });
+    }
+
     render() {
+        if(!this.state.group) {
+            return (<div></div>)
+        }
+        let name = this.state.group.name;
+        let description = this.state.group.description;
         return (
             <div className="container">
                 <div className="row rounded shadow my-3 p-3">
@@ -42,7 +81,7 @@ class TeachGroupComp extends Component {
                 </div>
 
                 <Formik
-                    initialValues={{name: '', description: ''}}
+                    initialValues={{name: name, description: description}}
                     onSubmit={this.onSubmit}
                     validateOnChange={false}
                     validateOnBlur={true}
@@ -86,13 +125,14 @@ class TeachGroupComp extends Component {
                     </div>
                 </div>
 
+                {this.state.group.admins &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped rounded shadow">
                         <tbody>
                         {
-                            this.state.group.users.map(
+                            this.state.group.admins.map(
                                 user =>
-                                    <tr>
+                                    <tr key={user.id} >
                                         <td>
                                             <strong>{user.name}</strong>
                                         </td>
@@ -107,7 +147,7 @@ class TeachGroupComp extends Component {
                         }
                         </tbody>
                     </table>
-                </div>
+                </div>}
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-12">Users</h1>
@@ -123,13 +163,14 @@ class TeachGroupComp extends Component {
                     </div>
                 </div>
 
+                {this.state.group.users &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped rounded shadow">
                         <tbody>
                         {
                             this.state.group.users.map(
                                 user =>
-                                    <tr>
+                                    <tr key={user.id} >
                                         <td>
                                             <strong>{user.name}</strong>
                                         </td>
@@ -144,7 +185,7 @@ class TeachGroupComp extends Component {
                         }
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
         );
     }
@@ -155,4 +196,4 @@ class TeachGroupComp extends Component {
 
 }
 
-export default TeachGroupComp;
+export default EditGroupComp;

@@ -1,11 +1,10 @@
-package com.thesis.studyapp.graphql.objectresolver;
+package com.thesis.studyapp.objectresolver;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.dto.TaskDTO;
 import com.thesis.studyapp.dto.TestDTO;
 import com.thesis.studyapp.dto.UserDTO;
-import com.thesis.studyapp.graphql.queryresolver.GroupQuery;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +24,21 @@ public class UserResolver implements GraphQLResolver<UserDTO> {
     }
 
     public CompletableFuture<List<GroupDTO>> managedGroups(UserDTO userDTO) {
-        //TODO ha van request élető usercontext akkor itt vizsgál és külön kérdezed!
         DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
         return grouploader.loadMany(userDTO.getManagedGroupIds());
     }
 
     public CompletableFuture<List<TaskDTO>> createdTasks(UserDTO userDTO) {
-        //Todo loader vagy külön vagy ne is legyen?
+        //Todo loader / külön / ne is legyen?
         return null;
     }
 
     public CompletableFuture<List<TestDTO>> createdTests(UserDTO userDTO) {
-        //Todo
-        return null;
+        if(userDTO.getCreatedTestIds() != null) {
+            DataLoader<Long, TestDTO> testloader = dataLoaderRegistry.getDataLoader("testloader");
+            return testloader.loadMany(userDTO.getCreatedTestIds());
+        } else {
+            return null;
+        }
     }
 }

@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface NewsRepo extends Neo4jRepository<News, Long> {
     @Query("MATCH (n:News) WHERE id(n) IN $0 " +
-            "RETURN id(n) AS id, n.title AS title, n.description AS  description")
-    List<NewsDTO> findByManyNewsIds(List<Long> Ids);
+            "RETURN id(n) AS id, n.text AS text, n.creationDate AS creationDate")
+    List<NewsDTO> getByManyIds(List<Long> Ids);
 }

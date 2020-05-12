@@ -1,4 +1,4 @@
-package com.thesis.studyapp.graphql.queryresolver;
+package com.thesis.studyapp.serviceresolver;
 
 import com.thesis.studyapp.dao.LiveTestRepo;
 import com.thesis.studyapp.dto.LiveTestDTO;

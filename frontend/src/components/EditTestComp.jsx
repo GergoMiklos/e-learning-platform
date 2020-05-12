@@ -1,26 +1,29 @@
 import React, { Component } from 'react'
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import gql from "graphql-tag";
+import client from "../ApolloClient";
+
+const TEST = gql`
+    query Test($id: ID!) {
+        test(id: $id) {
+            id
+            name
+            description
+            tasks {
+                id
+                question
+                answers
+                level
+            }
+        }
+    }`;
 
 class EditTestComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
             selected: null,
-            test: {
-                name: '', description: '', id: 1,
-                tasks : [{
-                    id: 1,
-                    question: 'Mi a jó válasz?',
-                    answers: ['A válasz', 'B válasz', 'C válasz', 'D válasz']
-                },
-                    {
-                        id: 2,
-                        question: 'Mi a jó már megint?',
-                        answers: ['A válasz', 'B válasz', 'C válasz', 'Dddd válasz']
-                    }
-
-                ],
-            }
+            test: null
         };
     }
 
@@ -39,7 +42,35 @@ class EditTestComp extends Component {
 
     }
 
+    componentDidMount() {
+        this.refreshTest();
+    }
+
+    refreshTest = () => {
+        client
+            .query({
+                query: TEST,
+                variables: {id: this.props.match.params.testid}
+            })
+            .then(result => {
+                console.log(result);
+                if(!result.data.test) {
+                    console.log("GraphQL query no result");
+                } else {
+                    this.setState({test: result.data.test});
+                }
+            })
+            .catch(errors => {
+                console.log(errors);
+            });
+    }
+
     render() {
+        if(!this.state.test) {
+            return (<div></div>)
+        }
+        let name = this.state.test.name;
+        let description = this.state.test.description;
         return (
             <div className="container">
                 <div className="row rounded shadow my-3 p-3">
@@ -47,7 +78,7 @@ class EditTestComp extends Component {
                 </div>
 
                 <Formik
-                    initialValues={{name: '', description: ''}}
+                    initialValues={{name: name, description: description}}
                     onSubmit={this.onSubmit}
                     validateOnChange={false}
                     validateOnBlur={true}
@@ -82,13 +113,14 @@ class EditTestComp extends Component {
                     <button className="col-2 btn btn-warning btn" onClick={() => this.newTask()}>New</button>
                 </div>
 
+                {this.state.test.tasks &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped rounded shadow">
                         <tbody>
                         {
                             this.state.test.tasks.map(
                                 task =>
-                                    <tr onClick={() => this.taskClicked(task.id)}>
+                                    <tr key={task.id} onClick={() => this.taskClicked(task.id)}>
                                         <td>
                                             <div className="container">
                                                 <div className="row">
@@ -108,7 +140,7 @@ class EditTestComp extends Component {
                         }
                         </tbody>
                     </table>
-                </div>
+                </div>}
             </div>
         );
     }

@@ -1,20 +1,74 @@
 import React, { Component } from 'react'
+import gql from "graphql-tag";
+import client from "../ApolloClient";
+
+const GROUP = gql`
+    query Group($id: ID!) {
+        group(id: $id) {
+            id
+            name
+            code
+            description,
+            news {
+                id
+                text
+            }
+            liveTests {
+                id
+                test {
+                    name
+                }
+            }
+        }
+    }`;
 
 class TeachGroupComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            group: {
-                id: 1, description: 'Learn React', name: 'Group 1', code: 'ASD123',
-                news: {id: 1, text: "hellóbeló g1"},
-                tests: [{id: 1, name: "Test 1", description: "hellóbeló g1"},
-                    {id: 2, name: "Test 2 (Nehéz)", description: "kobaka g2"}]
-            }
+            group: null
         };
     }
 
+    componentDidMount() {
+        this.refreshGroup();
+    }
+
+    refreshGroup = () => {
+        client
+            .query({
+                query: GROUP,
+                variables: {id: this.props.match.params.groupid}
+            })
+            .then(result => {
+                console.log(result);
+                if(!result.data.group) {
+                    console.log("GraphQL query no result");
+                } else {
+                    this.setState({group: result.data.group});
+                }
+            })
+            .catch(errors => {
+                console.log(errors);
+            });
+    }
+
+    testClicked = (id) => {
+        console.log("Test " + id + " clicked!");
+    }
+
+    newTest = () => {
+        this.props.history.push(`/teach/group/${this.state.group.id}/test/new`)
+    }
+
+    editGroup = () => {
+        this.props.history.push(`/teach/group/${this.state.group.id}/edit`)
+    }
 
     render() {
+        if(!this.state.group) {
+            return (<div></div>)
+        }
         return (
             <div className="container">
                 <div className="row rounded shadow my-3 p-3">
@@ -40,11 +94,10 @@ class TeachGroupComp extends Component {
                     </div>
                 </div>
 
-                <div className="row my-3">
-                    <div className="col-12 alert alert-warning my-3">
-                        {this.state.group.news.text}
-                    </div>
-                </div>
+                {this.state.group.news &&
+                <div className="row alert alert-warning my-3">
+                    {this.state.group.news.text}
+                </div> }
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-10">Tests</h1>
@@ -53,37 +106,27 @@ class TeachGroupComp extends Component {
                     </button>
                 </div>
 
+                {this.state.group.liveTests &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped table-hover rounded shadow">
                         <tbody>
                         {
-                            this.state.group.tests.map(
-                                test =>
-                                    <tr onClick={() => this.testClicked(test.id)}>
+                            this.state.group.liveTests.filter(lt => lt.test).map(
+                                liveTest =>
+                                    <tr key={liveTest.id} onClick={() => this.testClicked(liveTest.id)}>
                                         <td>
-                                            <strong>{test.name}</strong>
+                                            <strong>{liveTest.test.name}</strong>
                                         </td>
                                     </tr>
                             )
                         }
                         </tbody>
                     </table>
-                </div>
+                </div> }
             </div>
         );
     }
 
-    testClicked = (id) => {
-        console.log("Test " + id + " clicked!");
-    }
-
-    newTest = () => {
-        this.props.history.push(`/teach/group/${this.state.group.id}/test/new`)
-    }
-
-    editGroup = () => {
-        this.props.history.push(`/teach/group/${this.state.group.id}/edit`)
-    }
 
 }
 

@@ -14,10 +14,15 @@ public interface TaskRepo extends Neo4jRepository<Task, Long> {
     @Query("MATCH (te:Test)-[:TESTTASK]->(ta:Task)" +
             " WHERE id(te)=$0" +
             " RETURN ta")
-    List<Task> getTasksByTestId(Long id);
+    List<Task> getByTestId(Long testId);
 
-    @Query("MATCH (t:Task) " +
-            "WHERE id(t) IN $0 " +
-            "RETURN id(t) AS id, t.question AS question, t.answers AS answers")
-    List<TaskDTO> findByManyIds(List<Long> ids);
+    @Query("MATCH (t:Task)" +
+            " WHERE id(t) IN $0" +
+            " RETURN id(t) AS id, t.question AS question, t.answers AS answers, t.solution AS solution, t.level AS level")
+    List<TaskDTO> getByManyIds(List<Long> ids);
+
+    @Query("MATCH (t:Task)" +
+            " RETURN id(t) AS id, t.question AS question, t.answers AS answers, t.solution AS solution, t.level AS level" +
+            " LIMIT 25")
+    List<TaskDTO> getAll();
 }

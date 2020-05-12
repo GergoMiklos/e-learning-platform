@@ -11,7 +11,6 @@ import java.util.Date;
 @QueryResult
 public @Data class NewsDTO {
     private Long id;
-    private String title;
-    private String description;
+    private String text;
     private Date creationDate;
 }

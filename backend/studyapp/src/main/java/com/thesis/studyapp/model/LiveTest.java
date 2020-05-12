@@ -20,11 +20,9 @@ public class LiveTest {
     @Id
     @GeneratedValue
     private Long id;
-    private String uuid;
 
-    private String name;
-    private String description;
     private Date creationDate;
+    //TODO time-okat test-nél?
     private int maxTimeForTest;
     private int maxTimeForTasks;
 
@@ -37,15 +35,15 @@ public class LiveTest {
     private Test test;
 
     @JsonIgnore
-    @Relationship(type = "LIVETESTSTATE", direction = Relationship.OUTGOING)
-    private List<LiveTestUserState> liveTestUserStates;
+    @Relationship(type = "TESTSTATE", direction = Relationship.OUTGOING)
+    private List<LiveTestState> liveTestStates;
 
 
-    public void addLiveTestSate(LiveTestUserState liveTestUserState) {
-        if (liveTestUserStates == null) {
-            liveTestUserStates = new ArrayList<>();
+    public void addLiveTestSate(LiveTestState liveTestState) {
+        if (liveTestStates == null) {
+            liveTestStates = new ArrayList<>();
         }
-        liveTestUserStates.add(liveTestUserState);
+        liveTestStates.add(liveTestState);
     }
 
 }
