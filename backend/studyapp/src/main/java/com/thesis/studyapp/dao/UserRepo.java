@@ -1,6 +1,7 @@
 package com.thesis.studyapp.dao;
 
 import com.thesis.studyapp.dto.UserDTO;
+import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
@@ -13,7 +14,8 @@ import java.util.Optional;
 @Repository
 public interface UserRepo extends Neo4jRepository<User, Long> {
 
-    //TODO LTS ID NEM KELL
+    Optional<User> findByCode(String name);
+
     @Query("MATCH (u:User) WHERE id(u) IN $0" +
             " WITH u," +
             " [(u)-[:GROUPUSER]-(gu:Group) | id(gu)] AS groupIds," +
@@ -46,6 +48,18 @@ public interface UserRepo extends Neo4jRepository<User, Long> {
             " [(u)--(t:Test) | id(t) ] AS createdTestIds" +
             " RETURN id(u) AS id, u.name AS name, u.code AS code, groupIds, managedGroupIds," +
             " createdTaskIds, createdTestIds, liveTestStateIds")
-    List<UserDTO>  getByGroupId(Long groupId);
+    List<UserDTO> getByGroupId(Long groupId);
+
+    @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group)" +
+            " WHERE id(g) = $0" +
+            " RETURN u")
+    List<User> findByGroupId(Long groupId);
+
+    @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group)" +
+            " WHERE u.code = $0 OR g.code = $0" +
+            " RETURN u")
+    List<User> findByUserOrGroupCode(String userOrGroupCode);
+
+
 
 }

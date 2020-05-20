@@ -10,6 +10,8 @@ import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -21,7 +23,6 @@ public class LiveTestResolver implements GraphQLResolver<LiveTestDTO> {
     @Autowired
     DataLoaderRegistry dataLoaderRegistry;
 
-    //Todo jó ez így?
     public CompletableFuture<List<LiveTestStateDTO>> liveTestStates(LiveTestDTO liveTestDTO) {
         return CompletableFuture.supplyAsync(() -> liveTestStateQuery.getByLiveTestId(liveTestDTO.getId()));
     }
@@ -33,5 +34,16 @@ public class LiveTestResolver implements GraphQLResolver<LiveTestDTO> {
         } else {
             return null;
         }
+    }
+
+    public CompletableFuture<Long> sinceCreatedDays(LiveTestDTO liveTestDTO) {
+        return CompletableFuture.supplyAsync(() -> {
+            Date now = new Date();
+            Date timeCreated = liveTestDTO.getCreationDate();
+            if(timeCreated != null)
+                return Duration.between(timeCreated.toInstant(), now.toInstant()).toDays();
+            else
+                return null;
+        });
     }
 }

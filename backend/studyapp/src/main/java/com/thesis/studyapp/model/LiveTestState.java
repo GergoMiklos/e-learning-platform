@@ -1,5 +1,6 @@
 package com.thesis.studyapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,18 +29,21 @@ public class LiveTestState {
     List<Long> completedTasksId;
     List<Long> failedTasksId;
 
+    @JsonIgnore
     @Relationship(type="CURRENTTASK", direction = Relationship.OUTGOING)
     Task currentTask;
 
+    @JsonIgnore
     @Relationship(type="USERSTATE", direction = Relationship.INCOMING)
     private User user;
 
+    @JsonIgnore
     @Relationship(type="TESTSTATE", direction = Relationship.INCOMING)
     LiveTest liveTest;
 
 
     public enum State {
-        NOT_STARTED, PROBlEM, FINISHED, IN_PROGRESS
+        NOT_STARTED, IN_PROGRESS, INACTIVE, PROBLEM, FINISHED
     }
 
 }

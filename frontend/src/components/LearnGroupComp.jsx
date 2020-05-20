@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
 import { useQuery } from "@apollo/react-hooks";
+import AuthenticationService from "../AuthenticationService";
 
 const GROUP = gql`
     query Group($id: ID!) {
@@ -11,8 +12,8 @@ const GROUP = gql`
             code
             description,
             news {
-                id
                 text
+                sinceRefreshHours
             }
             liveTests {
                 id
@@ -21,6 +22,11 @@ const GROUP = gql`
                 }
             }
         }
+    }`;
+
+const LEAVEGROUP = gql`
+    mutation DeleteUserFromGroup($userId: ID!, $groupId: ID!) {
+        deleteUserFromGroup(userId: $userId, groupId: $groupId)
     }`;
 
 class LearnGroupComp extends Component {
@@ -55,11 +61,33 @@ class LearnGroupComp extends Component {
     }
 
     testClicked = (id) => {
-        console.log("Test " + id + " clicked!");
         this.props.history.push(`/learn/group/${this.props.match.params.groupid}/test/${id}`)
     }
 
+    getNewsRefreshTime = (sinceHours) => {
+        if(sinceHours <= 24)
+            return `${sinceHours} hours ago`
+        else
+            return `${parseInt(sinceHours/24)} days ago`
+    }
+
     leaveGroup = () => {
+        let userId = AuthenticationService.getUserId();
+        client.mutate({
+            mutation: LEAVEGROUP,
+            variables: {userId: userId, groupId: this.state.group.id}
+        })
+            .then(result => {
+                console.log(result);
+                this.props.history.push(`/learn`)
+            })
+            .catch(errors => {
+                console.log(errors);
+            })
+    }
+
+    navigateBack = () => {
+        this.props.history.push(`/learn`)
     }
 
     render() {
@@ -68,13 +96,19 @@ class LearnGroupComp extends Component {
         }
         return (
             <div className="container">
-                <div className="row rounded shadow my-3 p-3">
-                    <h3 className="col-12">{this.state.group.name}</h3>
-                    <h5 className="col-10">({this.state.group.code})</h5>
-                    <button className="col-2 btn btn-warning btn" onClick={() => this.leaveGroup()}>
+                <div className="row justify-content-between my-1">
+                    <button className="col-auto btn btn-secondary" onClick={() => this.navigateBack()}>
+                        Back
+                    </button>
+                    <button className="col-auto btn btn-outline-danger" onClick={() => this.leaveGroup()}>
                         Leave
                     </button>
-                    {this.state.group.description}
+                </div>
+
+                <div className="row bg-primary text-light rounded shadow my-3 p-3">
+                    <h1 className="col-auto">{this.state.group.name}</h1>
+                    <h1 className="col-auto rounded-pill bg-warning px-3">{this.state.group.code}</h1>
+                    <i className="col-12 mt-3">{this.state.group.description}</i>
                 </div>
 
                 <div className="row rounded shadow my-3 p-3">
@@ -83,11 +117,14 @@ class LearnGroupComp extends Component {
 
                 {this.state.group.news &&
                 <div className="row alert alert-warning my-3">
-                    {this.state.group.news.text}
+                    <span className="badge badge-primary text-center mr-2 mb-1 py-1">
+                        {this.getNewsRefreshTime(this.state.group.news.sinceRefreshHours)}
+                    </span>
+                    <i>{this.state.group.news.text}</i>
                 </div> }
 
                 <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-12">Tests</h1>
+                    <h1 className="col-12">Online Tests</h1>
                 </div>
 
                 {this.state.group.liveTests &&

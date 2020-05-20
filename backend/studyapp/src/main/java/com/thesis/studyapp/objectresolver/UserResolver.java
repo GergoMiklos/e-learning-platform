@@ -10,6 +10,7 @@ import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -19,13 +20,31 @@ public class UserResolver implements GraphQLResolver<UserDTO> {
     DataLoaderRegistry dataLoaderRegistry;
 
     public CompletableFuture<List<GroupDTO>> groups(UserDTO userDTO) {
-        DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
-        return grouploader.loadMany(userDTO.getGroupIds());
+        if(userDTO.getGroupIds() != null) {
+            DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
+            //TODO hol sortoljunk? Itt ez jól működik, de livetest-nél (IS!) és liveteststate-nél? (OTT NEM!)
+            //todo liveteststate-nél nincs is dataloaderezés, ott mehet db végén order by-al!
+            return grouploader.loadMany(userDTO.getGroupIds()).whenCompleteAsync((groups, e) -> groups.sort(new GroupComparator()));
+        } else {
+            return null;
+        }
+    }
+
+    private class GroupComparator implements Comparator<GroupDTO> {
+
+        @Override
+        public int compare(GroupDTO g1, GroupDTO g2) {
+            return g1.getName().compareTo(g2.getName());
+        }
     }
 
     public CompletableFuture<List<GroupDTO>> managedGroups(UserDTO userDTO) {
-        DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
-        return grouploader.loadMany(userDTO.getManagedGroupIds());
+        if(userDTO.getManagedGroupIds() != null) {
+            DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
+            return grouploader.loadMany(userDTO.getManagedGroupIds());
+        } else {
+            return null;
+        }
     }
 
     public CompletableFuture<List<TaskDTO>> createdTasks(UserDTO userDTO) {

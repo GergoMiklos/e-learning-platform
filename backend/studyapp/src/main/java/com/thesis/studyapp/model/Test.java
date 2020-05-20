@@ -20,13 +20,13 @@ public @Data class Test {
     private String description;
 
     @Relationship(type = "TESTTASK", direction = Relationship.OUTGOING)
-    private List<Task> tasks;
+    private List<TestTask> tasks;
 
     @JsonIgnore
     @Relationship(type = "TESTOWNER", direction = Relationship.OUTGOING)
     private User owner;
 
-    public void addTask(Task task) {
+    public void addTask(TestTask task) {
         if (tasks == null) {
             tasks = new ArrayList<>();
         }

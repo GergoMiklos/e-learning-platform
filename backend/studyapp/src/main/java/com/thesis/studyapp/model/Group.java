@@ -10,8 +10,8 @@ import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-//Nem akarunk mindent mindenkinek kiadni, érdemes úgy alakítani a Rel. Dir-eket, hogy eszerint működjön (User és Admin outgoing, többi incoming)
 @NodeEntity
 @Getter @Setter @NoArgsConstructor
 public class Group {
@@ -43,11 +43,34 @@ public class Group {
         users.add(user);
     }
 
+    public void addUsers(List<User> users) {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
+        users.addAll(users);
+    }
+
+    public void deleteUser(User user) {
+        if(users != null) {
+            users = users.stream()
+                    .filter(u -> u.getId() != user.getId())
+                    .collect(Collectors.toList());
+        }
+    }
+
     public void addAdmin(User user) {
         if (admins == null) {
             admins = new ArrayList<>();
         }
         admins.add(user);
+    }
+
+    public void deleteAdmin(User user) {
+        if(admins != null) {
+            admins = admins.stream()
+                    .filter(u -> u.getId() != user.getId())
+                    .collect(Collectors.toList());
+        }
     }
 
     public void addLiveTest(LiveTest liveTest) {

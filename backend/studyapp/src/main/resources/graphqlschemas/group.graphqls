@@ -13,6 +13,7 @@ type Group {
 type News {
     id: ID!
     text: String
+    sinceRefreshHours: Int
 }
 
 extend type Query {
@@ -20,5 +21,12 @@ extend type Query {
 }
 
 extend type Mutation {
-    createGroup(name: String!, description: String!): Group
+    createGroup(userId: ID!, name: String!, description: String!): Group
+    editGroup(id: ID!, name: String!, description: String!): Group
+    changeNews(groupId: ID!, text: String!): News
+    addUserFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addAdminFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addUserToGroupFromCode(userId: ID!, groupCode: String!): Group
+    deleteUserFromGroup(userId: ID!, groupId: ID!): Boolean
+    deleteAdminFromGroup(userId: ID!, groupId: ID!): Boolean
 }

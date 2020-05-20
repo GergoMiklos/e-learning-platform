@@ -2,6 +2,7 @@
 type LiveTest {
     id: ID!
     test: Test
+    sinceCreatedDays: Int
     liveTestStates: [LiveTestState]
 }
 
@@ -10,4 +11,10 @@ type LiveTestState {
     test: Test
     user: User
     currentTask: Task
+    sinceStateRefreshMins: Int
+    sinceStartMins: Int
+}
+
+extend type Mutation {
+    createLiveTest(groupId: ID!, testId: ID!): LiveTest
 }

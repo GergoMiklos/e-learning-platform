@@ -28,8 +28,8 @@ class NewTaskComp extends Component {
     render() {
         return (
             <div className="container">
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">New task</h1>
+                <div className="row rounded bg-primary text-light shadow my-3 p-3">
+                    <h1 className="col-10">New Task</h1>
                 </div>
 
                 <Formik
