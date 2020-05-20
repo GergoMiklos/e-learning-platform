@@ -1,11 +1,13 @@
 package com.thesis.studyapp.graphql;
 
+import com.thesis.studyapp.HasId;
 import com.thesis.studyapp.dto.*;
 import com.thesis.studyapp.serviceresolver.*;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import org.dataloader.BatchLoader;
 import org.dataloader.DataLoader;
+import org.dataloader.DataLoaderOptions;
 import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +20,8 @@ import java.util.concurrent.CompletionStage;
 
 @Configuration
 public class DataLoaderConfig {
-    //Todo batchService??
-    //Todo vagy rakjuk a ..loader függvényeket querybe? NE!
+    //Todo batchService/Repo?
+    //Todo vagy rakjuk a ..loader függvényeket querybe?
     @Autowired
     UserQuery userQuery;
     @Autowired
@@ -33,20 +35,22 @@ public class DataLoaderConfig {
     @Autowired
     TaskQuery taskQuery;
     @Autowired
+    TestTaskQuery testTaskQuery;
+    @Autowired
     LiveTestStateQuery liveTestStateQuery;
 
     @Bean
     public DataLoaderRegistry dataLoaderRegistry() {
-        System.out.println("Ajjaj másik registry bean!");
         DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
-        dataLoaderRegistry.register("userloader", userLoader());
-        dataLoaderRegistry.register("newsloader", newsLoader());
-        dataLoaderRegistry.register("grouploader", groupLoader());
-        dataLoaderRegistry.register("testloader", testLoader());
-        dataLoaderRegistry.register("taskloader", taskLoader());
-        dataLoaderRegistry.register("liveteststateloader", liveTestStateLoader());
-        dataLoaderRegistry.register("livetestloader", liveTestLoader());
-        return dataLoaderRegistry;
+        return dataLoaderRegistry
+                .register("userloader", userLoader())
+                .register("newsloader", newsLoader())
+                .register("grouploader", groupLoader())
+                .register("testloader", testLoader())
+                .register("taskloader", taskLoader())
+                .register("testtaskloader", testTaskLoader())
+                .register("liveteststateloader", liveTestStateLoader())
+                .register("livetestloader", liveTestLoader());
     }
 
     private DataLoader<Long, UserDTO> userLoader() {
@@ -54,22 +58,12 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<UserDTO>> load(List<Long> userIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    System.out.println("userBatchLoader: BATCHING!");
-                    System.out.println("userIds: "+userIds);
                     List<UserDTO> users = userQuery.getManyByIds(userIds);
-                    List<UserDTO> result = new ArrayList<>();
-                    for(Long id: userIds) {
-                        for (UserDTO u : users) {
-                            if(u.getId().equals(id)) {
-                                result.add(u);
-                            }
-                        }
-                    }
-                    return result;
+                    return sortByIds(userIds, users);
                 });
             }
         };
-        return DataLoader.newDataLoader(userBatchLoader);
+        return DataLoader.newDataLoader(userBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private DataLoader<Long, NewsDTO> newsLoader() {
@@ -78,135 +72,103 @@ public class DataLoaderConfig {
             public CompletionStage<List<NewsDTO>> load(List<Long> newsIds) {
                 return CompletableFuture.supplyAsync(() -> {
                     List<NewsDTO> news = newsQuery.getByManyNewsIds(newsIds);
-                    List<NewsDTO> result = new ArrayList<>();
-                    for(Long id: newsIds) {
-                        for (NewsDTO n : news) {
-                            if(n.getId().equals(id)) {
-                                result.add(n);
-                                break;
-                            }
-                        }
-                    }
-                    return result;
+                    return sortByIds(newsIds, news);
                 });
             }
         };
-        return DataLoader.newDataLoader(newsBatchLoader);
+        return DataLoader.newDataLoader(newsBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private DataLoader<Long, TestDTO> testLoader() {
-        BatchLoader<Long, TestDTO> newsBatchLoader = new BatchLoader<Long, TestDTO>() {
+        BatchLoader<Long, TestDTO> testBatchLoader = new BatchLoader<Long, TestDTO>() {
             @Override
             public CompletionStage<List<TestDTO>> load(List<Long> testIds) {
                 return CompletableFuture.supplyAsync(() -> {
                     List<TestDTO> tests = testQuery.getByManyTestIds(testIds);
-                    List<TestDTO> result = new ArrayList<>();
-                    for(Long id: testIds) {
-                        for (TestDTO t : tests) {
-                            if(t.getId().equals(id)) {
-                                result.add(t);
-                                break;
-                            }
-                        }
-                    }
-                    return result;
+                    return  sortByIds(testIds, tests);
                 });
             }
         };
-        return DataLoader.newDataLoader(newsBatchLoader);
+        return DataLoader.newDataLoader(testBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private DataLoader<Long, LiveTestDTO> liveTestLoader() {
-        BatchLoader<Long, LiveTestDTO> newsBatchLoader = new BatchLoader<Long, LiveTestDTO>() {
+        BatchLoader<Long, LiveTestDTO> liveTestBatchLoader = new BatchLoader<Long, LiveTestDTO>() {
             @Override
-            public CompletionStage<List<LiveTestDTO>> load(List<Long> testIds) {
+            public CompletionStage<List<LiveTestDTO>> load(List<Long> liveTestIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<LiveTestDTO> tests = liveTestQuery.getByManyLiveTestIds(testIds);
-                    List<LiveTestDTO> result = new ArrayList<>();
-                    for(Long id: testIds) {
-                        for (LiveTestDTO t : tests) {
-                            if(t.getId().equals(id)) {
-                                result.add(t);
-                                break;
-                            }
-                        }
-                    }
-                    return result;
+                    List<LiveTestDTO> liveTests = liveTestQuery.getByManyLiveTestIds(liveTestIds);
+                    return sortByIds(liveTestIds, liveTests);
                 });
             }
         };
-        return DataLoader.newDataLoader(newsBatchLoader);
+        return DataLoader.newDataLoader(liveTestBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private DataLoader<Long, GroupDTO> groupLoader() {
-        BatchLoader<Long, GroupDTO> newsBatchLoader = new BatchLoader<Long, GroupDTO>() {
+        BatchLoader<Long, GroupDTO> groupBatchLoader = new BatchLoader<Long, GroupDTO>() {
             @Override
             public CompletionStage<List<GroupDTO>> load(List<Long> groupIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<GroupDTO> tests = groupQuery.getByManyGroupIds(groupIds);
-                    List<GroupDTO> result = new ArrayList<>();
-                    for(Long id: groupIds) {
-                        for (GroupDTO t : tests) {
-                            if(t.getId().equals(id)) {
-                                result.add(t);
-                                break;
-                            }
-                        }
-                    }
-                    return result;
+                    List<GroupDTO> groups = groupQuery.getByManyGroupIds(groupIds);
+                    return sortByIds(groupIds, groups);
                 });
             }
         };
-        return DataLoader.newDataLoader(newsBatchLoader);
+        return DataLoader.newDataLoader(groupBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private DataLoader<Long, LiveTestStateDTO> liveTestStateLoader() {
-        BatchLoader<Long, LiveTestStateDTO> newsBatchLoader = new BatchLoader<Long, LiveTestStateDTO>() {
+        BatchLoader<Long, LiveTestStateDTO> liveTestStateBatchLoader = new BatchLoader<Long, LiveTestStateDTO>() {
             @Override
-            public CompletionStage<List<LiveTestStateDTO>> load(List<Long> groupIds) {
+            public CompletionStage<List<LiveTestStateDTO>> load(List<Long> liveTestStateIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<LiveTestStateDTO> tests = liveTestStateQuery.getByManyIds(groupIds);
-                    List<LiveTestStateDTO> result = new ArrayList<>();
-                    for(Long id: groupIds) {
-                        for (LiveTestStateDTO t : tests) {
-                            if(t.getId().equals(id)) {
-                                result.add(t);
-                                break;
-                            }
-                        }
-                    }
-                    return result;
+                    List<LiveTestStateDTO> liveTestStates = liveTestStateQuery.getByManyIds(liveTestStateIds);
+                    return sortByIds(liveTestStateIds, liveTestStates);
                 });
             }
         };
-        return DataLoader.newDataLoader(newsBatchLoader);
+        return DataLoader.newDataLoader(liveTestStateBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private DataLoader<Long, TaskDTO> taskLoader() {
-        BatchLoader<Long, TaskDTO> newsBatchLoader = new BatchLoader<Long, TaskDTO>() {
+        BatchLoader<Long, TaskDTO> taskBatchLoader = new BatchLoader<Long, TaskDTO>() {
             @Override
-            public CompletionStage<List<TaskDTO>> load(List<Long> groupIds) {
+            public CompletionStage<List<TaskDTO>> load(List<Long> taskIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<TaskDTO> tests = taskQuery.getByManyIds(groupIds);
-                    List<TaskDTO> result = new ArrayList<>();
-                    for(Long id: groupIds) {
-                        for (TaskDTO t : tests) {
-                            if(t.getId().equals(id)) {
-                                result.add(t);
-                                break;
-                            }
-                        }
-                    }
-                    return result;
+                    List<TaskDTO> tasks = taskQuery.getByManyIds(taskIds);
+                    return sortByIds(taskIds, tasks);
                 });
             }
         };
-        return DataLoader.newDataLoader(newsBatchLoader);
+        return DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-//    private  <T> T sortByIds(List<Long> ids, List<T> toSort) {
-//        return type.cast(friends.get(name));
-//    }
+    private DataLoader<Long, TestTaskDTO> testTaskLoader() {
+        BatchLoader<Long, TestTaskDTO> taskBatchLoader = new BatchLoader<Long, TestTaskDTO>() {
+            @Override
+            public CompletionStage<List<TestTaskDTO>> load(List<Long> testTaskIds) {
+                return CompletableFuture.supplyAsync(() -> {
+                    List<TestTaskDTO> testTasks = testTaskQuery.getByManyIds(testTaskIds);
+                    return sortByIds(testTaskIds, testTasks);
+                });
+            }
+        };
+        return DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+    }
+
+    private  <T extends HasId> List<T> sortByIds(List<Long> ids, List<T> toSort) {
+        List<T> result = new ArrayList<>();
+        for(Long id: ids) {
+            for (T t : toSort) {
+                if(t.getId().equals(id)) {
+                    result.add(t);
+                    break;
+                }
+            }
+        }
+        return result;
+    }
 
     @Bean
     public Instrumentation instrumentation(DataLoaderRegistry dataLoaderRegistry) {

@@ -7,6 +7,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 public class StudyappApplication {
 	public static boolean RUNTEST = true;
@@ -24,17 +27,19 @@ public class StudyappApplication {
 			if(userRepo.count() != 0)
 				return;
 
-			User user = new User(); user.setName("User"); user.setCode("ASD111");
+			User user = new User(); user.setName("User"); user.setCode("UUU001");
 			userRepo.save(user);
 
-			User user2 = new User(); user2.setName("User2"); user2.setCode("ASD222");
-			User user3 = new User(); user3.setName("User3"); user3.setCode("ASD333");
-			User user4 = new User(); user4.setName("User4"); user4.setCode("ASD444");
-			Group group = new Group(); group.setName("Group"); group.setCode("GSDG11"); group.setDescription("Helóbeló kobaka");
-			Group group2 = new Group(); group2.setName("Group2"); group2.setCode("GSDG22"); group2.setDescription("Helóbeló kobaka2");
+			User user2 = new User(); user2.setName("User2"); user2.setCode("UUU002");
+			User user3 = new User(); user3.setName("User3"); user3.setCode("UUU003");
+			User user4 = new User(); user4.setName("User4"); user4.setCode("UUU004");
+			Group group = new Group(); group.setName("Group"); group.setCode("GGG001"); group.setDescription("Helóbeló kobaka");
+			Group group2 = new Group(); group2.setName("Group2"); group2.setCode("GGG002"); group2.setDescription("Helóbeló kobaka2");
 
-			Task task = new Task(); task.setQuestion("Task");
-			Task task2 = new Task(); task2.setQuestion("Task2");
+			ArrayList<String> answers = new ArrayList<String>(); answers.add("Lóhere táncol"); answers.add("Csipike is táncol"); answers.add("hamradik válasz"); answers.add("de vajon melyik a hejes??");
+			Task task = new Task(); task.setQuestion("Task"); task.setAnswers(answers);
+			Task task2 = new Task(); task2.setQuestion("Task2"); task2.setAnswers(answers);
+			TestTask testTask = new TestTask(); testTask.setLevel(4);
 			Test test = new Test(); test.setName("Test"); test.setDescription("Test1 leírása az élő állatokról");
 			task.setOwner(user);
 			test.setOwner(user);
@@ -61,7 +66,8 @@ public class StudyappApplication {
 			liveTestState.setLiveTest(liveTest);
 			liveTestState.setCurrentTask(task2);
 			liveTest.setTest(test);
-			test.addTask(task);
+			testTask.setTask(task);
+			test.addTask(testTask);
 
 			userRepo.save(user);
 			userRepo.save(user2);

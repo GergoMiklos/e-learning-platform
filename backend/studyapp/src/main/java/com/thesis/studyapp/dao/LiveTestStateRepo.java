@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface LiveTestStateRepo extends Neo4jRepository<LiveTestState, Long> {
 
-    //Todo mi a faszért van több találat?
     @Query("MATCH (lts:LiveTestState)--(lt:LiveTest)" +
             " WHERE id(lt) = $0" +
             " WITH lts," +

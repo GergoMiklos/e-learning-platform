@@ -12,7 +12,8 @@ import NewTaskComp from "./NewTaskComp";
 import NewGroupComp from "./NewGroupComp";
 import NewTestComp from "./NewTestComp";
 import EditTestComp from "./EditTestComp";
-import TeachNewLiveTestComp from "./TeachNewLiveTestComp";
+import NewLiveTestComp from "./NewLiveTestComp";
+import TeachLiveTestComp from "./TeachLiveTestComp";
 
 class AppComp extends Component {
     render() {
@@ -26,7 +27,8 @@ class AppComp extends Component {
                     <Route path="/learn/group/:groupid" component={LearnGroupComp}/>
                     <Route path="/teach" exact component={TeachListComp}/>
                     <Route path="/teach/group/new" component={NewGroupComp}/>
-                    <Route path="/teach/group/:groupid/test/new" component={TeachNewLiveTestComp}/>
+                    <Route path="/teach/group/:groupid/test/new" component={NewLiveTestComp}/>
+                    <Route path="/teach/group/:groupid/test/:testid" component={TeachLiveTestComp}/>
                     <Route path="/teach/group/:groupid/edit" component={EditGroupComp}/>
                     <Route path="/teach/group/:groupid" component={TeachGroupComp}/>
                     <Route path="/teach/test/new" component={NewTestComp}/>

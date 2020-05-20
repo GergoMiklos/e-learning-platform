@@ -15,8 +15,7 @@ public class UserQuery implements GraphQLQueryResolver, GraphQLMutationResolver 
     @Autowired
     private UserRepo userRepo;
 
-    public Optional<UserDTO> user() {
-        Long id = new Long(52);
+    public Optional<UserDTO> user(Long id) {
         return userRepo.getById(id);
     }
 

@@ -14,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface GroupRepo extends Neo4jRepository<Group, Long> {
 
-    List<Group> findByName(String name);
+    Optional<Group> findByCode(String name);
 
 //TODO nem kell mindig minden id PL User és Admin
     @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group) WHERE id(u) = $0 " +
@@ -37,7 +37,6 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "newsId, userIds, adminId, liveTestIds")
     List<GroupDTO> getByAdminId(Long userId);
 
-    //ELÉG CSAK EZ + IN
     @Query("MATCH (g:Group) WHERE id(g) = $0 " +
             "WITH g, " +
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
@@ -48,7 +47,6 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "newsId, userIds, adminIds, liveTestIds")
     Optional<GroupDTO> getById(Long groupId);
 
-
     @Query("MATCH (g:Group) WHERE id(g) IN $0 " +
             "WITH g, " +
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
@@ -58,4 +56,14 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
             "newsId, userIds, adminIds, liveTestIds")
     List<GroupDTO> getByManyIds(List<Long> groupIds);
+
+    @Query("MATCH (u:User)-[gu:GROUPUSER]-(g:Group)" +
+            " WHERE id(u) = $0 AND id(g) = $1" +
+            " DELETE gu")
+    void deleteUserFromGroup(Long userId, Long groupId);
+
+    @Query("MATCH (u:User)-[ga:GROUPADMIN]-(g:Group)" +
+            " WHERE id(u) = $0 AND id(g) = $1" +
+            " DELETE ga")
+    void deleteAdminFromGroup(Long userId, Long groupId);
 }

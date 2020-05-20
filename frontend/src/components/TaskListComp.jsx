@@ -10,17 +10,25 @@ const TASKS = gql`{
     }
 }`;
 
+const ADDTASK = gql`
+    mutation AddTaskToTest($testId: ID!, $taskId: ID!, $level: Int) {
+        addTaskToTest(testId: $testId, taskId: $taskId, level: $level) {
+            id
+        }
+    }`;
+
 class TaskListComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
             selected: null,
-            tasks: null
+            tasks: null,
+            error: null,
+            success: null
         };
     }
 
     taskClicked = (id) => {
-        console.log("Test " + id + " clicked!");
         if(this.state.selected === id) {
             this.setState({selected: null});
         } else {
@@ -30,6 +38,26 @@ class TaskListComp extends Component {
 
     newTask= () => {
         this.props.history.push(`/teach/test/${this.props.match.params.testid}/tasks/new`)
+    }
+
+    addTask = (taskId) => {
+        client.mutate({
+            mutation: ADDTASK,
+            variables: {testId: this.props.match.params.testid, taskId: taskId, level: 0}
+        })
+            .then(result => {
+                console.log(result);
+                this.setState({success: 'Task added!', error: null});
+                this.refreshTasks();
+            })
+            .catch(errors => {
+                console.log(errors);
+                this.setState({error: 'Error!', success: null});
+            })
+    }
+
+    navigateBack = () => {
+        this.props.history.push(`/teach/test/${this.props.match.params.testid}/edit`)
     }
 
     componentDidMount() {
@@ -61,11 +89,19 @@ class TaskListComp extends Component {
         }
         return (
             <div className="container">
+                <button className="row btn btn-secondary mt-1" onClick={() => this.navigateBack()}>
+                    Back
+                </button>
 
                 <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Tasks</h1>
-                    <button className="col-2 btn btn-warning btn" onClick={() => this.newTask()}>New</button>
+                    <h1 className="col-10">Add Tasks</h1>
+                    <button className="col-2 btn btn-primary" onClick={() => this.newTask()}>
+                        New
+                    </button>
                 </div>
+
+                {this.state.error && <div className="alert alert-danger">{this.state.error}</div>}
+                {this.state.success && <div className="alert alert-success">{this.state.success}</div>}
 
                 <div className="row my-3">
                     <table className="col-12 table table-striped rounded shadow">
@@ -78,14 +114,15 @@ class TaskListComp extends Component {
                                             <div className="container">
                                                 <div className="row">
                                                     <strong className="col-10">{task.question}</strong>
-                                                    <button className="col-2 btn btn-warning btn">Add</button>
+                                                    {(this.state.selected === task.id) &&
+                                                    <button className="col-2 btn btn-primary btn-sm" onClick={() => this.addTask(task.id)}>
+                                                        Add
+                                                    </button>}
                                                 </div>
                                                 {(this.state.selected === task.id) && task.answers.map(
-                                                    answer =>
-                                                        <div className="row">{answer}</div>
-                                                )
-
-                                                }
+                                                    (answer, i) =>
+                                                        <div key={i} className="row">{answer}</div>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

@@ -1,20 +1,22 @@
 import React, { Component } from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
+import AuthenticationService from "../AuthenticationService";
 
-const USER = gql`    {
-    user {
-        id
-        managedGroups {
+const USERTEACH = gql`
+    query User($id: ID!) {
+        user(id: $id) {
             id
-            name
+            managedGroups {
+                id
+                name
+            }
+            createdTests {
+                id
+                name
+            }
         }
-        createdTests {
-            id
-            name
-        }
-    }
-}`;
+    }`;
 
 class TeachListComp extends Component {
     constructor(props){
@@ -24,14 +26,33 @@ class TeachListComp extends Component {
         };
     }
 
+    newGroup = () => {
+        this.props.history.push(`/teach/group/new`)
+    }
+
+    newTest = () => {
+        this.props.history.push(`/teach/test/new`)
+    }
+
+    groupClicked = (id) => {
+        this.props.history.push(`/teach/group/${id}`)
+    }
+
+    testClicked = (id) => {
+        this.props.history.push(`/teach/test/${id}/edit`)
+    }
+
     componentDidMount() {
         this.refreshGroups();
     }
 
     refreshGroups = () => {
+        let userId = AuthenticationService.getUserId();
         client
             .query({
-                query: USER
+                query: USERTEACH,
+                variables: {id: userId},
+                fetchPolicy: 'network-only'
             })
             .then(result => {
                 console.log(result);
@@ -105,23 +126,6 @@ class TeachListComp extends Component {
             </div>
         );
     }
-
-    newGroup = () => {
-        this.props.history.push(`/teach/group/new`)
-    }
-
-    newTest = () => {
-        this.props.history.push(`/teach/test/new`)
-    }
-
-    groupClicked = (id) => {
-        this.props.history.push(`/teach/group/${id}`)
-    }
-
-    testClicked = (id) => {
-        this.props.history.push(`/teach/test/${id}/edit`)
-    }
-
 
 }
 

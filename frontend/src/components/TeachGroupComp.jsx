@@ -10,11 +10,12 @@ const GROUP = gql`
             code
             description,
             news {
-                id
                 text
+                sinceRefreshHours
             }
             liveTests {
                 id
+                sinceCreatedDays
                 test {
                     name
                 }
@@ -22,11 +23,20 @@ const GROUP = gql`
         }
     }`;
 
+const CHANGENEWS = gql`
+    mutation ChangeNews($groupId: ID!, $text: String!) {
+        changeNews(groupId: $groupId, text: $text) {
+            id
+            text
+        }
+    }`;
+
 class TeachGroupComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            group: null
+            group: null,
+            changeNewsText: null
         };
     }
 
@@ -38,7 +48,8 @@ class TeachGroupComp extends Component {
         client
             .query({
                 query: GROUP,
-                variables: {id: this.props.match.params.groupid}
+                variables: {id: this.props.match.params.groupid},
+                fetchPolicy: 'network-only'
             })
             .then(result => {
                 console.log(result);
@@ -54,7 +65,34 @@ class TeachGroupComp extends Component {
     }
 
     testClicked = (id) => {
-        console.log("Test " + id + " clicked!");
+        this.props.history.push(`/teach/group/${this.state.group.id}/test/${id}`)
+    }
+
+    changeNews = () => {
+        if(!this.state.changeNewsText)
+            return
+        client.mutate({
+                mutation: CHANGENEWS,
+                variables: {groupId: this.state.group.id, text: this.state.changeNewsText}
+            })
+            .then(result => {
+                console.log(result);
+                this.refreshGroup();
+            })
+            .catch(errors => {
+                console.log(errors);
+            });
+    }
+
+    handleNewsChange = (event) => {
+        this.setState({changeNewsText: event.target.value});
+    }
+
+    getNewsRefreshTime = (sinceHours) => {
+        if(sinceHours <= 24)
+            return `${sinceHours} hours ago`
+        else
+            return `${parseInt(sinceHours/24)} days ago`
     }
 
     newTest = () => {
@@ -65,19 +103,29 @@ class TeachGroupComp extends Component {
         this.props.history.push(`/teach/group/${this.state.group.id}/edit`)
     }
 
+    navigateBack = () => {
+        this.props.history.push(`/teach`)
+    }
+
     render() {
         if(!this.state.group) {
             return (<div></div>)
         }
         return (
             <div className="container">
-                <div className="row rounded shadow my-3 p-3">
-                    <h3 className="col-12">{this.state.group.name}</h3>
-                    <h5 className="col-10">({this.state.group.code})</h5>
-                    <button className="col-2 btn btn-warning btn"  onClick={() => this.editGroup()}>
+                <div className="row justify-content-between my-1">
+                    <button className="col-auto btn btn-secondary" onClick={() => this.navigateBack()}>
+                        Back
+                    </button>
+                    <button className="col-auto btn btn-outline-warning" onClick={() => this.editGroup()}>
                         Edit
                     </button>
-                    {this.state.group.description}
+                </div>
+
+                <div className="row bg-primary text-light rounded shadow my-3 p-3">
+                    <h1 className="col-auto">{this.state.group.name}</h1>
+                    <h1 className="col-auto rounded-pill bg-warning px-3">{this.state.group.code}</h1>
+                    <i className="col-12 mt-3">{this.state.group.description}</i>
                 </div>
 
                 <div className="row rounded shadow my-3 p-3">
@@ -88,20 +136,25 @@ class TeachGroupComp extends Component {
                     <div className="input-group-prepend">
                         <span className="input-group-text">Change news</span>
                     </div>
-                    <input type="text" className="form-control" placeholder="news"/>
+                    <input type="text" className="form-control" placeholder="news" onChange={this.handleNewsChange}/>
                     <div className="input-group-append">
-                        <button className="btn btn-outline-secondary">Change</button>
+                        <button className="btn btn-outline-primary" onClick={() => this.changeNews()}>
+                            Change
+                        </button>
                     </div>
                 </div>
 
                 {this.state.group.news &&
                 <div className="row alert alert-warning my-3">
-                    {this.state.group.news.text}
+                    <span className="badge badge-primary text-center mr-2 mb-1 py-1">
+                        {this.getNewsRefreshTime(this.state.group.news.sinceRefreshHours)}
+                    </span>
+                    <i>{this.state.group.news.text}</i>
                 </div> }
 
                 <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Tests</h1>
-                    <button className="col-2 btn btn-warning btn" onClick={() => this.newTest()}>
+                    <h1 className="col-10">Online Tests</h1>
+                    <button className="col-2 btn btn-primary" onClick={() => this.newTest()}>
                         New
                     </button>
                 </div>
@@ -116,6 +169,9 @@ class TeachGroupComp extends Component {
                                     <tr key={liveTest.id} onClick={() => this.testClicked(liveTest.id)}>
                                         <td>
                                             <strong>{liveTest.test.name}</strong>
+                                        </td>
+                                        <td className="text-sm-right">
+                                            <i>{liveTest.sinceCreatedDays} days ago</i>
                                         </td>
                                     </tr>
                             )

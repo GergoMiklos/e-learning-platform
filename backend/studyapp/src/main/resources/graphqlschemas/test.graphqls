@@ -2,7 +2,7 @@ type Test {
     id: ID!
     name: String
     description: String
-    tasks: [Task]
+    tasks: [TestTask]
 }
 
 type Task {
@@ -10,10 +10,24 @@ type Task {
     question: String
     answers: [String]
     solution: Int
+}
+
+type TestTask {
+    id: ID!
+    question: String
+    answers: [String]
     level: Int
 }
 
 extend type Query {
     test(id: ID!): Test
     tasks: [Task]
+}
+
+extend type Mutation {
+    createTest(userId: ID!, name: String!, description: String!): Test
+    editTest(id: ID!, name: String!, description: String!): Test
+    addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask
+    deleteTaskFromTest(testTaskId: ID!): Boolean
+    changeTaskLevel(testTaskId: ID!, newLevel: Int): TestTask
 }

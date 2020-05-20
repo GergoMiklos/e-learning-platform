@@ -22,9 +22,8 @@ public class LiveTest {
     private Long id;
 
     private Date creationDate;
-    //TODO time-okat test-nél?
-    private int maxTimeForTest;
-    private int maxTimeForTasks;
+//    private int maxTimeForTest;
+//    private int maxTimeForTasks;
 
     @JsonIgnore
     @Relationship(type = "GROUPLIVETEST", direction = Relationship.INCOMING)

@@ -7,28 +7,34 @@ import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 public class LiveTestStateResolver implements GraphQLResolver<LiveTestStateDTO> {
     @Autowired
     DataLoaderRegistry dataLoaderRegistry;
-    //TODO kell-e? Inkább DTO mappingnál húzd be a user name-t és code-ot
 
     public CompletableFuture<UserDTO> user(LiveTestStateDTO dto) {
-        System.out.println("LiveTestUserState user");
-        DataLoader<Long, UserDTO> userloader = dataLoaderRegistry.getDataLoader("userloader");
-        return userloader.load(dto.getUserId());
+        if(dto.getUserId() != null) {
+            DataLoader<Long, UserDTO> userloader = dataLoaderRegistry.getDataLoader("userloader");
+            return userloader.load(dto.getUserId());
+        } else {
+            return null;
+        }
     }
 
     public CompletableFuture<TestDTO> test(LiveTestStateDTO dto) {
-        System.out.println("LiveTestUserState test");
-        DataLoader<Long, TestDTO> testloader = dataLoaderRegistry.getDataLoader("testloader");
-        return testloader.load(dto.getTestId());
+        if(dto.getTestId() != null) {
+            DataLoader<Long, TestDTO> testloader = dataLoaderRegistry.getDataLoader("testloader");
+            return testloader.load(dto.getTestId());
+        } else {
+            return null;
+        }
     }
 
     public CompletableFuture<TaskDTO> currentTask(LiveTestStateDTO dto) {
-        System.out.println("LiveTestUserState task");
         if(dto.getCurrentTaskId() != null) {
             DataLoader<Long, TaskDTO> taskloader = dataLoaderRegistry.getDataLoader("taskloader");
             return taskloader.load(dto.getCurrentTaskId());
@@ -36,4 +42,27 @@ public class LiveTestStateResolver implements GraphQLResolver<LiveTestStateDTO> 
             return null;
         }
     }
+
+    public CompletableFuture<Long> sinceStateRefreshMins(LiveTestStateDTO dto) {
+        return CompletableFuture.supplyAsync(() -> {
+            Date now = new Date();
+            Date timeStateChanged = dto.getTimeStateChanged();
+            if(timeStateChanged != null)
+                return Duration.between(timeStateChanged.toInstant(), now.toInstant()).toMinutes();
+            else
+                return null;
+        });
+    }
+
+    public CompletableFuture<Long> sinceStartMins(LiveTestStateDTO dto) {
+        return CompletableFuture.supplyAsync(() -> {
+            Date now = new Date();
+            Date timeStarted = dto.getTimeStartedTest();
+            if(timeStarted != null)
+                return Duration.between(timeStarted.toInstant(), now.toInstant()).toMinutes();
+            else
+                return null;
+        });
+    }
+
 }

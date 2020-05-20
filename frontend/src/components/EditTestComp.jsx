@@ -18,12 +18,28 @@ const TEST = gql`
         }
     }`;
 
+const EDITTEST = gql`
+    mutation EditTest($id: ID!, $name: String!, $description: String!) {
+        editTest(id: $id, name: $name, description: $description) {
+            id
+            name
+            description
+        }
+    }`;
+
+const DELETETASK = gql`
+    mutation DeleteTaskFromTest($testTaskId: ID!) {
+        deleteTaskFromTest(testTaskId: $testTaskId)
+    }`;
+
 class EditTestComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            test: null,
             selected: null,
-            test: null
+            error: null,
+            success: null
         };
     }
 
@@ -31,15 +47,61 @@ class EditTestComp extends Component {
         let errors = {}
         if(!values.name) {
             errors.name = 'Enter a name!'
-        }
-        else if(!values.description) {
+        } else if(values.name.toString().length > 50 || values.name.toString().length < 5) {
+            errors.name = 'Enter a name has min 5 and max 50 characters!'
+        } else if(!values.description) {
             errors.description = 'Enter a description!'
+        } else if(values.name.toString().length > 150 || values.name.toString().length < 5) {
+            errors.description = 'Enter a description has min 5 and max 150 characters!'
         }
         return errors
     }
 
     onSubmit = (values) => {
+        client.mutate({
+            mutation: EDITTEST,
+            variables: {name: values.name, description: values.description, id: this.state.test.id}
+        })
+            .then(result => {
+                console.log(result);
+                this.setState({success: 'Saved!', error: null});
+            })
+            .catch(errors => {
+                console.log(errors);
+                this.setState({error: 'Error!'});
+            })
+    }
 
+    deleteTask = (taskId) => {
+        client.mutate({
+            mutation: DELETETASK,
+            variables: {testTaskId: taskId}
+        })
+            .then(result => {
+                console.log(result);
+                this.setState({success: 'Deleted!', error: null});
+                this.refreshTest();
+            })
+            .catch(errors => {
+                console.log(errors);
+                this.setState({error: 'Error!', success: null});
+            })
+    }
+
+    navigateBack = () => {
+        this.props.history.push(`/teach`);
+    }
+
+    taskClicked = (id) => {;
+        if(this.state.selected === id) {
+            this.setState({selected: null});
+        } else {
+            this.setState({selected: id});
+        }
+    }
+
+    newTask= () => {
+        this.props.history.push(`/teach/test/${this.state.test.id}/tasks`)
     }
 
     componentDidMount() {
@@ -50,7 +112,8 @@ class EditTestComp extends Component {
         client
             .query({
                 query: TEST,
-                variables: {id: this.props.match.params.testid}
+                variables: {id: this.props.match.params.testid},
+                fetchPolicy: 'network-only'
             })
             .then(result => {
                 console.log(result);
@@ -73,9 +136,16 @@ class EditTestComp extends Component {
         let description = this.state.test.description;
         return (
             <div className="container">
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Edit test</h1>
+                <button className="row btn btn-secondary mt-1" onClick={() => this.navigateBack()}>
+                    Back
+                </button>
+
+                <div className="row bg-primary text-light rounded shadow my-3 p-3">
+                    <h1 className="col-auto">Edit test</h1>
                 </div>
+
+                {this.state.error && <div className="alert alert-danger">{this.state.error}</div>}
+                {this.state.success && <div className="alert alert-success">{this.state.success}</div>}
 
                 <Formik
                     initialValues={{name: name, description: description}}
@@ -99,10 +169,8 @@ class EditTestComp extends Component {
                                     <label>Description</label>
                                     <Field className="form-control" type="text" name="description" placeholder="Description"></Field>
                                 </fieldset>
-                                <div className="btn-group my-2">
-                                    <button type="submit" className="btn btn-primary">Save</button>
-                                    <button className="btn btn-light">Back</button>
-                                </div>
+
+                                <button type="submit" className="btn btn-primary my-1">Save</button>
                             </Form>
                         )
                     }
@@ -110,7 +178,7 @@ class EditTestComp extends Component {
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-10">Tasks</h1>
-                    <button className="col-2 btn btn-warning btn" onClick={() => this.newTask()}>New</button>
+                    <button className="col-2 btn btn-primary btn" onClick={() => this.newTask()}>New</button>
                 </div>
 
                 {this.state.test.tasks &&
@@ -125,14 +193,15 @@ class EditTestComp extends Component {
                                             <div className="container">
                                                 <div className="row">
                                                     <strong className="col-10">{task.question}</strong>
-                                                    <button className="col-2 btn btn-danger btn">Delete</button>
+                                                    {(this.state.selected === task.id) &&
+                                                    <button className="col-2 btn btn-danger" onClick={() => this.deleteTask(task.id)}>
+                                                        Delete
+                                                    </button>}
                                                 </div>
                                                 {(this.state.selected === task.id) && task.answers.map(
-                                                    answer =>
-                                                        <div className="row">{answer}</div>
-                                                )
-
-                                                }
+                                                    (answer, i) =>
+                                                        <div key={i} className="row">{answer}</div>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
@@ -143,19 +212,6 @@ class EditTestComp extends Component {
                 </div>}
             </div>
         );
-    }
-
-    taskClicked = (id) => {
-        console.log("Test " + id + " clicked!");
-        if(this.state.selected === id) {
-            this.setState({selected: null});
-        } else {
-            this.setState({selected: id});
-        }
-    }
-
-    newTask= () => {
-        this.props.history.push(`/teach/test/${this.state.test.id}/tasks`)
     }
 
 }
