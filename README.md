@@ -1,5 +1,5 @@
 Miklós Gergő 
-# Önálló laboratórium / szakdolgozat repository
+# Önálló laboratórium dokumentáció
 
 Neo4j + Spring + GraphQL + React
 
