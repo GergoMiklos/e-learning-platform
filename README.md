@@ -19,7 +19,7 @@ Teszteket létrehozni egyszerű, egy nyilvános feladattárból lehet feladatot 
 ## Technológiák és architektúra
 Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a frontend oldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna a modellben lévő sok, és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon az dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
 
-![extensions](imgs/logos.png)
+![extensions](imgs/logos.PNG)
 
 # Fejlesztés:
 ## Backend
@@ -28,7 +28,7 @@ Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen b
 A szerveroldal alapvetően az általános tervezési konvenciókat követtem, azaz három rétegből, a kiszolgálási, az üzletilogika és az adatelérési rétegből áll, a Spring keretrendszerre épülve. A Spring modulok sok mindent nyújtanak számomra Java alkalmazás fejlesztéskor: függőség injektálást, adatbáziselérés és tranzakciókezelés egységes absztrakcióját, webszolgáltatásokat támogató eszközöket és még sok más mindent.
 A gyorsabb alkalmazásfejlesztés érdekében a Spring Bootot használtam, ezzel megspórolva nehézkes kézi konfigurációkat.
 
-![extensions](imgs/arch1.PNG)
+![extensions](imgs/arch1.png)
 
 ### GraphQL 
 Spring keretrendszerben nagy támogatottsága van az eredetileg JavaScripthez írt GraphQL-nek a GraphQL-Java (és Spring Boot Starter) kreatív nevű könyvtárnak köszönhetően, ami egy teljes előre konfigurált szervert ad a fejlesztőnek. A GraphQL-nek, ha jól használjuk, sok előnye lehet a REST-tel szemben kliens oldalon, mert a séma alapján deklaratív módon pontosan megfogalmazhatjuk, milyen adatokra van szükségünk, ezáltal kevesebb kérés történik, fölösleges adatok nélkül. Azonban mindez a szerver oldalon sok többletmunkával és új problémákkal járhat akár minden területen, ahogy ez velem is történt (jelen előadás nagy része ezért erről is szól), így nem feltétlenül éri meg az alkalmazása.
