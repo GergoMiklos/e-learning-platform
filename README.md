@@ -14,12 +14,12 @@ Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, 
 A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanulókorábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak szintugrásokat kell végrehajtania. (de jelenleg ez még nincs megvalósítva).
 Teszteket létrehozni egyszerű, egy nyilvános feladattárból lehet feladatot kiválasztani megadva, hogy a teszt melyik szintjéhez tartozzon.
 
-![extensions](imgs/onlab/Dia2.PNG)
+![extensions](imgs/onlab/Dia3.PNG)
 
 ## Technológiák és architektúra
 Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a frontend oldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna a modellben lévő sok, és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon az dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
 
-![extensions](imgs/onlab/Dia3.PNG)
+![extensions](imgs/onlab/Dia4.PNG)
 
 # Fejlesztés:
 ## Backend
@@ -28,7 +28,7 @@ Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen b
 A szerveroldal alapvetően az általános tervezési konvenciókat követtem, azaz három rétegből, a kiszolgálási, az üzletilogika és az adatelérési rétegből áll, a Spring keretrendszerre épülve. A Spring modulok sok mindent nyújtanak számomra Java alkalmazás fejlesztéskor: függőség injektálást, adatbáziselérés és tranzakciókezelés egységes absztrakcióját, webszolgáltatásokat támogató eszközöket és még sok más mindent.
 A gyorsabb alkalmazásfejlesztés érdekében a Spring Bootot használtam, ezzel megspórolva nehézkes kézi konfigurációkat.
 
-![extensions](imgs/onlab/Dia4.PNG)
+![extensions](imgs/onlab/Dia5.PNG)
 
 ### GraphQL 
 Spring keretrendszerben nagy támogatottsága van az eredetileg JavaScripthez írt GraphQL-nek a GraphQL-Java (és Spring Boot Starter) kreatív nevű könyvtárnak köszönhetően, ami egy teljes előre konfigurált szervert ad a fejlesztőnek. A GraphQL-nek, ha jól használjuk, sok előnye lehet a REST-tel szemben kliens oldalon, mert a séma alapján deklaratív módon pontosan megfogalmazhatjuk, milyen adatokra van szükségünk, ezáltal kevesebb kérés történik, fölösleges adatok nélkül. Azonban mindez a szerver oldalon sok többletmunkával és új problémákkal járhat akár minden területen, ahogy ez velem is történt (jelen előadás nagy része ezért erről is szól), így nem feltétlenül éri meg az alkalmazása.
@@ -58,18 +58,18 @@ A gráfadatbázisok lehetővé teszik az ún. „nagy teljesítményű (index fr
 
 A Neo4j gráfadatbáziskezelőhöz létezik Spring Data implementáció, azaz megfelelő annotációkkal használva automatikus objektum-gráf leképezést kapunk. Egy megfelelő Neo4jRepository interfészből leszármaztatva szintén sok kódot megspórolhatunk, mivel az adatelérési logikát a függvények neveivel adhatjuk meg. Azonban esetünkben ez nem mindig elég, például, ha szükségünk van egy csoport tesztjeinek azonosítójára is (amit a DataLoader megkövetel), akkor a Query annotációval saját Cypher nyelvű lekérdezést kell megvalósítanunk:
 
-![extensions](imgs/onlab/Dia9.PNG)
+![extensions](imgs/onlab/Dia10.PNG)
 
 Jól látszik, hogy a GraphQL alkalmazása a lekérdezésekre és a DTO-k szerkezetére is kihat, ha az N+1 problémát is megakarjuk oldani. Természetesen mérlegelhetünk is, nem kell minden esetben kötelezően megtennünk, de így tulajdonképpen egy háromrétegű objektummodellel dolgozunk: entitások az adatbázisnak, DTO-k a resolvereknek, valamint a GraphQL séma által meghatározott objektumok a kliensnek.
 
-![extensions](imgs/onlab/Dia10.PNG)
+![extensions](imgs/onlab/Dia11.PNG)
 
 ## Frontend
 
 ### Röviden
 A frontend oldalról is szeretnénk említeni néhány szót, amely egy single-page aplication, a React könyvtárral valósítva. Működésének lényege, hogy a felhasználói felületet egy az úgynevezett virtuális DOM-ban tartja karban, így képes gyors műveletek végrehajtásra. A React alkalmazásom két részből, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő szervízekből áll. Ezekhez a kérésekhez a sok funkcióval rendelkező, de egyszerű, Reacthez fejlesztett Apollo Clientet választottam.
 
-![extensions](imgs/onlab/Dia11.PNG)
+![extensions](imgs/onlab/Dia12.PNG)
 
 ## Továbbfejlesztés
 Korábban már említett hiányosságok, több feladattípus, autentikáció és autorizáció, mobil, Docker, tesztelés, Redux
