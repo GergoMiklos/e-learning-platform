@@ -30,8 +30,8 @@ public class GroupQuery implements GraphQLQueryResolver, GraphQLMutationResolver
     @Autowired
     private UserRepo userRepo;
 
-    public GroupDTO getGroup(Long id) {
-        return groupRepo.getById(id).orElse(null);
+    public Optional<GroupDTO> getGroup(Long id) {
+        return groupRepo.getById(id);
     }
 
     public List<GroupDTO> getByManyGroupIds(List<Long> groupIds) {
