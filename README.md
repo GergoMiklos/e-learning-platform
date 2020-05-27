@@ -14,12 +14,12 @@ Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, 
 
 A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanuló korábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak szintugrásokat kell végrehajtania, a képességeinek megfelelő sebességgel (jelenleg ez még nincs megvalósítva).
 
-Teszteket létrehozni egyszerű, a feladattárból kereshet ki feladatokat megadva, hogy a teszt melyik szintjéhez tartozzon.A feladattár teljesen nyilvános, ide bárki létrehozhat feladatokat és bárki fel is használhatja azokat.
+Teszteket létrehozni egyszerű, egy nyilvános feladattárból válazthatunk ki feladatokat, azt megadva, hogy a teszt melyik szintjéhez tartozzon.
 
 ![extensions](imgs/onlab/Dia3.PNG)
 
 ## Technológiák és architektúra
-Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a frontend oldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon a dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
+Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a kliensoldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon a dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
 
 ![extensions](imgs/onlab/Dia4.PNG)
 
@@ -34,14 +34,14 @@ A gyorsabb alkalmazásfejlesztés érdekében Spring Bootot használtam, ezzel m
 ![extensions](imgs/onlab/Dia5.PNG)
 
 ### GraphQL 
-Spring keretrendszerben nagy támogatottsága van az eredetileg JavaScripthez írt GraphQL-nek a GraphQL-Java kreatív nevű könyvtárnak köszönhetően, amely egy teljes előre konfigurált szervert ad a fejlesztőnek. A GraphQL-nek, ha jól használjuk, sok előnye lehet a REST-tel szemben, mert kliensoldalon a séma alapján deklaratív módon pontosan megfogalmazhatjuk, milyen adatokra van szükségünk, ezáltal kevesebb kérés történik, fölösleges adatok nélkül. Azonban mindez a szerveroldalon sok többletmunkával és új problémákkal járhat akár minden területen, ahogy ez velem is történt (jelen előadás nagy része ezért erről is szól), így nem feltétlenül éri meg az alkalmazása.
+Spring keretrendszerben nagy támogatottsága van (az eredetileg JavaScripthez létehozott) GraphQL-nek a GraphQL-Java kreatív nevű könyvtárnak köszönhetően, amely egy teljes előre konfigurált szervert ad a fejlesztőnek. A GraphQL-nek, ha jól használjuk, sok előnye lehet a REST-tel szemben, amiért kliensoldalon a séma alapján deklaratív módon pontosan megadhatjuk, milyen adatokra van szükségünk, ezáltal kevesebb kérés történik, fölösleges adatok nélkül. Azonban mindez a szerveroldalon sok többletmunkával és új problémákkal járhat akár minden területen, ahogy ez velem is történt (jelen előadás nagy része ezért erről is szól), így nem feltétlenül éri meg az alkalmazása.
 
-REST végpontok helyett hasonló feladatot ellátó Query- és MutationResolvereket kell létrehozni, a GraphQL sémában az alkalmazás objektummodelljét meg kell ismételni, valamint ez alapján a modell összes objektumához is Resolvereket kell létrehozni, amelyek feladata, hogy az adott objektumok adattagjait állítsák be.
+REST kontrollerek helyett hasonló feladatot ellátó Query- és MutationResolvereket kell létrehozni, a GraphQL sémában az alkalmazás objektummodelljét meg kell ismételni, valamint ez alapján a modell összes objektumához is Resolvereket kell létrehozni, amelyek feladata, hogy az adott objektumok adattagjait állítsák be.
 
-Tehát a GraphQL-nek bőven vannak hátrányai is, újabb sémaismétlések kellenek, Resolverek miatt bonyolultabb az autentikáció és autorizáció, és megjelenik a jól ismert N+1 Probléma is:
+Tehát a GraphQL-nek nem csak előnyei, de hátrányai is vannak. Újabb sémaismétlések kellenek, Resolverek miatt bonyolultabb az autorizáció, és megjelenik a jól ismert N+1 Probléma is:
 
 ### N+1 probléma
-Ha csoportokat és azok tesztjeit szeretnénk megkapni, az REST-tel két külön kérés lenne, de GraphQL-lel csak egy. De mi a probléma a GraphQL kéréssel? Az N csoport összesen 1 adatbáziskérés, azonban a resolverek működése szerint azok tesztjeihez mindegy egyes csoportra egyesével fog megtörténni, ami további N adatbáziskérés. Így a válaszadás akár lassabb is lehet, mint két külön REST kérés (párhuzamosságot figyelembe véve is).
+Ha csoportokat és azok tesztjeit szeretnénk megkapni, az REST-tel két külön kérés lenne, de GraphQL-lel csak egy. De mi a probléma a GraphQL kéréssel? Az N csoport összesen 1 adatbáziskérés, azonban a resolverek működése szerint azok tesztjeihez minden külön csoportra egyesével fog megtörténni, ami további N adatbáziskérés. Így a válaszidő akár hosszabb is lehet, mint két külön REST kérés (párhuzamosságot figyelembe véve is).
 
 ![extensions](imgs/onlab/Dia7.PNG)
 
@@ -50,14 +50,14 @@ Az N+1 problémát a DataLoader nevű osztály segítségével oldottam meg, ame
 ![extensions](imgs/onlab/Dia8.PNG)
 
 ### Hibakezelés
-Alapesetben a GraphQL-Javában végponton keresztül történő kérésre nem tudunk egyedi hibaüzenettel válaszolni, csupán a hibás szintaktikájú kérésre vonatkozó eseményekről értesül pontosan a kliens, minden más esetben (kivételnél) „Internal server error” hibaüzenet jelenik meg, ez az úgynevezett „exception shielding” technika. Erre megoldásként három osztályt kell létrehoznunk: egy saját kivételt, ahhoz egy új adaptert, amely elrejti a kliens elől az érzékeny információkat, valamint egy saját kivételkezelőt is az alap kivételkezelő működését megváltoztatva úgy, hogy a saját kivételeink is eljussanak a klienshez.
+Alapesetben a kliensoldali kérésre nem tudunk egyedi hibaüzenettel válaszolni (csupán a hibás szintaktikájú kérésre vonatkozó eseményekről értesül pontosan a kliens), minden esetben (kivételnél) „Internal server error” hibaüzenet jelenik meg, ez az úgynevezett „exception shielding” technika. Erre megoldásként három osztályt kell létrehoznunk: egy saját kivételt, ahhoz egy új adaptert, amely elrejti a kliens elől az érzékeny információkat, és egy saját kivételkezelőt is az alap kivételkezelő működését megváltoztatva úgy, hogy a saját kivételeink is eljussanak a klienshez.
 
 Fontos még figyelembe venni, hogy a REST http válaszaival ellentétben, ha egy GraphQL lekérdezés egy nem kért hibát produkál, attól még kért adatok részlegesen megérkezhetnek, fontos információkat tartalmazva.
 
 ### Adatbázis 
-A megszokottól eltérően az előadás végére hagytam az adatbázist, ami azzal magyarázható, hogy fejlesztés közben is utólag véglegesítettem azt, leginkább a GraphQL elején még nem ismert sajátosságai miatt.
+A megszokottól eltérően az előadás végére hagytam az adatbázist, ami azzal magyarázható, hogy fejlesztés közben is utólag véglegesítettem azt, leginkább a GraphQL még nem ismert sajátosságai miatt.
 
-A gráfadatbázisok lehetővé teszik az ún. „nagy teljesítményű (index free) join” műveleteket, ezért esett végül erre a választásom a relációs vagy dokumentum adatbázisok helyett.
+Az alkalmazásom sokszor használ kapcsolódó objektumokat, és a gráfadatbázisok lehetővé teszik az ún. „nagy teljesítményű (index free) join” műveleteket, így végül egy gráfadatbázisra esett a választásom a relációs vagy dokumentum adatbázisok helyett.
 
 A Neo4j gráfadatbáziskezelőhöz létezik Spring Data implementáció, azaz megfelelő annotációkkal használva automatikus objektum-gráf leképezést kapunk. Egy megfelelő Neo4jRepository interfészből leszármaztatva szintén sok kódot megspórolhatunk, mivel az adatelérési logikát a függvények neveivel adhatjuk meg. Azonban az én esetemben ez nem mindig volt elég, például, ha szükségem volt egy csoport tesztjeinek azonosítójára is (amit a DataLoader megkövetel), akkor a Query annotációval saját Cypher nyelvű lekérdezést kellett megvalósítanom:
 
