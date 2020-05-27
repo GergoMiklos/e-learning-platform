@@ -5,21 +5,21 @@ Neo4j + Spring + GraphQL + React
 
 ## Feladatkiírás
 #### Gyakorló alkalmazás általános iskolások számára
-Manapság egyre nagyobb problémát jelent a tanulók egyenlőként kezelése, egyre több szülő kér felmentést tanulási zavarokkal küzdő gyermekének. Mivel minden tanuló eltérő kompetenciával rendelkezik, ezért eltérő figyelmet is igényel.
+Manapság egyre nagyobb problémát jelent a tanulók egyenlőként kezelése, egyre több szülő kér felmentést tanulási zavarokkal küzdő gyermekének. Mivel minden tanuló eltérő kompetenciákkal rendelkezik, ezért eltérő figyelmet is igényel.
 
 A feladat egy olyan adaptív gyakorló webalkalmazás készítése, amely lehetővé teszi a tanulók képességeihez alkalmazkodó feladatsorok egyszerű készítését, valamint a tanár (vagy a szülő) számára a tanulók haladásának követését. 
 
 ## Bevezetés
-Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, tanárok és tesztek. A tanulók teszteket tudnak oldani, a tanárok teszteket tudnak létrehozni és láthatják a tanulók megoldása közbeni állapotait.
+Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, tanárok és tesztek. A tanulók teszteket tudnak oldani, a tanárok teszteket tudnak létrehozni csoportokhoz és láthatják a tanulók megoldása közbeni állapotait, például, hogy valakinek segítségre van-e szüksége, vagy épp végzett-e már, esetleg még elsem kezdte a megoldást.
 
-A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanuló korábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak szintugrásokat kell végrehajtania (jelenleg ez még nincs megvalósítva).
+A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanuló korábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak szintugrásokat kell végrehajtania, a képességeinek megfelelő sebességgel (jelenleg ez még nincs megvalósítva).
 
-Teszteket létrehozni egyszerű, egy nyilvános feladattárból lehet feladatot kiválasztani megadva, hogy a teszt melyik szintjéhez tartozzon.
+Teszteket létrehozni egyszerű, a feladattárból kereshet ki feladatokat megadva, hogy a teszt melyik szintjéhez tartozzon.A feladattár teljesen nyilvános, ide bárki létrehozhat feladatokat és bárki fel is használhatja azokat.
 
 ![extensions](imgs/onlab/Dia3.PNG)
 
 ## Technológiák és architektúra
-Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a frontend oldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok, és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon a dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
+Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a frontend oldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon a dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
 
 ![extensions](imgs/onlab/Dia4.PNG)
 
@@ -45,12 +45,12 @@ Ha csoportokat és azok tesztjeit szeretnénk megkapni, az REST-tel két külön
 
 ![extensions](imgs/onlab/Dia7.PNG)
 
-Az N+1 problémára a DataLoader nevű osztály segítségével oldottam meg, amely annyit csinál, hogy összevárja az kéréseket egy kötegbe, és megfelelő időpontban egyetlen egy adatbáziskérésként hajtja végre azokat. Azonban ez további megkötésekkel jár. Esetünkben a csoport objektumoknak előre ismerniük kell a hozzá tartozó tesztek azonosítóját, az  adatbázisnak képesnek kell lennie kötegelt lekérdezésekre és megfelelő sorrendben kell visszaadni a csoportokat, null értékek nélkül.
+Az N+1 problémát a DataLoader nevű osztály segítségével oldottam meg, amely annyit csinál, hogy összevárja a kéréseket egy kötegbe és megfelelő időpontban egyetlen egy adatbáziskérésként hajtja végre azokat. Azonban ez további megkötésekkel jár. Esetünkben a csoport objektumoknak előre ismerniük kell a hozzá tartozó tesztek azonosítóját, az  adatbázisnak képesnek kell lennie kötegelt lekérdezésekre és megfelelő sorrendben kell visszaadni a csoportokat, null értékek nélkül.
 
 ![extensions](imgs/onlab/Dia8.PNG)
 
 ### Hibakezelés
-Alapesetben a GraphQL-Javában végponton keresztül történő kérésre nem tudunk egyedi hibaüzenettel válaszolni, csupán a hibás szintaktikájú kérésre vonatkozó eseményekről értesül pontosan a kliens, minden más esetben (kivételnél) „Internal server error” hibaüzenet jelenik meg, ez az úgynevezett „exception shielding” technika. Erre megoldásként három osztályt kell létrehoznunk: egy saját kivételt, ahhoz egy új adaptert, amely elrejti a kliens elől az érzékeny információkat, valamint egy saját kivételkezelőt is az alap kivételkezelő működését megváltozta úgy, hogy a saját kivételeink is eljussanak a klienshez.
+Alapesetben a GraphQL-Javában végponton keresztül történő kérésre nem tudunk egyedi hibaüzenettel válaszolni, csupán a hibás szintaktikájú kérésre vonatkozó eseményekről értesül pontosan a kliens, minden más esetben (kivételnél) „Internal server error” hibaüzenet jelenik meg, ez az úgynevezett „exception shielding” technika. Erre megoldásként három osztályt kell létrehoznunk: egy saját kivételt, ahhoz egy új adaptert, amely elrejti a kliens elől az érzékeny információkat, valamint egy saját kivételkezelőt is az alap kivételkezelő működését megváltoztatva úgy, hogy a saját kivételeink is eljussanak a klienshez.
 
 Fontos még figyelembe venni, hogy a REST http válaszaival ellentétben, ha egy GraphQL lekérdezés egy nem kért hibát produkál, attól még kért adatok részlegesen megérkezhetnek, fontos információkat tartalmazva.
 
@@ -70,12 +70,12 @@ Jól látszik, hogy a GraphQL alkalmazása a lekérdezésekre és a DTO-k szerke
 ## Frontend
 
 ### Röviden
-A frontend oldalról is szeretnénk említeni néhány szót, amely egy single-page aplication, a React könyvtárral megvalósítva. Működésének lényege, hogy a felhasználói felületet egy az úgynevezett virtuális DOM-ban tartja karban, így képes műveletek gyors végrehajtásra. A React alkalmazásom két fő részből, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő szervízekből áll. Ezekhez a kérésekhez a sok funkcióval rendelkező, de egyszerű, Reacthez fejlesztett Apollo Clientet választottam.
+A frontend oldalról is szeretnénk említeni néhány szót, amely egy single-page application, a React könyvtárral megvalósítva. Működésének lényege, hogy a felhasználói felületet egy az úgynevezett virtuális DOM-ban tartja karban, így képes műveletek gyors végrehajtásra. A React alkalmazásom két fő részből áll, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő adatkiszolgálókból. Ezekhez a kérésekhez a sok funkcióval rendelkező, de egyszerű, Reacthez fejlesztett Apollo Clientet választottam. Az alkalmazás felületének kialakításakor figyelmet fordítottam arra, hogy gyerekbarát, így könnyen kezelhető legyen, valamint igyekeztem élénk színeket is használni.
 
 ![extensions](imgs/onlab/Dia12.PNG)
 
 ## Továbbfejlesztés
-Korábban már említett hiányosságok, több feladattípus, autentikáció és autorizáció, mobil, Docker, tesztelés, Redux
+A hiányosságok bepótlása mellett (autentikáció, tesztelés) további fejlesztési terv a többféle feladattípus és az, hogy tanulókhoz szülőket is lehessen rendelni, hogy ők is lássák gyermekeik állapotait feladatsoronként, ezáltal támogatva az otthon való gyakorlást is.
 
 ## Összefoglalás
 
