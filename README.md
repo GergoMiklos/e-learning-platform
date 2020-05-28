@@ -40,7 +40,7 @@ REST kontrollerek helyett hasonló feladatot ellátó Query- és MutationResolve
 
 Tehát a GraphQL-nek nem csak előnyei, de hátrányai is vannak. Újabb sémaismétlések kellenek, resolverek miatt bonyolultabb az autorizáció, és megjelenik a jól ismert N+1 Probléma is:
 
-### N+1 probléma
+### GraphQL N+1 probléma
 Ha csoportokat és azok tesztjeit szeretnénk megkapni, az REST-tel két külön kérés lenne, de GraphQL-lel csak egy. De mi a probléma a GraphQL kéréssel? Az N csoport összesen 1 adatbáziskérés, azonban a resolverek működése szerint minden külön csoportra külön fog megtörténni a tesztek kérése, ami további N adatbáziskérés. Így a válaszidő akár hosszabb is lehet, mint két külön REST kérés (párhuzamosságot figyelembe véve is).
 
 ![extensions](imgs/onlab/Dia7.PNG)
@@ -55,11 +55,11 @@ Alapesetben a kliensoldali kérésre nem tudunk egyedi hibaüzenettel válaszoln
 Fontos még figyelembe venni, hogy a REST http válaszaival ellentétben, ha egy GraphQL lekérdezés egy nem kért hibát produkál, attól még kért adatok részlegesen megérkezhetnek, fontos információkat tartalmazva.
 
 ### Adatbázis 
-A megszokottól eltérően az előadás végére hagytam az adatbázist, ami azzal magyarázható, hogy fejlesztés közben is utólag véglegesítettem azt, leginkább a GraphQL még nem ismert sajátosságai miatt.
+A megszokottól eltérően az dokumentum végére hagytam az adatbázist, ami azzal magyarázható, hogy fejlesztés közben is utólag véglegesítettem azt a GraphQL még nem ismert sajátosságai miatt.
 
-Az alkalmazásom sokszor használ kapcsolódó objektumokat, és a gráfadatbázisok lehetővé teszik az ún. „nagy teljesítményű (index free) join” műveleteket, így végül egy gráfadatbázisra esett a választásom a relációs vagy dokumentum adatbázisok helyett.
+Az alkalmazásom sokszor használ kapcsolódó objektumokat, és a gráfadatbázisok lehetővé teszik az ún. „nagy teljesítményű (index free) join” műveleteket, így végül a relációs vagy dokumentum adatbázisok helyett a gráfadatbázisokra esett a választásom.
 
-A Neo4j gráfadatbáziskezelőhöz létezik Spring Data implementáció, azaz megfelelő annotációkkal használva automatikus objektum-gráf leképezést kapunk. Egy megfelelő Neo4jRepository interfészből leszármaztatva szintén sok kódot megspórolhatunk, mivel az adatelérési logikát a függvények neveivel adhatjuk meg. Azonban az én esetemben ez nem mindig volt elég, például, ha szükségem volt egy csoport tesztjeinek azonosítójára is (amit a DataLoader megkövetel), akkor a Query annotációval saját Cypher nyelvű lekérdezést kellett megvalósítanom:
+A Neo4j gráfadatbáziskezelőhöz létezik Spring Data implementáció, azaz megfelelő annotációkkat használva automatikus objektum-gráf leképezést kapunk. Egy megfelelő interfészből leszármaztatva szintén sok kódolást megspórolhatunk, mivel így az adatelérési logikát a függvények neveivel is megadhatjuk. Azonban az én esetemben ez nem mindig volt elég, például, ha szükségem volt egy csoport tesztjeinek azonosítójára is (amit a DataLoader megkövetel), akkor saját Cypher nyelvű lekérdezést kellett megvalósítanom:
 
 ![extensions](imgs/onlab/Dia10.PNG)
 
@@ -70,7 +70,7 @@ Jól látszik, hogy a GraphQL alkalmazása a lekérdezésekre és a DTO-k szerke
 ## Frontend
 
 ### Röviden
-A frontend oldalról is szeretnénk említeni néhány szót, amely egy single-page application, a React könyvtárral megvalósítva. Működésének lényege, hogy a felhasználói felületet egy az úgynevezett virtuális DOM-ban tartja karban, így képes műveletek gyors végrehajtásra. A React alkalmazásom két fő részből áll, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő adatkiszolgálókból. Ezekhez a kérésekhez a sok funkcióval rendelkező, de egyszerű, Reacthez fejlesztett Apollo Clientet választottam. Az alkalmazás felületének kialakításakor figyelmet fordítottam arra, hogy gyerekbarát, így könnyen kezelhető legyen, valamint igyekeztem élénk színeket is használni.
+A frontend oldalról is szeretnénk említeni néhány szót, amelyet a React könyvtárral valósítottam meg, amelynek működésének lényege, hogy a felhasználói felületet egy virtuális DOM-ban tartja karban, így képes műveletek gyors végrehajtásra. A React alkalmazásom két fő egységből áll, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő kiszolgálókból. Ezekhez a kérésekhez az egyszerű, Reacthez fejlesztett Apollo Clientet választottam. Az alkalmazás felületének kialakításakor figyelmet fordítottam arra, hogy gyerekbarát, így könnyen kezelhető legyen, valamint igyekeztem élénk és barátságos színeket is használni.
 
 ![extensions](imgs/onlab/Dia12.PNG)
 
