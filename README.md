@@ -3,13 +3,13 @@ Miklós Gergő
 
 Neo4j + Spring + GraphQL + React
 
-## Feladatkiírás
+### Feladatkiírás
 #### Álatlános iskolások oktatását segítő webalkalmazás
 Manapság egyre nagyobb problémát jelent a tanulók egyenlőként kezelése, egyre több szülő kér felmentést valamilyen tárgyból a tanulási zavarokkal küzdő gyermekének. Mivel minden tanuló eltérő kompetenciákkal rendelkezik, ezért eltérő figyelmet is igényel.
 
 A feladat egy olyan gyakorló webalkalmazás készítése, amely lehetővé teszi a adaptív feladatsorok egyszerű készítését, valamint biztosítja a tanár (vagy a szülő) számára a tanulók haladásának követését. 
 
-## Bevezetés
+### Bevezetés
 Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, tanárok és tesztek. A tanulók teszteket tudnak oldani, a tanárok teszteket tudnak létrehozni és láthatják a tanulók megoldása közbeni állapotait, például, hogy valakinek segítségre van-e szüksége, vagy épp végzett-e már.
 
 A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanuló korábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak tulajdonképpen szintugrásokat kell végrehajtania, a saját tempójában (jelenleg ez még nincs megvalósítva).
@@ -18,7 +18,7 @@ Teszteket létrehozni egyszerű, egy nyilvános feladattárból választhatunk k
 
 ![extensions](imgs/onlab/Dia3.PNG)
 
-## Technológiák és architektúra
+### Technológiák és architektúra
 Egyik alapvető célom a Spring keretrendszerrel való megismerkedés volt és emellett érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a kliensoldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok és összetett kapcsolat miatt, és végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Alapvetően a szerveroldali fejlesztésre szerettem volna helyezni a hangsúlyt, ezért kliensoldalon a dinamikus megjelenítést támogató, viszont egyszerű React könyvtárat használtam.  
 
 ![extensions](imgs/onlab/Dia4.PNG)
@@ -59,7 +59,7 @@ A megszokottól eltérően az dokumentum végére hagytam az adatbázist, ami az
 
 Az alkalmazásom sokszor használ kapcsolódó objektumokat, és a gráfadatbázisok lehetővé teszik az ún. „nagy teljesítményű (index free) join” műveleteket, így végül a relációs vagy dokumentum adatbázisok helyett a gráfadatbázisokra esett a választásom.
 
-A Neo4j gráfadatbáziskezelőhöz létezik Spring Data implementáció, azaz megfelelő annotációkkat használva automatikus objektum-gráf leképezést kapunk. Egy megfelelő interfészből leszármaztatva szintén sok kódolást megspórolhatunk, mivel így az adatelérési logikát a függvények neveivel is megadhatjuk. Azonban az én esetemben ez nem mindig volt elég, például, ha szükségem volt egy csoport tesztjeinek azonosítójára is (amit a DataLoader megkövetel), akkor saját Cypher nyelvű lekérdezést kellett megvalósítanom:
+A Neo4j gráfadatbáziskezelőhöz létezik Spring Data implementáció, azaz megfelelő annotációkkat használva automatikus objektum-gráf leképezést kapunk. Egy megfelelő interfészből leszármaztatva szintén sok kódolást megspórolhatunk, mivel így az adatelérési logikát a függvények neveivel is megadhatjuk. Azonban esetemben ez nem mindig volt elég, például, ha szükségem volt egy csoport tesztjeinek azonosítójára is (amit a DataLoader megkövetel), akkor saját Cypher nyelvű lekérdezést kellett írnom:
 
 ![extensions](imgs/onlab/Dia10.PNG)
 
@@ -70,13 +70,13 @@ Jól látszik, hogy a GraphQL alkalmazása a lekérdezésekre és a DTO-k szerke
 ## Frontend
 
 ### Röviden
-A frontend oldalról is szeretnénk említeni néhány szót, amelyet a React könyvtárral valósítottam meg, amelynek működésének lényege, hogy a felhasználói felületet egy virtuális DOM-ban tartja karban, így képes műveletek gyors végrehajtásra. A React alkalmazásom két fő egységből áll, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő kiszolgálókból. Ezekhez a kérésekhez az egyszerű, Reacthez fejlesztett Apollo Clientet választottam. Az alkalmazás felületének kialakításakor figyelmet fordítottam arra, hogy gyerekbarát, így könnyen kezelhető legyen, valamint igyekeztem élénk és barátságos színeket is használni.
+A frontend oldalról is szeretnénk említeni néhány szót, amelyet a React könyvtárral valósítottam meg, amelynek működésének lényege, hogy a felhasználói felületet egy virtuális DOM-ban tartja karban, így azon képes műveletek gyors végrehajtásra. A React alkalmazásom két fő egységből áll, a megjelenítésért felelős komponensekből és a backendhez irányuló kéréseket kezelő kiszolgálókból. (Ezekhez a kérésekhez az egyszerű, Reacthez fejlesztett Apollo Clientet választottam.) Az alkalmazás felületének kialakításakor figyelmet fordítottam arra, hogy gyerekbarát, így könnyen kezelhető legyen, valamint igyekeztem élénk és barátságos színeket is használni.
 
 ![extensions](imgs/onlab/Dia12.PNG)
 
 ## Továbbfejlesztés
 A hiányosságok bepótlása mellett (autentikáció, tesztelés) további fejlesztési terv a többféle feladattípus és az, hogy tanulókhoz szülőket is lehessen rendelni, hogy ők is lássák gyermekeik állapotait feladatsoronként, ezáltal támogatva az otthon való gyakorlást is.
+(+ mobil, docker)
 
 ## Összefoglalás
-
 Habár még sok fejlesztési lehetőség maradt, azonban mindezt összegezve én úgy gondolom sikerült teljesítenem a kitűzött célokat, valamint rengeteg tapasztalatot szereznem, hiszen az alkalmazott technológiák többségével korábban még nem is foglalkoztam.
