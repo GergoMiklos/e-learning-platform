@@ -4,22 +4,22 @@ Miklós Gergő
 Neo4j + Spring + GraphQL + React
 
 ## Feladatkiírás
-#### Gyakorló alkalmazás általános iskolások számára
-Manapság egyre nagyobb problémát jelent a tanulók egyenlőként kezelése, egyre több szülő kér felmentést tanulási zavarokkal küzdő gyermekének. Mivel minden tanuló eltérő kompetenciákkal rendelkezik, ezért eltérő figyelmet is igényel.
+#### Álatlános iskolások oktatását segítő webalkalmazás
+Manapság egyre nagyobb problémát jelent a tanulók egyenlőként kezelése, egyre több szülő kér felmentést valamilyen tárgyból a tanulási zavarokkal küzdő gyermekének. Mivel minden tanuló eltérő kompetenciákkal rendelkezik, ezért eltérő figyelmet is igényel.
 
-A feladat egy olyan adaptív gyakorló webalkalmazás készítése, amely lehetővé teszi a tanulók képességeihez alkalmazkodó feladatsorok egyszerű készítését, valamint a tanár (vagy a szülő) számára a tanulók haladásának követését. 
+A feladat egy olyan gyakorló webalkalmazás készítése, amely lehetővé teszi a adaptív feladatsorok egyszerű készítését, valamint biztosítja a tanár (vagy a szülő) számára a tanulók haladásának követését. 
 
 ## Bevezetés
-Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, tanárok és tesztek. A tanulók teszteket tudnak oldani, a tanárok teszteket tudnak létrehozni csoportokhoz és láthatják a tanulók megoldása közbeni állapotait, például, hogy valakinek segítségre van-e szüksége, vagy épp végzett-e már, esetleg még elsem kezdte a megoldást.
+Az alkalmazásban minden csoportok köré épül, ezekhez tartoznak a tanulók, tanárok és tesztek. A tanulók teszteket tudnak oldani, a tanárok teszteket tudnak létrehozni és láthatják a tanulók megoldása közbeni állapotait, például, hogy valakinek segítségre van-e szüksége, vagy épp végzett-e már.
 
-A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanuló korábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak szintugrásokat kell végrehajtania, a képességeinek megfelelő sebességgel (jelenleg ez még nincs megvalósítva).
+A tesztek fő célja nem a tudásfelmérés, hanem a gyakorlás. A kapott feladatok tanulónként egyediek, alkalmazkodnak a tanuló korábbi teljesítményeihez. Ennek alapja az, hogy egy teszten belül a feladatok szintekhez vannak rendelve, és a teszt megoldásához a tanulónak tulajdonképpen szintugrásokat kell végrehajtania, a saját tempójában (jelenleg ez még nincs megvalósítva).
 
-Teszteket létrehozni egyszerű, egy nyilvános feladattárból válazthatunk ki feladatokat, azt megadva, hogy a teszt melyik szintjéhez tartozzon.
+Teszteket létrehozni egyszerű, egy nyilvános feladattárból választhatunk ki feladatokat, azt megadva, hogy a teszt melyik szintjéhez tartozzon.
 
 ![extensions](imgs/onlab/Dia3.PNG)
 
 ## Technológiák és architektúra
-Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen belül érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a kliensoldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok és összetett kapcsolat miatt. Végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Fejlesztéskor alapvetően a szerveroldali fejlesztésre szeretném helyezni a hangsúlyt, ezért kliensoldalon a dinamikus tartalmat támogató, de egyszerű React könyvtárat használom.  
+Egyik alapvető célom a Spring keretrendszerrel való megismerkedés volt és emellett érdekes kihívásnak tartottam REST helyett az egyre népszerűbb GraphQL alkalmazni a kommunikáció megvalósítására, amely segítségével nagyban leegyszerűsíthető a kliensoldali fejlesztés. Az adatok tárolására mindenképpen gráfadatbázist szerettem volna használni a modellben lévő sok és összetett kapcsolat miatt, és végül a Spring támogatottsága miatt a Neo4j adatbáziskezelőre esett a választás. Alapvetően a szerveroldali fejlesztésre szerettem volna helyezni a hangsúlyt, ezért kliensoldalon a dinamikus megjelenítést támogató, viszont egyszerű React könyvtárat használtam.  
 
 ![extensions](imgs/onlab/Dia4.PNG)
 
@@ -27,25 +27,25 @@ Egyik alapvető célom a Spring keretrendszerrel való megismerkedés és ezen b
 ## Backend
 
 ### Spring architektúra
-Szerveroldalon alapvetően az általános tervezési konvenciókat követtem, azaz három rétegből, a kiszolgálási, az üzletilogika és az adatelérési rétegből áll, Spring keretrendszerre épülve. A Spring modulok sok eszközt nyújtottak számomra a Java alkalmazás fejlesztésekor: függőség injektálást, adatbáziselérés és tranzakciókezelés egységes absztrakcióját, webszolgáltatásokat támogató eszközöket és még sok más mindent.
+Szerveroldalon alapvetően az általános tervezési konvenciókat követtem, azaz három rétegből áll, a kiszolgálási, az üzletilogika és az adatelérési rétegből áll, a Spring keretrendszert felhasználva. A Spring modulok sok eszközt nyújtottak a Java alkalmazásom fejlesztésekor: függőség injektálást, adatbáziselérés és tranzakciókezelés egységes absztrakcióját, webszolgáltatásokat támogató eszközöket és még sok más mindent.
 
-A gyorsabb alkalmazásfejlesztés érdekében Spring Bootot használtam, ezzel megspórolva nehézkes kézi konfigurációkat.
+(A gyorsabb alkalmazásfejlesztés érdekében Spring Bootot használtam, ezzel megspórolva nehézkes kézi konfigurációkat.)
 
 ![extensions](imgs/onlab/Dia5.PNG)
 
 ### GraphQL 
-Spring keretrendszerben nagy támogatottsága van (az eredetileg JavaScripthez létehozott) GraphQL-nek a GraphQL-Java kreatív nevű könyvtárnak köszönhetően, amely egy teljes előre konfigurált szervert ad a fejlesztőnek. A GraphQL-nek, ha jól használjuk, sok előnye lehet a REST-tel szemben, amiért kliensoldalon a séma alapján deklaratív módon pontosan megadhatjuk, milyen adatokra van szükségünk, ezáltal kevesebb kérés történik, fölösleges adatok nélkül. Azonban mindez a szerveroldalon sok többletmunkával és új problémákkal járhat akár minden területen, ahogy ez velem is történt (jelen előadás nagy része ezért erről is szól), így nem feltétlenül éri meg az alkalmazása.
+Spring keretrendszerben nagy támogatottsága van (az eredetileg JavaScripthez létehozott) GraphQL-nek a kreatív nevű GraphQL-Java könyvtárnak köszönhetően, amely egy teljes előre konfigurált szervert ad a fejlesztőnek. A GraphQL-nek, ha jól használjuk, sok előnye lehet a REST-tel szemben, mivel kliensoldalon a séma alapján deklaratív módon pontosan megadhatjuk, milyen adatokra van szükségünk, ezáltal kevesebb kérés történik, fölösleges adatok nélkül. Azonban mindez a szerveroldalon sok többletmunkával és új problémákkal járhat, ahogy ez velem is történt (dokumentumom nagy része ezért erről is szól), így nem feltétlenül éri meg az alkalmazása.
 
-REST kontrollerek helyett hasonló feladatot ellátó Query- és MutationResolvereket kell létrehozni, a GraphQL sémában az alkalmazás objektummodelljét meg kell ismételni, valamint ez alapján a modell összes objektumához is Resolvereket kell létrehozni, amelyek feladata, hogy az adott objektumok adattagjait állítsák be.
+REST kontrollerek helyett hasonló feladatot ellátó Query- és MutationResolvereket kell létrehozni, a GraphQL sémában az alkalmazás objektummodelljét meg kell ismételni, valamint ez alapján a modell összes objektumához is ObjectResolvereket kell létrehozni, amelyek feladata, hogy az adott objektumok adattagjainak értékét állítsák be.
 
-Tehát a GraphQL-nek nem csak előnyei, de hátrányai is vannak. Újabb sémaismétlések kellenek, Resolverek miatt bonyolultabb az autorizáció, és megjelenik a jól ismert N+1 Probléma is:
+Tehát a GraphQL-nek nem csak előnyei, de hátrányai is vannak. Újabb sémaismétlések kellenek, resolverek miatt bonyolultabb az autorizáció, és megjelenik a jól ismert N+1 Probléma is:
 
 ### N+1 probléma
-Ha csoportokat és azok tesztjeit szeretnénk megkapni, az REST-tel két külön kérés lenne, de GraphQL-lel csak egy. De mi a probléma a GraphQL kéréssel? Az N csoport összesen 1 adatbáziskérés, azonban a resolverek működése szerint azok tesztjeihez minden külön csoportra egyesével fog megtörténni, ami további N adatbáziskérés. Így a válaszidő akár hosszabb is lehet, mint két külön REST kérés (párhuzamosságot figyelembe véve is).
+Ha csoportokat és azok tesztjeit szeretnénk megkapni, az REST-tel két külön kérés lenne, de GraphQL-lel csak egy. De mi a probléma a GraphQL kéréssel? Az N csoport összesen 1 adatbáziskérés, azonban a resolverek működése szerint minden külön csoportra külön fog megtörténni a tesztek kérése, ami további N adatbáziskérés. Így a válaszidő akár hosszabb is lehet, mint két külön REST kérés (párhuzamosságot figyelembe véve is).
 
 ![extensions](imgs/onlab/Dia7.PNG)
 
-Az N+1 problémát a DataLoader nevű osztály segítségével oldottam meg, amely annyit csinál, hogy összevárja a kéréseket egy kötegbe és megfelelő időpontban egyetlen egy adatbáziskérésként hajtja végre azokat. Azonban ez további megkötésekkel jár. Esetünkben a csoport objektumoknak előre ismerniük kell a hozzá tartozó tesztek azonosítóját, az  adatbázisnak képesnek kell lennie kötegelt lekérdezésekre és megfelelő sorrendben kell visszaadni a csoportokat, null értékek nélkül.
+Az N+1 problémát a DataLoader nevű osztály segítségével oldottam meg, amely annyit csinál, hogy összevárja a kéréseket egy kötegbe és megfelelő időpontban egyetlen egy adatbáziskérésként hajtja végre azokat. Azonban ez további megkötésekkel jár. Esetünkben a csoport objektumoknak előre ismerniük kell a hozzá tartozó tesztek azonosítóját, az  adatbázisnak képesnek kell lennie kötegelt lekérdezésekre és megfelelő sorrendben kell visszaadni az eredményt, null értékek nélkül.
 
 ![extensions](imgs/onlab/Dia8.PNG)
 
