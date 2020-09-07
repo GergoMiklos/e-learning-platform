@@ -17,7 +17,6 @@ public @Data class UserDTO implements HasId {
     private List<Long> groupIds;
     private List<Long> managedGroupIds;
     private List<Long> liveTestStateIds;
-    private List<Long> createdTestIds;
     private List<Long> createdTaskIds;
 
 //    private List<GroupDTO> groups;

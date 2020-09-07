@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ee734555-be7c-4878-91dd-4f30e4daf0d1" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/dao/GroupRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/dao/GroupRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/dao/UserRepo.java" beforeDir="false" afterPath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/dao/UserRepo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/graphql/objectresolver/GroupResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/graphql/objectresolver/GroupResolver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/service/GroupService.java" beforeDir="false" afterPath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/service/GroupService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/objectresolver/UserResolver.java" beforeDir="false" afterPath="$PROJECT_DIR$/studyapp/src/main/java/com/thesis/studyapp/objectresolver/UserResolver.java" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,20 +14,14 @@
   </component>
   <component name="ProjectId" id="1b2x4TQ5VyP45OTDLIYONeVNHYe" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/studyapp" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/studyapp" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -57,5 +46,6 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
 </project>

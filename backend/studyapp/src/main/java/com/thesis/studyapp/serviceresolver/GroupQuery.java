@@ -5,22 +5,17 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dao.GroupRepo;
 import com.thesis.studyapp.dao.UserRepo;
 import com.thesis.studyapp.dto.GroupDTO;
-import com.thesis.studyapp.dto.NewsDTO;
 import com.thesis.studyapp.dto.UserDTO;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
-import com.thesis.studyapp.model.News;
 import com.thesis.studyapp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static java.lang.Thread.sleep;
 
 @Component
 public class GroupQuery implements GraphQLQueryResolver, GraphQLMutationResolver {
@@ -106,12 +101,12 @@ public class GroupQuery implements GraphQLQueryResolver, GraphQLMutationResolver
     }
 
     public void deleteUserFromGroup(Long userId, Long groupId) {
-        //TODO EZEKET A DELETE PATCHEKET lehet jobb lenne csak queryben megírni
+        //TODO EZEKET A DELETE PATCHEKET lehet jobb lenne csak queryben megírni? vag get group, delete from list, és save?
         groupRepo.deleteUserFromGroup(userId, groupId);
     }
 
     public void deleteAdminFromGroup(Long userId, Long groupId) {
-        //Todo return boolean
+        //Todo return boolean? NEM, error ha not found
         groupRepo.deleteAdminFromGroup(userId, groupId);
     }
 

@@ -33,6 +33,9 @@ public class Group {
     @Relationship(type = "GROUPLIVETEST", direction = Relationship.OUTGOING)
     private List<LiveTest> liveTests;
 
+    @Relationship(type = "TESTGROUP", direction = Relationship.OUTGOING)
+    private List<Test> tests;
+
     @Relationship(type = "GROUPNEWS", direction = Relationship.OUTGOING)
     private News news;
 

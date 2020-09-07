@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
-import { useQuery } from "@apollo/react-hooks";
+import {useQuery} from "@apollo/react-hooks";
 import AuthenticationService from "../AuthenticationService";
 
 const GROUP = gql`
@@ -49,7 +49,7 @@ class LearnGroupComp extends Component {
             })
             .then(result => {
                 console.log(result);
-                if(!result.data.group) {
+                if (!result.data.group) {
                     console.log("GraphQL query no result");
                 } else {
                     this.setState({group: result.data.group});
@@ -65,10 +65,10 @@ class LearnGroupComp extends Component {
     }
 
     getNewsRefreshTime = (sinceHours) => {
-        if(sinceHours <= 24)
+        if (sinceHours <= 24)
             return `${sinceHours} hours ago`
         else
-            return `${parseInt(sinceHours/24)} days ago`
+            return `${parseInt(sinceHours / 24)} days ago`
     }
 
     leaveGroup = () => {
@@ -91,8 +91,8 @@ class LearnGroupComp extends Component {
     }
 
     render() {
-        if(!this.state.group) {
-            return (<div></div>)
+        if (!this.state.group) {
+            return (<div>Loading...</div>)
         }
         return (
             <div className="container">
@@ -121,7 +121,7 @@ class LearnGroupComp extends Component {
                         {this.getNewsRefreshTime(this.state.group.news.sinceRefreshHours)}
                     </span>
                     <i>{this.state.group.news.text}</i>
-                </div> }
+                </div>}
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-12">Online Tests</h1>
@@ -143,7 +143,7 @@ class LearnGroupComp extends Component {
                         }
                         </tbody>
                     </table>
-                </div> }
+                </div>}
             </div>
         );
     }

@@ -1,8 +1,22 @@
 package com.thesis.studyapp.graphql;
 
 import com.thesis.studyapp.HasId;
-import com.thesis.studyapp.dto.*;
-import com.thesis.studyapp.serviceresolver.*;
+import com.thesis.studyapp.dto.GroupDTO;
+import com.thesis.studyapp.dto.LiveTestDTO;
+import com.thesis.studyapp.dto.LiveTestStateDTO;
+import com.thesis.studyapp.dto.NewsDTO;
+import com.thesis.studyapp.dto.TaskDTO;
+import com.thesis.studyapp.dto.TestDTO;
+import com.thesis.studyapp.dto.TestTaskDTO;
+import com.thesis.studyapp.dto.UserDTO;
+import com.thesis.studyapp.serviceresolver.GroupQuery;
+import com.thesis.studyapp.serviceresolver.LiveTestQuery;
+import com.thesis.studyapp.serviceresolver.LiveTestStateQuery;
+import com.thesis.studyapp.serviceresolver.NewsQuery;
+import com.thesis.studyapp.serviceresolver.TaskQuery;
+import com.thesis.studyapp.serviceresolver.TestQuery;
+import com.thesis.studyapp.serviceresolver.TestTaskQuery;
+import com.thesis.studyapp.serviceresolver.UserQuery;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import org.dataloader.BatchLoader;
@@ -160,9 +174,9 @@ public class DataLoaderConfig {
     private  <T extends HasId> List<T> sortByIds(List<Long> ids, List<T> toSort) {
         List<T> result = new ArrayList<>();
         for(Long id: ids) {
-            for (T t : toSort) {
-                if(t.getId().equals(id)) {
-                    result.add(t);
+            for (T hasId : toSort) {
+                if (hasId.getId().equals(id)) {
+                    result.add(hasId);
                     break;
                 }
             }

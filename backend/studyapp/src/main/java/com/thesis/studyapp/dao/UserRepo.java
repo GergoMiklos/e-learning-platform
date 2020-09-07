@@ -1,11 +1,9 @@
 package com.thesis.studyapp.dao;
 
 import com.thesis.studyapp.dto.UserDTO;
-import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,10 +19,9 @@ public interface UserRepo extends Neo4jRepository<User, Long> {
             " [(u)-[:GROUPUSER]-(gu:Group) | id(gu)] AS groupIds," +
             " [(u)-[:GROUPADMIN]-(ga:Group) | id(ga)] AS managedGroupIds," +
             " [(u)--(lts:LiveTestState) | id(lts)] AS liveTestStateIds," +
-            " [(u)--(t:Task) | id(t) ] AS createdTaskIds," +
-            " [(u)--(t:Test) | id(t) ] AS createdTestIds" +
+            " [(u)--(t:Task) | id(t) ] AS createdTaskIds" +
             " RETURN id(u) AS id, u.name AS name, u.code AS code, groupIds, managedGroupIds," +
-            " createdTaskIds, createdTestIds, liveTestStateIds")
+            " createdTaskIds, liveTestStateIds")
     List<UserDTO> getByManyIds(List<Long> ids);
 
     @Query("MATCH (u:User) WHERE id(u) = $0" +
@@ -32,10 +29,9 @@ public interface UserRepo extends Neo4jRepository<User, Long> {
             " [(u)-[:GROUPUSER]-(gu:Group) | id(gu)] AS groupIds," +
             " [(u)-[:GROUPADMIN]-(ga:Group) | id(ga)] AS managedGroupIds," +
             " [(u)--(lts:LiveTestState) | id(lts)] AS liveTestStateIds," +
-            " [(u)--(t:Task) | id(t) ] AS createdTaskIds," +
-            " [(u)--(t:Test) | id(t) ] AS createdTestIds" +
+            " [(u)--(t:Task) | id(t) ] AS createdTaskIds" +
             " RETURN id(u) AS id, u.name AS name, u.code AS code, groupIds, managedGroupIds," +
-            " createdTaskIds, createdTestIds, liveTestStateIds")
+            " createdTaskIds, liveTestStateIds")
     Optional<UserDTO> getById(Long id);
 
     @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group)" +
@@ -44,10 +40,9 @@ public interface UserRepo extends Neo4jRepository<User, Long> {
             " [(u)-[:GROUPUSER]-(gu:Group) | id(gu)] AS groupIds," +
             " [(u)-[:GROUPADMIN]-(ga:Group) | id(ga)] AS managedGroupIds," +
             " [(u)--(lts:LiveTestState) | id(lts)] AS liveTestStateIds," +
-            " [(u)--(t:Task) | id(t) ] AS createdTaskIds," +
-            " [(u)--(t:Test) | id(t) ] AS createdTestIds" +
+            " [(u)--(t:Task) | id(t) ] AS createdTaskIds" +
             " RETURN id(u) AS id, u.name AS name, u.code AS code, groupIds, managedGroupIds," +
-            " createdTaskIds, createdTestIds, liveTestStateIds")
+            " createdTaskIds, liveTestStateIds")
     List<UserDTO> getByGroupId(Long groupId);
 
     @Query("MATCH (u:User)-[:GROUPUSER]-(g:Group)" +

@@ -3,7 +3,6 @@ package com.thesis.studyapp.objectresolver;
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.dto.TaskDTO;
-import com.thesis.studyapp.dto.TestDTO;
 import com.thesis.studyapp.dto.UserDTO;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
@@ -22,8 +21,6 @@ public class UserResolver implements GraphQLResolver<UserDTO> {
     public CompletableFuture<List<GroupDTO>> groups(UserDTO userDTO) {
         if(userDTO.getGroupIds() != null) {
             DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
-            //TODO hol sortoljunk? Itt ez jól működik, de livetest-nél (IS!) és liveteststate-nél? (OTT NEM!)
-            //todo liveteststate-nél nincs is dataloaderezés, ott mehet db végén order by-al!
             return grouploader.loadMany(userDTO.getGroupIds()).whenCompleteAsync((groups, e) -> groups.sort(new GroupComparator()));
         } else {
             return null;
@@ -52,12 +49,4 @@ public class UserResolver implements GraphQLResolver<UserDTO> {
         return null;
     }
 
-    public CompletableFuture<List<TestDTO>> createdTests(UserDTO userDTO) {
-        if(userDTO.getCreatedTestIds() != null) {
-            DataLoader<Long, TestDTO> testloader = dataLoaderRegistry.getDataLoader("testloader");
-            return testloader.loadMany(userDTO.getCreatedTestIds());
-        } else {
-            return null;
-        }
-    }
 }

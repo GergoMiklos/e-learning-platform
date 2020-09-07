@@ -2,10 +2,8 @@ package com.thesis.studyapp.dao;
 
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.model.Group;
-import org.springframework.data.neo4j.annotation.Depth;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,9 +20,10 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
             "head([(g)--(n:News) | id(n)]) AS newsId, " +
-            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestId " +
+            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds, " +
+            "[(g)-[:TESTGROUP]-(t:Test) | id(t)] AS testIds " +
             "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
-            "newsId, userIds, adminIds, liveTestIds")
+            "newsId, userIds, adminIds, liveTestIds, testIds")
     List<GroupDTO> getByUserId(Long userId);
 
     @Query("MATCH (u:User)-[:GROUPADMIN]-(g:Group) WHERE id(u) = $0 " +
@@ -32,9 +31,10 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
             "head([(g)--(n:News) | id(n)]) AS newsId, " +
-            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
+            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds, " +
+            "[(g)-[:TESTGROUP]-(t:Test) | id(t)] AS testIds " +
             "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
-            "newsId, userIds, adminId, liveTestIds")
+            "newsId, userIds, adminIds, liveTestIds, testIds")
     List<GroupDTO> getByAdminId(Long userId);
 
     @Query("MATCH (g:Group) WHERE id(g) = $0 " +
@@ -42,9 +42,10 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
             "head([(g)--(n:News) | id(n)]) AS newsId, " +
-            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
+            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds, " +
+            "[(g)-[:TESTGROUP]-(t:Test) | id(t)] AS testIds " +
             "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
-            "newsId, userIds, adminIds, liveTestIds")
+            "newsId, userIds, adminIds, liveTestIds, testIds")
     Optional<GroupDTO> getById(Long groupId);
 
     @Query("MATCH (g:Group) WHERE id(g) IN $0 " +
@@ -52,9 +53,10 @@ public interface GroupRepo extends Neo4jRepository<Group, Long> {
             "[(g)-[:GROUPUSER]-(us:User) | id(us)] AS userIds, " +
             "[(g)-[:GROUPADMIN]-(ad:User) | id(ad)] AS adminIds, " +
             "head([(g)--(n:News) | id(n)]) AS newsId, " +
-            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds " +
+            "[(g)-[:GROUPLIVETEST]-(lt:LiveTest) | id(lt)] AS liveTestIds, " +
+            "[(g)-[:TESTGROUP]-(t:Test) | id(t)] AS testIds " +
             "RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, " +
-            "newsId, userIds, adminIds, liveTestIds")
+            "newsId, userIds, adminIds, liveTestIds, testIds")
     List<GroupDTO> getByManyIds(List<Long> groupIds);
 
     @Query("MATCH (u:User)-[gu:GROUPUSER]-(g:Group)" +

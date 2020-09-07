@@ -37,10 +37,6 @@ public class User {
     private List<Task> createdTasks;
 
     @JsonIgnore
-    @Relationship(type = "TESTOWNER", direction = Relationship.INCOMING)
-    private List<Test> createdTests;
-
-    @JsonIgnore
     @Relationship(type = "USERSTATE", direction = Relationship.INCOMING)
     private List<LiveTestState> liveTestStates;
 
@@ -70,13 +66,6 @@ public class User {
             createdTasks = new ArrayList<>();
         }
         createdTasks.add(task);
-    }
-
-    public void addCreatedTest(Test test) {
-        if (createdTests == null) {
-            createdTests = new ArrayList<>();
-        }
-        createdTests.add(test);
     }
 
 

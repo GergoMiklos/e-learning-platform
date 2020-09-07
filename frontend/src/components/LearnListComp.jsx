@@ -107,7 +107,7 @@ class LearnListComp extends Component {
 
     render() {
         if(!this.state.user) {
-            return (<div></div>)
+            return (<div>Loading...</div>)
         }
         return (
             <div className="container">

@@ -2,11 +2,8 @@ package com.thesis.studyapp.dto;
 
 import com.thesis.studyapp.HasId;
 import lombok.Data;
-import org.neo4j.ogm.annotation.PostLoad;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @QueryResult
@@ -20,6 +17,7 @@ public @Data class GroupDTO implements HasId {
 
     private List<Long> userIds;
     private List<Long> adminIds;
+    private List<Long> testIds;
     private List<Long> liveTestIds;
     private Long newsId;
 

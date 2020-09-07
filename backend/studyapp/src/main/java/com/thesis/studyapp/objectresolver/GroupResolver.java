@@ -1,14 +1,12 @@
 package com.thesis.studyapp.objectresolver;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.dao.UserRepo;
 import com.thesis.studyapp.dto.GroupDTO;
 import com.thesis.studyapp.dto.LiveTestDTO;
 import com.thesis.studyapp.dto.NewsDTO;
+import com.thesis.studyapp.dto.TestDTO;
 import com.thesis.studyapp.dto.UserDTO;
 import com.thesis.studyapp.serviceresolver.UserQuery;
-import graphql.execution.batched.Batched;
-import org.dataloader.BatchLoader;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 @Component
 public class GroupResolver implements GraphQLResolver<GroupDTO> {
@@ -56,9 +53,18 @@ public class GroupResolver implements GraphQLResolver<GroupDTO> {
     }
 
     public CompletableFuture<List<LiveTestDTO>> liveTests(GroupDTO groupDTO) {
-        if(groupDTO.getLiveTestIds() != null) {
+        if (groupDTO.getLiveTestIds() != null) {
             DataLoader<Long, LiveTestDTO> livetestloader = dataLoaderRegistry.getDataLoader("livetestloader");
             return livetestloader.loadMany(groupDTO.getLiveTestIds());
+        } else {
+            return null;
+        }
+    }
+
+    public CompletableFuture<List<TestDTO>> tests(GroupDTO groupDTO) {
+        if (groupDTO.getLiveTestIds() != null) {
+            DataLoader<Long, TestDTO> loader = dataLoaderRegistry.getDataLoader("testloader");
+            return loader.loadMany(groupDTO.getTestIds());
         } else {
             return null;
         }

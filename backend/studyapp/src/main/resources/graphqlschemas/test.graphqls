@@ -25,9 +25,9 @@ extend type Query {
 }
 
 extend type Mutation {
-    createTest(userId: ID!, name: String!, description: String!): Test
+    createTest(groupId: ID!, name: String!, description: String!): Test
     editTest(id: ID!, name: String!, description: String!): Test
     addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask
     deleteTaskFromTest(testTaskId: ID!): Boolean
-    changeTaskLevel(testTaskId: ID!, newLevel: Int): TestTask
+    editTaskLevel(testTaskId: ID!, level: Int): TestTask
 }
