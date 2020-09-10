@@ -27,12 +27,12 @@ class AppComp extends Component {
                     <Route path="/learn/group/:groupid" component={LearnGroupComp}/>
                     <Route path="/teach" exact component={TeachListComp}/>
                     <Route path="/teach/group/new" component={NewGroupComp}/>
-                    <Route path="/teach/group/:groupid/test/new" component={NewLiveTestComp}/>
+                    <Route path="/teach/group/:groupid/livetest/new" component={NewLiveTestComp}/>
+                    <Route path="/teach/group/:groupid/test/new" component={NewTestComp}/>
+                    <Route path="/teach/group/:groupid/test/:testid/edit" component={EditTestComp}/>
                     <Route path="/teach/group/:groupid/test/:testid" component={TeachLiveTestComp}/>
                     <Route path="/teach/group/:groupid/edit" component={EditGroupComp}/>
                     <Route path="/teach/group/:groupid" component={TeachGroupComp}/>
-                    <Route path="/teach/test/new" component={NewTestComp}/>
-                    <Route path="/teach/test/:testid/edit" component={EditTestComp}/>
                     <Route path="/teach/test/:testid/tasks/new" component={NewTaskComp}/>
                     <Route path="/teach/test/:testid/tasks" component={TaskListComp}/>
                     <Route path="/group/test/:id" component={NewGroupComp}/>

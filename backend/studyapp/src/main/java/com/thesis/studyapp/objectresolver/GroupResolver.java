@@ -1,73 +1,40 @@
 package com.thesis.studyapp.objectresolver;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.dto.GroupDTO;
-import com.thesis.studyapp.dto.LiveTestDTO;
-import com.thesis.studyapp.dto.NewsDTO;
-import com.thesis.studyapp.dto.TestDTO;
-import com.thesis.studyapp.dto.UserDTO;
-import com.thesis.studyapp.serviceresolver.UserQuery;
-import org.dataloader.DataLoader;
-import org.dataloader.DataLoaderRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.thesis.studyapp.dto.GroupDto;
+import com.thesis.studyapp.dto.TestDto;
+import com.thesis.studyapp.dto.UserDto;
+import com.thesis.studyapp.repository.TestRepository;
+import com.thesis.studyapp.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class GroupResolver implements GraphQLResolver<GroupDTO> {
-    @Autowired
-    DataLoaderRegistry dataLoaderRegistry;
+@RequiredArgsConstructor
+public class GroupResolver implements GraphQLResolver<GroupDto> {
 
-    @Autowired
-    UserQuery userQuery;
+    private final UserRepository userRepository;
+    private final TestRepository testRepository;
 
-
-    public CompletableFuture<List<UserDTO>> users(GroupDTO groupDTO) {
-//        if(groupDTO.getUserIds() != null) {
-//            DataLoader<Long, UserDTO> userloader = dataLoaderRegistry.getDataLoader("userloader");
-//            return userloader.loadMany(groupDTO.getUserIds());
-//        } else {
-//            return null;
-//        }
-        return CompletableFuture.supplyAsync(() -> userQuery.getByGroupId(groupDTO.getId()));
+    public CompletableFuture<List<UserDto>> students(GroupDto groupDTO) {
+        return CompletableFuture.supplyAsync(() -> userRepository.getStudentByGroupId(groupDTO.getId()));
+        //TODO melyik?
+        //return CompletableFuture.completedFuture(userRepository.getStudentByGroupId(groupDTO.getId()));
     }
 
-    public CompletableFuture<List<UserDTO>> admins(GroupDTO groupDTO) {
-        if(groupDTO.getAdminIds() != null) {
-            DataLoader<Long, UserDTO> userloader = dataLoaderRegistry.getDataLoader("userloader");
-            return userloader.loadMany(groupDTO.getAdminIds());
-        } else {
-            return null;
-        }
+    public CompletableFuture<List<UserDto>> teachers(GroupDto groupDTO) {
+        return CompletableFuture.supplyAsync(() -> userRepository.getTeacherByGroupId(groupDTO.getId()));
     }
 
-    public CompletableFuture<NewsDTO> news(GroupDTO groupDTO) {
-        if(groupDTO.getNewsId() != null) {
-            DataLoader<Long, NewsDTO> newsloader = dataLoaderRegistry.getDataLoader("newsloader");
-            return newsloader.load(groupDTO.getNewsId());
-        } else {
-            return null;
-        }
+    public CompletableFuture<List<TestDto>> tests(GroupDto groupDTO) {
+        return CompletableFuture.supplyAsync(() -> testRepository.getByGroupId(groupDTO.getId()));
     }
 
-    public CompletableFuture<List<LiveTestDTO>> liveTests(GroupDTO groupDTO) {
-        if (groupDTO.getLiveTestIds() != null) {
-            DataLoader<Long, LiveTestDTO> livetestloader = dataLoaderRegistry.getDataLoader("livetestloader");
-            return livetestloader.loadMany(groupDTO.getLiveTestIds());
-        } else {
-            return null;
-        }
-    }
-
-    public CompletableFuture<List<TestDTO>> tests(GroupDTO groupDTO) {
-        if (groupDTO.getLiveTestIds() != null) {
-            DataLoader<Long, TestDTO> loader = dataLoaderRegistry.getDataLoader("testloader");
-            return loader.loadMany(groupDTO.getTestIds());
-        } else {
-            return null;
-        }
+    public String newsChangedDate(GroupDto groupDTO) {
+        return groupDTO.getNewsChangedDate().toString();
     }
 
 }

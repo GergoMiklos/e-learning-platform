@@ -5,8 +5,8 @@ import AuthenticationService from "../AuthenticationService";
 import client from "../ApolloClient";
 
 const CREATETEST = gql`
-    mutation CreateTest($userId: ID!, $name: String!, $description: String!) {
-        createTest(userId: $userId, name: $name, description: $description) {
+    mutation CreateTest($groupId: ID!, $name: String!, $description: String!) {
+        createTest(groupId: $groupId, name: $name, description: $description) {
             id
             name
             description
@@ -39,11 +39,11 @@ class NewTestComp extends Component {
         let userId = AuthenticationService.getUserId();
         client.mutate({
             mutation: CREATETEST,
-            variables: {name: values.name, description: values.description, userId: userId}
+            variables: {name: values.name, description: values.description, groupId: this.props.match.params.groupid}
         })
             .then(result => {
                 console.log(result);
-                this.props.history.push(`/teach`);
+                this.goBack();
             })
             .catch(errors => {
                 console.log(errors);
@@ -52,7 +52,7 @@ class NewTestComp extends Component {
     }
 
     goBack = () => {
-        this.props.history.push(`/teach`)
+        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`)
     }
 
     render() {

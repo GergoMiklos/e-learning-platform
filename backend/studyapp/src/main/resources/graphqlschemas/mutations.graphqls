@@ -1,0 +1,16 @@
+type Mutation {
+    createGroup(userId: ID!, name: String!, description: String!): Group
+    editGroup(id: ID!, name: String!, description: String!): Group
+    changeGroupNews(groupId: ID!, text: String!): Group
+    addStudentFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addTeacherFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addStudentToGroupFromCode(userId: ID!, groupCode: String!): Group
+    deleteTeacherFromGroup(userId: ID!, groupId: ID!): Boolean
+    deleteStudentFromGroup(userId: ID!, groupId: ID!): Boolean
+
+    createTest(groupId: ID!, name: String!, description: String!): Test
+    editTest(id: ID!, name: String!, description: String!): Test
+    addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask
+    deleteTaskFromTest(testTaskId: ID!): Boolean
+    editTaskLevel(testTaskId: ID!, level: Int): TestTask
+}

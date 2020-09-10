@@ -1,0 +1,52 @@
+type User {
+    id: ID!
+    code: String!
+    name: String!
+    studentGroups: [Group]
+    teacherGroups: [Group]
+    followedStudents: [User]
+    userTestStatuses: [UserTestStatuses]
+}
+
+type Group {
+    id: ID!
+    code: String!
+    name: String!
+    description: String
+    news: String
+    newsChangedDate: String
+    students: [User]
+    teachers: [User]
+    tests: [Test]
+}
+
+
+type Test {
+    id: ID!
+    name: String!
+    description: String
+    tasks: [TestTask]
+    userTestStatuses: [UserTestStatuses]
+}
+
+type UserTestStatuses {
+    id: ID!
+    test: Test!
+    user: User!
+    currentTask: Task
+    status: String!
+    statusChangedTime: String
+}
+
+type Task {
+    id: ID!
+    question: String!
+    answers: [String]!
+    solution: Int!
+}
+
+type TestTask {
+    id: ID!
+    level: Int!
+    task: Task!
+}

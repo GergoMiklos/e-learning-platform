@@ -1,13 +1,13 @@
 package com.thesis.studyapp.dto;
 
-import com.thesis.studyapp.HasId;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.List;
 
 @QueryResult
-public @Data class TaskDTO implements HasId {
+@Data
+public class TaskDto implements HasId {
 
     private Long id;
 

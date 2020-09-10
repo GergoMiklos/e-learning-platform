@@ -1,9 +1,11 @@
 package com.thesis.studyapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -13,7 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NodeEntity
-@Getter @Setter @NoArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue
@@ -25,40 +30,45 @@ public class User {
     private String password;
 
     @JsonIgnore
-    @Relationship(type = "GROUPUSER", direction = Relationship.OUTGOING)
-    private List<Group> groups;
-
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "GROUPSTUDENT", direction = Relationship.OUTGOING)
+    private List<Group> studentGroups;
     @JsonIgnore
-    @Relationship(type = "GROUPADMIN", direction = Relationship.OUTGOING)
-    private List<Group> managedGroups;
-
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "GROUPTEACHER", direction = Relationship.OUTGOING)
+    private List<Group> teacherGroups;
     @JsonIgnore
+    @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKOWNER", direction = Relationship.INCOMING)
     private List<Task> createdTasks;
-
     @JsonIgnore
-    @Relationship(type = "USERSTATE", direction = Relationship.INCOMING)
-    private List<LiveTestState> liveTestStates;
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "USERSTATUS", direction = Relationship.INCOMING)
+    private List<UserTestStatus> userTestStatuses;
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "STUDENTPARENT", direction = Relationship.OUTGOING)
+    private List<User> followedStudents;
 
     public void addGroup(Group group) {
-        if (groups == null) {
-            groups = new ArrayList<>();
+        if (studentGroups == null) {
+            studentGroups = new ArrayList<>();
         }
-        groups.add(group);
+        studentGroups.add(group);
     }
 
     public void addManagedGroup(Group group) {
-        if (managedGroups == null) {
-            managedGroups = new ArrayList<>();
+        if (teacherGroups == null) {
+            teacherGroups = new ArrayList<>();
         }
-        managedGroups.add(group);
+        teacherGroups.add(group);
     }
 
-    public void addLiveTestState(LiveTestState liveTestState) {
-        if (liveTestStates == null) {
-            liveTestStates = new ArrayList<>();
+    public void addLiveTestState(UserTestStatus userTestStatus) {
+        if (userTestStatuses == null) {
+            userTestStatuses = new ArrayList<>();
         }
-        liveTestStates.add(liveTestState);
+        userTestStatuses.add(userTestStatus);
     }
 
     public void addCreatedTask(Task task) {

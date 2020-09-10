@@ -89,7 +89,7 @@ class EditTestComp extends Component {
     }
 
     navigateBack = () => {
-        this.props.history.push(`/teach`);
+        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`)
     }
 
     taskClicked = (id) => {;

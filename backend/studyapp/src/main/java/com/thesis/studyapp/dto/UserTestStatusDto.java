@@ -1,17 +1,18 @@
 package com.thesis.studyapp.dto;
 
-import com.thesis.studyapp.HasId;
+import com.thesis.studyapp.model.UserTestStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.Date;
-import java.util.List;
 
 @QueryResult
-@Getter @Setter @NoArgsConstructor
-public class LiveTestStateDTO implements HasId {
+@Getter
+@Setter
+@NoArgsConstructor
+public class UserTestStatusDto implements HasId {
 
     private Long id;
 
@@ -21,8 +22,8 @@ public class LiveTestStateDTO implements HasId {
 //    private int correctsInRow;
 //    private int failsInRow;
 
-    private Date timeStartedTest;
-    private Date timeStateChanged;
+    private UserTestStatus.Status status;
+    private Date statusChangedTime;
 
 //    List<Long> completedTaskIds;
 //    List<Long> failedTaskIds;
@@ -31,11 +32,7 @@ public class LiveTestStateDTO implements HasId {
     private Long userId;
     private Long testId;
 
-//    public enum State {
-//        NOT_STARTED, IN_PROGRESS, INACTIVE, PROBLEM, FINISHED
-//    }
-
-//    private TaskDTO currentTask;
-//    private UserDTO user;
-//    private TestDTO test;
+//    private TaskDto currentTask;
+//    private UserDto user;
+//    private TestDto test;
 }

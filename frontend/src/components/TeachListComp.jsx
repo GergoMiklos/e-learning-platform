@@ -11,10 +11,6 @@ const USERTEACH = gql`
                 id
                 name
             }
-            createdTests {
-                id
-                name
-            }
         }
     }`;
 
@@ -30,16 +26,8 @@ class TeachListComp extends Component {
         this.props.history.push(`/teach/group/new`)
     }
 
-    newTest = () => {
-        this.props.history.push(`/teach/test/new`)
-    }
-
     groupClicked = (id) => {
         this.props.history.push(`/teach/group/${id}`)
-    }
-
-    testClicked = (id) => {
-        this.props.history.push(`/teach/test/${id}/edit`)
     }
 
     componentDidMount() {
@@ -99,30 +87,6 @@ class TeachListComp extends Component {
                     </table>
                 </div> }
 
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">My Tests</h1>
-                    <button className="col-2 btn btn-primary" onClick={() => this.newTest()}>
-                        New
-                    </button>
-                </div>
-
-                {this.state.user.createdTests &&
-                <div className="row my-3">
-                    <table className="col-12 table table-striped table-hover rounded shadow">
-                        <tbody>
-                        {
-                            this.state.user.createdTests.map(
-                                test =>
-                                    <tr key={test.id} onClick={() => this.testClicked(test.id)}>
-                                        <td>
-                                            <strong>{test.name}</strong>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
-                </div> }
             </div>
         );
     }

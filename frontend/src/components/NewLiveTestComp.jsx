@@ -3,15 +3,15 @@ import gql from "graphql-tag";
 import AuthenticationService from "../AuthenticationService";
 import client from "../ApolloClient";
 
-const TESTS = gql`
-    query User($id: ID!) {
-        user(id: $id) {
-            createdTests {
+const GETTESTS = gql`
+    query Group($id: ID!) {
+        group(id: $id) {
+            tests {
                 id
                 name
             }
         }
-}`;
+    }`;
 
 const ADDTEST = gql`
     mutation createLiveTest($groupId: ID!, $testId: ID!) {
@@ -60,15 +60,16 @@ class NewLiveTestComp extends Component {
         let userId = AuthenticationService.getUserId();
         client
             .query({
-                query: TESTS,
+                query: GETTESTS,
                 variables: {id: userId}
             })
             .then(result => {
-                console.log(result);
-                if(!result.data.user) {
-                    console.log("GraphQL query no result");
-                } else if(result.data.user.createdTests) {
-                    this.setState({tests: result.data.user.createdTests});
+                console.log(result.data);
+                //TODO ezek a fölsölegesek, minden kiírás, html legyen elöl
+                // if(!result.data.user) {
+                //     console.log("GraphQL query no result");
+                if(result.data.group && result.data.group.tests) {
+                    this.setState({tests: result.data.group.tests});
                 }
             })
             .catch(errors => {

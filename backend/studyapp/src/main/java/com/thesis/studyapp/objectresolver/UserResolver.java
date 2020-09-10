@@ -1,51 +1,45 @@
 package com.thesis.studyapp.objectresolver;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.dto.GroupDTO;
-import com.thesis.studyapp.dto.TaskDTO;
-import com.thesis.studyapp.dto.UserDTO;
-import org.dataloader.DataLoader;
-import org.dataloader.DataLoaderRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.thesis.studyapp.dto.GroupDto;
+import com.thesis.studyapp.dto.TaskDto;
+import com.thesis.studyapp.dto.UserDto;
+import com.thesis.studyapp.dto.UserTestStatusDto;
+import com.thesis.studyapp.repository.GroupRepository;
+import com.thesis.studyapp.repository.UserRepository;
+import com.thesis.studyapp.repository.UserTestStatusRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
-public class UserResolver implements GraphQLResolver<UserDTO> {
-    @Autowired
-    DataLoaderRegistry dataLoaderRegistry;
+@RequiredArgsConstructor
+public class UserResolver implements GraphQLResolver<UserDto> {
 
-    public CompletableFuture<List<GroupDTO>> groups(UserDTO userDTO) {
-        if(userDTO.getGroupIds() != null) {
-            DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
-            return grouploader.loadMany(userDTO.getGroupIds()).whenCompleteAsync((groups, e) -> groups.sort(new GroupComparator()));
-        } else {
-            return null;
-        }
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+    private final UserTestStatusRepository userTestStatusRepository;
+
+    public CompletableFuture<List<GroupDto>> studentGroups(UserDto userDTO) {
+        return CompletableFuture.supplyAsync(() -> groupRepository.getByStudentId(userDTO.getId()));
     }
 
-    private class GroupComparator implements Comparator<GroupDTO> {
-
-        @Override
-        public int compare(GroupDTO g1, GroupDTO g2) {
-            return g1.getName().compareTo(g2.getName());
-        }
+    public CompletableFuture<List<GroupDto>> teacherGroups(UserDto userDTO) {
+        return CompletableFuture.supplyAsync(() -> groupRepository.getByTeacherId(userDTO.getId()));
     }
 
-    public CompletableFuture<List<GroupDTO>> managedGroups(UserDTO userDTO) {
-        if(userDTO.getManagedGroupIds() != null) {
-            DataLoader<Long, GroupDTO> grouploader = dataLoaderRegistry.getDataLoader("grouploader");
-            return grouploader.loadMany(userDTO.getManagedGroupIds());
-        } else {
-            return null;
-        }
+    public CompletableFuture<List<UserDto>> followedStudents(UserDto userDTO) {
+        return CompletableFuture.supplyAsync(() -> userRepository.getFollowedStudents(userDTO.getId()));
     }
 
-    public CompletableFuture<List<TaskDTO>> createdTasks(UserDTO userDTO) {
-        //Todo loader / külön / ne is legyen?
+    public CompletableFuture<List<UserTestStatusDto>> userTestStatuses(UserDto userDTO) {
+        return CompletableFuture.supplyAsync(() -> userTestStatusRepository.getByTestId(userDTO.getId()));
+    }
+
+    public CompletableFuture<List<TaskDto>> createdTasks(UserDto userDTO) {
+        //Todo loader / külön / ne is legyen? MOST ÉPP NE!
         return null;
     }
 

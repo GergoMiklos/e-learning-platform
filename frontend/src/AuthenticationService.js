@@ -2,7 +2,7 @@
 
 class AuthenticationService {
     getUserId = () => {
-        return 57;
+        return 88;
     }
 }
 

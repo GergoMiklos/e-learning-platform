@@ -1,29 +1,25 @@
 package com.thesis.studyapp.graphql;
 
-import com.thesis.studyapp.HasId;
-import com.thesis.studyapp.dto.GroupDTO;
-import com.thesis.studyapp.dto.LiveTestDTO;
-import com.thesis.studyapp.dto.LiveTestStateDTO;
-import com.thesis.studyapp.dto.NewsDTO;
-import com.thesis.studyapp.dto.TaskDTO;
-import com.thesis.studyapp.dto.TestDTO;
-import com.thesis.studyapp.dto.TestTaskDTO;
-import com.thesis.studyapp.dto.UserDTO;
-import com.thesis.studyapp.serviceresolver.GroupQuery;
-import com.thesis.studyapp.serviceresolver.LiveTestQuery;
-import com.thesis.studyapp.serviceresolver.LiveTestStateQuery;
-import com.thesis.studyapp.serviceresolver.NewsQuery;
-import com.thesis.studyapp.serviceresolver.TaskQuery;
-import com.thesis.studyapp.serviceresolver.TestQuery;
-import com.thesis.studyapp.serviceresolver.TestTaskQuery;
-import com.thesis.studyapp.serviceresolver.UserQuery;
+import com.thesis.studyapp.dto.GroupDto;
+import com.thesis.studyapp.dto.HasId;
+import com.thesis.studyapp.dto.TaskDto;
+import com.thesis.studyapp.dto.TestDto;
+import com.thesis.studyapp.dto.TestTaskDto;
+import com.thesis.studyapp.dto.UserDto;
+import com.thesis.studyapp.dto.UserTestStatusDto;
+import com.thesis.studyapp.serviceresolver.GroupEndpoint;
+import com.thesis.studyapp.serviceresolver.TaskEndpoint;
+import com.thesis.studyapp.serviceresolver.TestEndpoint;
+import com.thesis.studyapp.serviceresolver.TestTaskEndpoint;
+import com.thesis.studyapp.serviceresolver.UserEndpoint;
+import com.thesis.studyapp.serviceresolver.UserTestStatusEndpoint;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
+import lombok.RequiredArgsConstructor;
 import org.dataloader.BatchLoader;
 import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderOptions;
 import org.dataloader.DataLoaderRegistry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,46 +29,34 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 @Configuration
+@RequiredArgsConstructor
 public class DataLoaderConfig {
-    //Todo batchService/Repo?
-    //Todo vagy rakjuk a ..loader függvényeket querybe?
-    @Autowired
-    UserQuery userQuery;
-    @Autowired
-    NewsQuery newsQuery;
-    @Autowired
-    TestQuery testQuery;
-    @Autowired
-    LiveTestQuery liveTestQuery;
-    @Autowired
-    GroupQuery groupQuery;
-    @Autowired
-    TaskQuery taskQuery;
-    @Autowired
-    TestTaskQuery testTaskQuery;
-    @Autowired
-    LiveTestStateQuery liveTestStateQuery;
+
+    private final UserEndpoint userEndpoint;
+    private final TestEndpoint testEndpoint;
+    private final GroupEndpoint groupEndpoint;
+    private final TaskEndpoint taskEndpoint;
+    private final TestTaskEndpoint testTaskEndpoint;
+    private final UserTestStatusEndpoint userTestStatusEndpoint;
 
     @Bean
     public DataLoaderRegistry dataLoaderRegistry() {
         DataLoaderRegistry dataLoaderRegistry = new DataLoaderRegistry();
         return dataLoaderRegistry
-                .register("userloader", userLoader())
-                .register("newsloader", newsLoader())
-                .register("grouploader", groupLoader())
-                .register("testloader", testLoader())
-                .register("taskloader", taskLoader())
-                .register("testtaskloader", testTaskLoader())
-                .register("liveteststateloader", liveTestStateLoader())
-                .register("livetestloader", liveTestLoader());
+                .register("userLoader", userLoader())
+                .register("groupLoader", groupLoader())
+                .register("testLoader", testLoader())
+                .register("taskLoader", taskLoader())
+                .register("testTaskLoader", testTaskLoader())
+                .register("userTestSateLoader", userTestStateLoader());
     }
 
-    private DataLoader<Long, UserDTO> userLoader() {
-        BatchLoader<Long, UserDTO> userBatchLoader = new BatchLoader<Long, UserDTO>() {
+    private DataLoader<Long, UserDto> userLoader() {
+        BatchLoader<Long, UserDto> userBatchLoader = new BatchLoader<Long, UserDto>() {
             @Override
-            public CompletionStage<List<UserDTO>> load(List<Long> userIds) {
+            public CompletionStage<List<UserDto>> load(List<Long> userIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<UserDTO> users = userQuery.getManyByIds(userIds);
+                    List<UserDto> users = userEndpoint.getUsersByIds(userIds);
                     return sortByIds(userIds, users);
                 });
             }
@@ -80,51 +64,25 @@ public class DataLoaderConfig {
         return DataLoader.newDataLoader(userBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, NewsDTO> newsLoader() {
-        BatchLoader<Long, NewsDTO> newsBatchLoader = new BatchLoader<Long, NewsDTO>() {
+    private DataLoader<Long, TestDto> testLoader() {
+        BatchLoader<Long, TestDto> testBatchLoader = new BatchLoader<Long, TestDto>() {
             @Override
-            public CompletionStage<List<NewsDTO>> load(List<Long> newsIds) {
+            public CompletionStage<List<TestDto>> load(List<Long> testIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<NewsDTO> news = newsQuery.getByManyNewsIds(newsIds);
-                    return sortByIds(newsIds, news);
-                });
-            }
-        };
-        return DataLoader.newDataLoader(newsBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
-    }
-
-    private DataLoader<Long, TestDTO> testLoader() {
-        BatchLoader<Long, TestDTO> testBatchLoader = new BatchLoader<Long, TestDTO>() {
-            @Override
-            public CompletionStage<List<TestDTO>> load(List<Long> testIds) {
-                return CompletableFuture.supplyAsync(() -> {
-                    List<TestDTO> tests = testQuery.getByManyTestIds(testIds);
-                    return  sortByIds(testIds, tests);
+                    List<TestDto> tests = testEndpoint.getTestsByIds(testIds);
+                    return sortByIds(testIds, tests);
                 });
             }
         };
         return DataLoader.newDataLoader(testBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, LiveTestDTO> liveTestLoader() {
-        BatchLoader<Long, LiveTestDTO> liveTestBatchLoader = new BatchLoader<Long, LiveTestDTO>() {
+    private DataLoader<Long, GroupDto> groupLoader() {
+        BatchLoader<Long, GroupDto> groupBatchLoader = new BatchLoader<Long, GroupDto>() {
             @Override
-            public CompletionStage<List<LiveTestDTO>> load(List<Long> liveTestIds) {
+            public CompletionStage<List<GroupDto>> load(List<Long> groupIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<LiveTestDTO> liveTests = liveTestQuery.getByManyLiveTestIds(liveTestIds);
-                    return sortByIds(liveTestIds, liveTests);
-                });
-            }
-        };
-        return DataLoader.newDataLoader(liveTestBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
-    }
-
-    private DataLoader<Long, GroupDTO> groupLoader() {
-        BatchLoader<Long, GroupDTO> groupBatchLoader = new BatchLoader<Long, GroupDTO>() {
-            @Override
-            public CompletionStage<List<GroupDTO>> load(List<Long> groupIds) {
-                return CompletableFuture.supplyAsync(() -> {
-                    List<GroupDTO> groups = groupQuery.getByManyGroupIds(groupIds);
+                    List<GroupDto> groups = groupEndpoint.getGroupsByIds(groupIds);
                     return sortByIds(groupIds, groups);
                 });
             }
@@ -132,25 +90,25 @@ public class DataLoaderConfig {
         return DataLoader.newDataLoader(groupBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, LiveTestStateDTO> liveTestStateLoader() {
-        BatchLoader<Long, LiveTestStateDTO> liveTestStateBatchLoader = new BatchLoader<Long, LiveTestStateDTO>() {
+    private DataLoader<Long, UserTestStatusDto> userTestStateLoader() {
+        BatchLoader<Long, UserTestStatusDto> batchLoader = new BatchLoader<Long, UserTestStatusDto>() {
             @Override
-            public CompletionStage<List<LiveTestStateDTO>> load(List<Long> liveTestStateIds) {
+            public CompletionStage<List<UserTestStatusDto>> load(List<Long> userTestStatusIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<LiveTestStateDTO> liveTestStates = liveTestStateQuery.getByManyIds(liveTestStateIds);
-                    return sortByIds(liveTestStateIds, liveTestStates);
+                    List<UserTestStatusDto> userTestStatuses = userTestStatusEndpoint.getUserTestStatusesByIds(userTestStatusIds);
+                    return sortByIds(userTestStatusIds, userTestStatuses);
                 });
             }
         };
-        return DataLoader.newDataLoader(liveTestStateBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, TaskDTO> taskLoader() {
-        BatchLoader<Long, TaskDTO> taskBatchLoader = new BatchLoader<Long, TaskDTO>() {
+    private DataLoader<Long, TaskDto> taskLoader() {
+        BatchLoader<Long, TaskDto> taskBatchLoader = new BatchLoader<Long, TaskDto>() {
             @Override
-            public CompletionStage<List<TaskDTO>> load(List<Long> taskIds) {
+            public CompletionStage<List<TaskDto>> load(List<Long> taskIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<TaskDTO> tasks = taskQuery.getByManyIds(taskIds);
+                    List<TaskDto> tasks = taskEndpoint.getTasksByIds(taskIds);
                     return sortByIds(taskIds, tasks);
                 });
             }
@@ -158,12 +116,12 @@ public class DataLoaderConfig {
         return DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, TestTaskDTO> testTaskLoader() {
-        BatchLoader<Long, TestTaskDTO> taskBatchLoader = new BatchLoader<Long, TestTaskDTO>() {
+    private DataLoader<Long, TestTaskDto> testTaskLoader() {
+        BatchLoader<Long, TestTaskDto> taskBatchLoader = new BatchLoader<Long, TestTaskDto>() {
             @Override
-            public CompletionStage<List<TestTaskDTO>> load(List<Long> testTaskIds) {
+            public CompletionStage<List<TestTaskDto>> load(List<Long> testTaskIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<TestTaskDTO> testTasks = testTaskQuery.getByManyIds(testTaskIds);
+                    List<TestTaskDto> testTasks = testTaskEndpoint.getTestTasksByIds(testTaskIds);
                     return sortByIds(testTaskIds, testTasks);
                 });
             }

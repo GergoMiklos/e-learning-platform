@@ -20,6 +20,10 @@ const GROUP = gql`
                     name
                 }
             }
+            tests {
+                id
+                name
+            }
         }
     }`;
 
@@ -64,7 +68,7 @@ class TeachGroupComp extends Component {
             });
     }
 
-    testClicked = (id) => {
+    liveTestClicked = (id) => {
         this.props.history.push(`/teach/group/${this.state.group.id}/test/${id}`)
     }
 
@@ -95,12 +99,20 @@ class TeachGroupComp extends Component {
             return `${parseInt(sinceHours/24)} days ago`
     }
 
-    newTest = () => {
-        this.props.history.push(`/teach/group/${this.state.group.id}/test/new`)
+    newLiveTest = () => {
+        this.props.history.push(`/teach/group/${this.state.group.id}/livetest/new`)
     }
 
     editGroup = () => {
         this.props.history.push(`/teach/group/${this.state.group.id}/edit`)
+    }
+
+    newTest = () => {
+        this.props.history.push(`/teach/group/${this.state.group.id}/test/new`)
+    }
+
+    testClicked = (id) => {
+        this.props.history.push(`/teach/group/${this.state.group.id}/test/${id}/edit`)
     }
 
     navigateBack = () => {
@@ -154,7 +166,7 @@ class TeachGroupComp extends Component {
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-10">Online Tests</h1>
-                    <button className="col-2 btn btn-primary" onClick={() => this.newTest()}>
+                    <button className="col-2 btn btn-primary" onClick={() => this.newLiveTest()}>
                         New
                     </button>
                 </div>
@@ -166,12 +178,37 @@ class TeachGroupComp extends Component {
                         {
                             this.state.group.liveTests.filter(lt => lt.test).map(
                                 liveTest =>
-                                    <tr key={liveTest.id} onClick={() => this.testClicked(liveTest.id)}>
+                                    <tr key={liveTest.id} onClick={() => this.liveTestClicked(liveTest.id)}>
                                         <td>
                                             <strong>{liveTest.test.name}</strong>
                                         </td>
                                         <td className="text-sm-right">
                                             <i>{liveTest.sinceCreatedDays} days ago</i>
+                                        </td>
+                                    </tr>
+                            )
+                        }
+                        </tbody>
+                    </table>
+                </div> }
+
+                <div className="row rounded shadow my-3 p-3">
+                    <h1 className="col-10">Offline Tests</h1>
+                    <button className="col-2 btn btn-primary" onClick={() => this.newTest()}>
+                        New
+                    </button>
+                </div>
+
+                {this.state.group.tests &&
+                <div className="row my-3">
+                    <table className="col-12 table table-striped table-hover rounded shadow">
+                        <tbody>
+                        {
+                            this.state.group.tests.map(
+                                test =>
+                                    <tr key={test.id} onClick={() => this.testClicked(test.id)}>
+                                        <td>
+                                            <strong>{test.name}</strong>
                                         </td>
                                     </tr>
                             )
