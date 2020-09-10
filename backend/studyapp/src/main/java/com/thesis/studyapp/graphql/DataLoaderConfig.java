@@ -7,12 +7,12 @@ import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.dto.TestTaskDto;
 import com.thesis.studyapp.dto.UserDto;
 import com.thesis.studyapp.dto.UserTestStatusDto;
-import com.thesis.studyapp.serviceresolver.GroupEndpoint;
-import com.thesis.studyapp.serviceresolver.TaskEndpoint;
-import com.thesis.studyapp.serviceresolver.TestEndpoint;
-import com.thesis.studyapp.serviceresolver.TestTaskEndpoint;
-import com.thesis.studyapp.serviceresolver.UserEndpoint;
-import com.thesis.studyapp.serviceresolver.UserTestStatusEndpoint;
+import com.thesis.studyapp.service.GroupService;
+import com.thesis.studyapp.service.TaskService;
+import com.thesis.studyapp.service.TestService;
+import com.thesis.studyapp.service.TestTaskService;
+import com.thesis.studyapp.service.UserService;
+import com.thesis.studyapp.service.UserTestStatusService;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +25,21 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
 public class DataLoaderConfig {
 
-    private final UserEndpoint userEndpoint;
-    private final TestEndpoint testEndpoint;
-    private final GroupEndpoint groupEndpoint;
-    private final TaskEndpoint taskEndpoint;
-    private final TestTaskEndpoint testTaskEndpoint;
-    private final UserTestStatusEndpoint userTestStatusEndpoint;
+    private final UserService userService;
+    private final TestService testService;
+    private final GroupService groupService;
+    private final TaskService taskService;
+    private final TestTaskService testTaskService;
+    private final UserTestStatusService userTestStatusService;
 
     @Bean
     public DataLoaderRegistry dataLoaderRegistry() {
@@ -56,8 +58,8 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<UserDto>> load(List<Long> userIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<UserDto> users = userEndpoint.getUsersByIds(userIds);
-                    return sortByIds(userIds, users);
+                    List<UserDto> users = userService.getUsersByIds(userIds);
+                    return sortListByIds(users, userIds);
                 });
             }
         };
@@ -69,8 +71,8 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<TestDto>> load(List<Long> testIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<TestDto> tests = testEndpoint.getTestsByIds(testIds);
-                    return sortByIds(testIds, tests);
+                    List<TestDto> tests = testService.getTestsByIds(testIds);
+                    return sortListByIds(tests, testIds);
                 });
             }
         };
@@ -82,8 +84,8 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<GroupDto>> load(List<Long> groupIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<GroupDto> groups = groupEndpoint.getGroupsByIds(groupIds);
-                    return sortByIds(groupIds, groups);
+                    List<GroupDto> groups = groupService.getGroupsByIds(groupIds);
+                    return sortListByIds(groups, groupIds);
                 });
             }
         };
@@ -95,8 +97,8 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<UserTestStatusDto>> load(List<Long> userTestStatusIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<UserTestStatusDto> userTestStatuses = userTestStatusEndpoint.getUserTestStatusesByIds(userTestStatusIds);
-                    return sortByIds(userTestStatusIds, userTestStatuses);
+                    List<UserTestStatusDto> userTestStatuses = userTestStatusService.getUserTestStatusesByIds(userTestStatusIds);
+                    return sortListByIds(userTestStatuses, userTestStatusIds);
                 });
             }
         };
@@ -108,8 +110,8 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<TaskDto>> load(List<Long> taskIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<TaskDto> tasks = taskEndpoint.getTasksByIds(taskIds);
-                    return sortByIds(taskIds, tasks);
+                    List<TaskDto> tasks = taskService.getTasksByIds(taskIds);
+                    return sortListByIds(tasks, taskIds);
                 });
             }
         };
@@ -121,23 +123,19 @@ public class DataLoaderConfig {
             @Override
             public CompletionStage<List<TestTaskDto>> load(List<Long> testTaskIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<TestTaskDto> testTasks = testTaskEndpoint.getTestTasksByIds(testTaskIds);
-                    return sortByIds(testTaskIds, testTasks);
+                    List<TestTaskDto> testTasks = testTaskService.getTestTasksByIds(testTaskIds);
+                    return sortListByIds(testTasks, testTaskIds);
                 });
             }
         };
         return DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private  <T extends HasId> List<T> sortByIds(List<Long> ids, List<T> toSort) {
+    private <T extends HasId> List<T> sortListByIds(List<T> list, List<Long> ids) {
+        Map<Long, T> map = list.stream().collect(Collectors.toMap(HasId::getId, user -> user));
         List<T> result = new ArrayList<>();
-        for(Long id: ids) {
-            for (T hasId : toSort) {
-                if (hasId.getId().equals(id)) {
-                    result.add(hasId);
-                    break;
-                }
-            }
+        for (Long id : ids) {
+            result.add(map.get(id));
         }
         return result;
     }

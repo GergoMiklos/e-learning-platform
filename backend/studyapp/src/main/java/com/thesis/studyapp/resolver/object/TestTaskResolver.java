@@ -1,4 +1,4 @@
-package com.thesis.studyapp.objectresolver;
+package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.dto.TaskDto;

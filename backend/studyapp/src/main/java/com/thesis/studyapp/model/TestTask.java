@@ -27,5 +27,9 @@ public class TestTask {
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASK", direction = Relationship.OUTGOING)
     private Task task;
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "TESTTASK", direction = Relationship.INCOMING)
+    private Test test;
 
 }

@@ -49,6 +49,10 @@ public class User {
     @EqualsAndHashCode.Exclude
     @Relationship(type = "STUDENTPARENT", direction = Relationship.OUTGOING)
     private List<User> followedStudents;
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "STUDENTPARENT", direction = Relationship.INCOMING)
+    private List<User> parents;
 
     public void addGroup(Group group) {
         if (studentGroups == null) {

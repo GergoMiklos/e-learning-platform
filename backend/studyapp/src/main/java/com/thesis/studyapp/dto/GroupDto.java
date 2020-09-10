@@ -1,5 +1,7 @@
 package com.thesis.studyapp.dto;
 
+import com.thesis.studyapp.model.Group;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
@@ -7,6 +9,7 @@ import java.util.Date;
 
 @QueryResult
 @Data
+@Builder
 public class GroupDto implements HasId {
 
     private Long id;
@@ -17,4 +20,14 @@ public class GroupDto implements HasId {
     private String news;
     private Date newsChangedDate;
 
+    public static GroupDto build(Group group) {
+        return GroupDto.builder()
+                .id(group.getId())
+                .code(group.getCode())
+                .name(group.getName())
+                .description(group.getDescription())
+                .news(group.getNews())
+                .newsChangedDate(group.getNewsChangedDate())
+                .build();
+    }
 }

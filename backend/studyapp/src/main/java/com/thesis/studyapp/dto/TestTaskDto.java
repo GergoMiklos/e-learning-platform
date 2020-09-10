@@ -1,10 +1,13 @@
 package com.thesis.studyapp.dto;
 
+import com.thesis.studyapp.model.TestTask;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
 @QueryResult
 @Data
+@Builder
 public class TestTaskDto implements HasId {
 
     Long id;
@@ -12,5 +15,13 @@ public class TestTaskDto implements HasId {
     private int level;
 
     private Long taskId;
+
+    public static TestTaskDto build(TestTask testTask) {
+        return TestTaskDto.builder()
+                .id(testTask.getId())
+                .level(testTask.getLevel())
+                .taskId(testTask.getTask().getId())
+                .build();
+    }
 
 }

@@ -35,8 +35,6 @@ public class StudyappApplication {
 			User user = new User();
 			user.setName("User");
 			user.setCode("UUU001");
-			user.setId(new Long(57));
-			userRepository.save(user);
 
             User user2 = new User();
             user2.setName("User2");
@@ -72,6 +70,7 @@ public class StudyappApplication {
 			Test test = new Test();
 			test.setName("Test");
 			test.setDescription("Test1 leírása az élő állatokról");
+			test.addTask(testTask);
 			task.setOwner(user);
 
 			group.setNews("news");
@@ -90,6 +89,7 @@ public class StudyappApplication {
 			group.addTest(test);
 			test.addUserTestStatus(userTestStatus);
 			userTestStatus.setUser(user);
+			user.addLiveTestState(userTestStatus);
 			userTestStatus.setTest(test);
 			userTestStatus.setCurrentTask(task2);
 			userTestStatus.setDeprecated(false);

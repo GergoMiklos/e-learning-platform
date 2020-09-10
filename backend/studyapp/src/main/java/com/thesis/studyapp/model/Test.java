@@ -37,7 +37,7 @@ public class Test {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TESTTASK", direction = Relationship.OUTGOING)
-    private List<TestTask> tasks;
+    private List<TestTask> testTasks;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TESTSTATUS", direction = Relationship.OUTGOING)
@@ -51,10 +51,10 @@ public class Test {
     }
 
     public void addTask(TestTask task) {
-        if (tasks == null) {
-            tasks = new ArrayList<>();
+        if (testTasks == null) {
+            testTasks = new ArrayList<>();
         }
-        tasks.add(task);
+        testTasks.add(task);
     }
 
     public enum Status {

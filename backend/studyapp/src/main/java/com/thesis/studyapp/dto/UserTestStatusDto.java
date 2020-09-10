@@ -1,17 +1,15 @@
 package com.thesis.studyapp.dto;
 
 import com.thesis.studyapp.model.UserTestStatus;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.util.Date;
 
 @QueryResult
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
+@Builder
 public class UserTestStatusDto implements HasId {
 
     private Long id;
@@ -35,4 +33,18 @@ public class UserTestStatusDto implements HasId {
 //    private TaskDto currentTask;
 //    private UserDto user;
 //    private TestDto test;
+
+    public static UserTestStatusDto build(UserTestStatus userTestStatus) {
+        if (userTestStatus.getTest() == null || userTestStatus.getUser() == null) {
+            throw new IllegalStateException("Relationships needed when converting to UserTestStatusDto!");
+        }
+        return UserTestStatusDto.builder()
+                .id(userTestStatus.getId())
+                .status(userTestStatus.getStatus())
+                .statusChangedTime(userTestStatus.getStatusChangedDate())
+                .testId(userTestStatus.getTest().getId())
+                .userId(userTestStatus.getUser().getId())
+                .currentTaskId(userTestStatus.getCurrentTask() != null ? userTestStatus.getCurrentTask().getId() : null)
+                .build();
+    }
 }
