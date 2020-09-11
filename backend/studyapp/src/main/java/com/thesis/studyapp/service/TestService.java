@@ -24,13 +24,11 @@ public class TestService {
     private final GroupRepository groupRepository;
 
     public TestDto getTest(Long testId) {
-        return TestDto.build(getTestById(testId, 0));
+        return convertToDto(getTestById(testId, 0));
     }
 
     public List<TestDto> getTestsByIds(List<Long> ids) {
-        return testRepository.findByIdIn(ids, 0).stream()
-                .map(TestDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(testRepository.findByIdIn(ids, 0));
     }
 
 
@@ -44,7 +42,7 @@ public class TestService {
                 .group(group)
                 .userTestStatuses(new ArrayList<>())
                 .build();
-        return TestDto.build(testRepository.save(test));
+        return convertToDto(testRepository.save(test));
     }
 
     @Transactional
@@ -52,7 +50,7 @@ public class TestService {
         Test test = getTestById(testId, 0);
         test.setName(name);
         test.setDescription(description);
-        return TestDto.build(testRepository.save(test));
+        return convertToDto(testRepository.save(test));
     }
 
     //TODO ez ronda
@@ -68,15 +66,13 @@ public class TestService {
                 }
             }
             test.setStatus(status);
-            return TestDto.build(testRepository.save(test));
+            return convertToDto(testRepository.save(test));
         }
-        return TestDto.build(test);
+        return convertToDto(test);
     }
 
     public List<TestDto> getTestsForGroup(Long groupId) {
-        return testRepository.findByGroupIdOrderByName(groupId, 0).stream()
-                .map(TestDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(testRepository.findByGroupIdOrderByName(groupId, 0));
     }
 
     //todo ezek menjenek másik service-be?
@@ -96,5 +92,14 @@ public class TestService {
                 .orElseThrow(() -> new CustomGraphQLException("No test with id: " + testId));
     }
 
+    private TestDto convertToDto(Test test) {
+        return TestDto.build(test);
+    }
+
+    private List<TestDto> convertToDto(List<Test> tests) {
+        return tests.stream()
+                .map(TestDto::build)
+                .collect(Collectors.toList());
+    }
 
 }

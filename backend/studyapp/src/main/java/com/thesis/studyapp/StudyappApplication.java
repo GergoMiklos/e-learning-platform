@@ -72,6 +72,8 @@ public class StudyappApplication {
 			test.setDescription("Test1 leírása az élő állatokról");
 			test.addTask(testTask);
 			task.setOwner(user);
+			testTask.setTask(task);
+			testTask.setTest(test);
 
 			group.setNews("news");
 			group.setNewsChangedDate(new Date());

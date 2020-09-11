@@ -25,5 +25,13 @@ public class UserEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
         return userService.addTeacherFromCodeToGroup(groupId, teacherCode);
     }
 
+    public UserDto addStudentFromCodeToParent(Long parentId, String studentCode) {
+        return userService.addStudentFromCodeToParent(parentId, studentCode);
+    }
+
+    public void deleteStudentFromParent(Long parentId, Long studentId) {
+        userService.deleteStudentFromParent(parentId, studentId);
+    }
+
 
 }

@@ -1,6 +1,6 @@
 type Query {
-    getUser(userId: ID!): User
-    getGroup(groupId: ID!): Group
-    getTest(testId: ID!): Test
+    getUser(userId: ID!): User!
+    getGroup(groupId: ID!): Group!
+    getTest(testId: ID!): Test!
     getTasks: [Task]
 }

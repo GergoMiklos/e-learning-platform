@@ -18,28 +18,22 @@ public class UserTestStatusService {
     private final UserTestStatusRepository userTestStatusRepository;
 
     public UserTestStatusDto getUserTestStatus(Long userTestStatusId) {
-        return UserTestStatusDto.build(getUserTestStatusById(userTestStatusId, 1));
+        return convertToDto(getUserTestStatusById(userTestStatusId, 1));
     }
 
     public List<UserTestStatusDto> getUserTestStatusesByIds(List<Long> ids) {
-        return userTestStatusRepository.findByIdIn(ids, 1).stream()
-                .map(UserTestStatusDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(userTestStatusRepository.findByIdIn(ids, 1));
     }
 
     //TODO ilyenkor testId check? pl get Test with depth 1, filter userId == userId && deprecated == false
-    // vagy ez ne is legyen itt mert csak objectresolverből hívjuk??
-    // Obejctresolver repot vagy servicet használjon
+    // vagy ez ne is legyen itt mert csak objectresolverből hívjuk?
+    // (FONTOS: objectresolvernél ha errort dobunk egy filednél, attól még a többi meglehet (külön folyamat))
     public List<UserTestStatusDto> getUserTestStatusesForTest(Long testId) {
-        return userTestStatusRepository.findByDeprecatedIsFalseAndTestIdIs(testId, 1).stream()
-                .map(UserTestStatusDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(userTestStatusRepository.findByDeprecatedIsFalseAndTestIdIs(testId, 1));
     }
 
     public List<UserTestStatusDto> getUserTestStatusesForUser(Long userId) {
-        return userTestStatusRepository.findByDeprecatedIsFalseAndUserIdIs(userId, 1).stream()
-                .map(UserTestStatusDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(userTestStatusRepository.findByDeprecatedIsFalseAndUserIdIs(userId, 1));
     }
 
     private UserTestStatus getUserTestStatusById(Long userTestStatusId, int depth) {
@@ -47,5 +41,14 @@ public class UserTestStatusService {
                 .orElseThrow(() -> new CustomGraphQLException("No UserTestStatus with id: " + userTestStatusId));
     }
 
+    private UserTestStatusDto convertToDto(UserTestStatus userTestStatus) {
+        return UserTestStatusDto.build(userTestStatus);
+    }
+
+    private List<UserTestStatusDto> convertToDto(List<UserTestStatus> userTestStatuses) {
+        return userTestStatuses.stream()
+                .map(UserTestStatusDto::build)
+                .collect(Collectors.toList());
+    }
 
 }

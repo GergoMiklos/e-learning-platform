@@ -4,6 +4,7 @@ import com.thesis.studyapp.model.Group;
 import org.springframework.data.neo4j.annotation.Depth;
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,13 +36,21 @@ public interface GroupRepository extends Neo4jRepository<Group, Long> {
 //    @Query("MATCH (u:User)-[gt:GROUPTEACHER]-(g:Group) WHERE id(u) = $0" + RETURN_GROUPDTO + ORDER_BY_NAME)
 //    List<GroupDto> getByTeacherId(Long userId);
 
-    @Query("MATCH (u:User)-[gs:GROUPSTUDENT]-(g:Group)" +
-            " WHERE id(u) = $0 AND id(g) = $1" +
+    @Query("MATCH (student:User)-[gs:GROUPSTUDENT]-(g:Group)" +
+            " WHERE id(student) = $studentId AND id(g) = $groupId" +
             " DELETE gs")
-    void deleteStudent(Long userId, Long groupId);
+    void deleteStudent(
+            @Param("groupId")
+                    Long groupId,
+            @Param("studentId")
+                    Long studentId);
 
-    @Query("MATCH (u:User)-[gt:GROUPTEACHER]-(g:Group)" +
-            " WHERE id(u) = $0 AND id(g) = $1" +
+    @Query("MATCH (teacher:User)-[gt:GROUPTEACHER]-(g:Group)" +
+            " WHERE id(teacher) = $teacherId AND id(g) = $groupId" +
             " DELETE gt")
-    void deleteTeacher(Long groupId, Long userId);
+    void deleteTeacher(
+            @Param("groupId")
+                    Long groupId,
+            @Param("teacherId")
+                    Long teacherId);
 }

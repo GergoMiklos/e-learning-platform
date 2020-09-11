@@ -24,7 +24,6 @@ public class UserService {
         return UserDto.build(getUserById(userId, 0));
     }
 
-    //todo dataloader repot vagy servicet használjon?
     public List<UserDto> getUsersByIds(List<Long> ids) {
         return userRepository.findByIdIn(ids, 0).stream()
                 .map(UserDto::build)
@@ -47,22 +46,33 @@ public class UserService {
         return UserDto.build(userRepository.save(user));
     }
 
+    @Transactional
+    public UserDto addStudentFromCodeToParent(Long parentId, String studentCode) {
+        User student = getUserByCode(studentCode, 0);
+        User parent = getUserById(parentId, 1);
+        student.getParents().add(parent);
+        return UserDto.build(userRepository.save(student));
+    }
+
+    @Transactional
+    public void deleteStudentFromParent(Long parentId, Long studentId) {
+        if (userRepository.existsById(parentId) && userRepository.existsById(parentId)) {
+            userRepository.deleteFollowedStudent(parentId, studentId);
+        } else {
+            throw new CustomGraphQLException("No user with id: " + parentId + " or " + studentId);
+        }
+    }
+
     public List<UserDto> getStudentsForGroup(Long groupId) {
-        return userRepository.findByStudentGroupsIdOrderByName(groupId, 0).stream()
-                .map(UserDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(userRepository.findByStudentGroupsIdOrderByName(groupId, 0));
     }
 
     public List<UserDto> getTeachersForGroup(Long groupId) {
-        return userRepository.findByTeacherGroupsIdOrderByName(groupId, 0).stream()
-                .map(UserDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(userRepository.findByTeacherGroupsIdOrderByName(groupId, 0));
     }
 
     public List<UserDto> getStudentsForParent(Long parentId) {
-        return userRepository.findByParentsIdOrderByName(parentId, 0).stream()
-                .map(UserDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(userRepository.findByParentsIdOrderByName(parentId, 0));
     }
 
     private User getUserById(Long userId, int depth) {
@@ -80,11 +90,11 @@ public class UserService {
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
     }
 
-    private UserDto convertUserToDto(User user) {
+    private UserDto convertToDto(User user) {
         return UserDto.build(user);
     }
 
-    private List<UserDto> convertUserToDto(List<User> users) {
+    private List<UserDto> convertToDto(List<User> users) {
         return users.stream()
                 .map(UserDto::build)
                 .collect(Collectors.toList());

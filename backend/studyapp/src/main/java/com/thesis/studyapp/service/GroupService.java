@@ -23,13 +23,11 @@ public class GroupService {
     private final UserRepository userRepository;
 
     public GroupDto getGroup(Long groupId) {
-        return GroupDto.build(getGroupById(groupId, 0));
+        return convertToDto(getGroupById(groupId, 0));
     }
 
     public List<GroupDto> getGroupsByIds(List<Long> groupIds) {
-        return groupRepository.findByIdIn(groupIds, 0).stream()
-                .map(GroupDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(groupRepository.findByIdIn(groupIds, 0));
     }
 
     @Transactional
@@ -41,7 +39,7 @@ public class GroupService {
                 .code(RandomStringUtils.random(8).toUpperCase())
                 .teachers(Collections.singletonList(user))
                 .build();
-        return GroupDto.build(groupRepository.save(group));
+        return convertToDto(groupRepository.save(group));
     }
 
     @Transactional
@@ -49,14 +47,14 @@ public class GroupService {
         Group group = getGroupById(groupId, 0);
         group.setName(name);
         group.setDescription(description);
-        return GroupDto.build(groupRepository.save(group));
+        return convertToDto(groupRepository.save(group));
     }
 
     @Transactional
     public GroupDto changeGroupNews(Long groupId, String news) {
         Group group = getGroupById(groupId, 0);
         group.setNews(news);
-        return GroupDto.build(groupRepository.save(group));
+        return convertToDto(groupRepository.save(group));
     }
 
     @Transactional
@@ -64,29 +62,31 @@ public class GroupService {
         User user = getUserById(studentId, 0);
         Group group = getGroupByCode(groupCode, 1);
         group.getStudents().add(user);
-        return GroupDto.build(groupRepository.save(group));
+        return convertToDto(groupRepository.save(group));
     }
 
-    public void deleteStudentFromGroup(Long userId, Long groupId) {
-        //TODO EZEKET A DELETE PATCHEKET lehet jobb lenne csak queryben megírni? vag get group, delete from list, és save?
-        groupRepository.deleteStudent(groupId, userId);
+    public void deleteStudentFromGroup(Long studentId, Long groupId) {
+        if (userRepository.existsById(studentId) && groupRepository.existsById(groupId)) {
+            groupRepository.deleteStudent(groupId, studentId);
+        } else {
+            throw new CustomGraphQLException("No user with id: " + studentId + " or group with id: " + groupId);
+        }
     }
 
-    public void deleteTeacherFromGroup(Long userId, Long groupId) {
-        //Todo return boolean? NEM, error ha not found
-        groupRepository.deleteTeacher(groupId, userId);
+    public void deleteTeacherFromGroup(Long teacherId, Long groupId) {
+        if (userRepository.existsById(teacherId) && groupRepository.existsById(groupId)) {
+            groupRepository.deleteTeacher(groupId, teacherId);
+        } else {
+            throw new CustomGraphQLException("No user with id: " + teacherId + " or group with id: " + groupId);
+        }
     }
 
     public List<GroupDto> getGroupsForStudent(Long studentId) {
-        return groupRepository.findByStudentsIdOrderByName(studentId, 0).stream()
-                .map(GroupDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(groupRepository.findByStudentsIdOrderByName(studentId, 0));
     }
 
     public List<GroupDto> getGroupsForTeacher(Long studentId) {
-        return groupRepository.findByTeachersIdOrderByName(studentId, 0).stream()
-                .map(GroupDto::build)
-                .collect(Collectors.toList());
+        return convertToDto(groupRepository.findByTeachersIdOrderByName(studentId, 0));
     }
 
     private Group getGroupById(Long groupId, int depth) {
@@ -104,11 +104,11 @@ public class GroupService {
                 .orElseThrow(() -> new CustomGraphQLException("No user with id: " + userId));
     }
 
-    private GroupDto convertUserToDto(Group group) {
+    private GroupDto convertToDto(Group group) {
         return GroupDto.build(group);
     }
 
-    private List<GroupDto> convertUserToDto(List<Group> groups) {
+    private List<GroupDto> convertToDto(List<Group> groups) {
         return groups.stream()
                 .map(GroupDto::build)
                 .collect(Collectors.toList());
