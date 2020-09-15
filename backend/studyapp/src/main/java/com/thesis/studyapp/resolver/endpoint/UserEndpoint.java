@@ -13,7 +13,7 @@ public class UserEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final UserService userService;
 
-    public UserDto getUser(Long userId) {
+    public UserDto user(Long userId) {
         return userService.getUser(userId);
     }
 

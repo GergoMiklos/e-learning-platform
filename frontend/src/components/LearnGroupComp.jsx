@@ -1,98 +1,100 @@
 import React, {Component} from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
-import {useQuery} from "@apollo/react-hooks";
+import toaster from 'toasted-notes';
 import AuthenticationService from "../AuthenticationService";
 
-const GROUP = gql`
-    query Group($id: ID!) {
-        group(id: $id) {
+const STUDENT_GROUP = gql`
+    query getGroup($groupId: ID!) {
+        group(groupId: $groupId) {
             id
             name
             code
-            description,
-            news {
-                text
-                sinceRefreshHours
-            }
-            liveTests {
+            description
+            news
+            newsChangedDate
+            tests {
                 id
-                test {
-                    name
-                }
+                name
             }
         }
     }`;
 
-const LEAVEGROUP = gql`
+const LEAVE_GROUP = gql`
     mutation DeleteUserFromGroup($userId: ID!, $groupId: ID!) {
-        deleteUserFromGroup(userId: $userId, groupId: $groupId)
+        deleteStudentFromGroup(userId: $userId, groupId: $groupId)
     }`;
 
 class LearnGroupComp extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
-            group: null
+            group: null,
         };
     }
 
     componentDidMount() {
-        this.refreshGroup();
+        this.loadData();
     }
 
-    refreshGroup = () => {
+    loadData = () => {
         client
             .query({
-                query: GROUP,
-                variables: {id: this.props.match.params.groupid}
+                query: STUDENT_GROUP,
+                variables: {groupId: this.props.match.params.groupid},
             })
             .then(result => {
                 console.log(result);
-                if (!result.data.group) {
-                    console.log("GraphQL query no result");
-                } else {
+                if (result.data) {
                     this.setState({group: result.data.group});
                 }
             })
             .catch(errors => {
                 console.log(errors);
+                this.showNotification({text: 'Something went wrong', type: 'error'});
             });
     }
 
     testClicked = (id) => {
-        this.props.history.push(`/learn/group/${this.props.match.params.groupid}/test/${id}`)
+        this.props.history.push(`/learn/group/${this.props.match.params.groupid}/test/${id}`);
     }
 
-    getNewsRefreshTime = (sinceHours) => {
-        if (sinceHours <= 24)
-            return `${sinceHours} hours ago`
-        else
-            return `${parseInt(sinceHours / 24)} days ago`
+    formatDate = (date) => {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        return new Date(date).toLocaleString(/*navigator.language*/ 'en', options); //todo
     }
 
     leaveGroup = () => {
         let userId = AuthenticationService.getUserId();
         client.mutate({
-            mutation: LEAVEGROUP,
+            mutation: LEAVE_GROUP,
             variables: {userId: userId, groupId: this.state.group.id}
         })
             .then(result => {
-                console.log(result);
-                this.props.history.push(`/learn`)
+                this.showNotification({text: 'Group left successfully', type: 'success'});
+                this.props.history.push(`/learn`);
             })
             .catch(errors => {
                 console.log(errors);
+                this.showNotification({text: 'Something went wrong', type: 'error'});
             })
     }
 
     navigateBack = () => {
-        this.props.history.push(`/learn`)
+        this.props.history.push(`/learn`);
+    }
+
+    showNotification = ({text, type}) => {
+        toaster.notify(() => (
+            <div className={`alert alert-${type}`}>
+                {text}
+            </div>
+        ));
     }
 
     render() {
         if (!this.state.group) {
-            return (<div>Loading...</div>)
+            return (<div/>);
         }
         return (
             <div className="container">
@@ -118,25 +120,25 @@ class LearnGroupComp extends Component {
                 {this.state.group.news &&
                 <div className="row alert alert-warning my-3">
                     <span className="badge badge-primary text-center mr-2 mb-1 py-1">
-                        {this.getNewsRefreshTime(this.state.group.news.sinceRefreshHours)}
+                        {this.formatDate(new Date(this.state.group.newsChangedDate))}
                     </span>
-                    <i>{this.state.group.news.text}</i>
+                    <i>{this.state.group.news}</i>
                 </div>}
 
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-12">Online Tests</h1>
                 </div>
 
-                {this.state.group.liveTests &&
+                {this.state.group.tests &&
                 <div className="row my-3">
                     <table className="col-12 table table-striped table-hover rounded shadow">
                         <tbody>
                         {
-                            this.state.group.liveTests.filter(lt => lt.test).map(
-                                liveTest =>
-                                    <tr key={liveTest.id} onClick={() => this.testClicked(liveTest.id)}>
+                            this.state.group.tests.map(
+                                test =>
+                                    <tr key={test.id} onClick={() => this.testClicked(test.id)}>
                                         <td>
-                                            <strong>{liveTest.test.name}</strong>
+                                            <strong>{test.name}</strong>
                                         </td>
                                     </tr>
                             )

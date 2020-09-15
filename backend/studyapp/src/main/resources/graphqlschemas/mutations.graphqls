@@ -15,7 +15,12 @@ type Mutation {
     createTest(groupId: ID!, name: String!, description: String!): Test!
     editTest(testId: ID!, name: String!, description: String!): Test!
     changeTestStatus(testId: ID!, Status: String!): Test!
+
+    createTask(taskInput: TaskInput!): Task
     addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask!
     deleteTaskFromTest(testTaskId: ID!): Boolean
     changeTestTaskLevel(testTaskId: ID!, level: Int): TestTask!
+
+    checkSolution(userId: ID!, testId: ID!, solutionNumber: Int!): Int!
+
 }

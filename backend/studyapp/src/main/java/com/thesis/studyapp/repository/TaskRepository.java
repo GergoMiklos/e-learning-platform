@@ -14,7 +14,9 @@ public interface TaskRepository extends Neo4jRepository<Task, Long> {
 
     List<Task> findByIdIn(List<Long> ids, @Depth int depth);
 
-    List<Task> findAll();
+    List<Task> findByQuestionLikeOrderByUsage(String searchString,
+                                              @Depth
+                                                      int depth);
 
 
 //    @Query("MATCH (t:Task) WHERE id(t) IN $0" + RETURN_TASKDTO)

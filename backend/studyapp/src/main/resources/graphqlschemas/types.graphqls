@@ -33,16 +33,27 @@ type UserTestStatuses {
     id: ID!
     test: Test!
     user: User!
-    currentTask: Task
+    currentTask: Task!
     status: String!
-    statusChangedTime: String
+    statusChangedTime: String!
 }
 
 type Task {
     id: ID!
     question: String!
-    answers: [String]!
-    solution: Int!
+    answers: [TaskAnswer]!
+    solutionNumber: Int!
+}
+
+type TaskAnswer {
+    number: Int!
+    answer: String!
+}
+
+input TaskInput {
+    question: String!
+    correctAnswer: String!
+    incorrectAnswer: [String!]!
 }
 
 type TestTask {

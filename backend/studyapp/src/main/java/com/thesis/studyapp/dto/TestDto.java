@@ -14,6 +14,7 @@ public class TestDto implements HasId {
 
     private String name;
     private String description;
+    private Test.Status status;
 
     public static TestDto build(Test test) {
         return TestDto.builder()

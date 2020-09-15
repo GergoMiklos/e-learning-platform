@@ -26,9 +26,12 @@ public class UserTestStatus {
 
     private Status status = Status.NOT_STARTED;
     private boolean deprecated;
-    //    private int correctsInRow;
-//    private int failsInRow;
-//    private Date timeStartedTest;
+
+    private int correctAnswersInRow;
+    private int wrongAnswersInRow;
+    private int correctAnswers;
+    private int wrongAnswers;
+    //    private Date timeStartedTest;
 //    private Date startedLastTaskDate;
     private Date statusChangedDate;
 

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
@@ -24,8 +25,9 @@ public class User {
     @GeneratedValue
     private Long id;
 
-    private String name;
+    @Index(unique = true)
     private String code;
+    private String name;
     private String email;
     private String password;
 
@@ -54,21 +56,21 @@ public class User {
     @Relationship(type = "STUDENTPARENT", direction = Relationship.INCOMING)
     private List<User> parents;
 
-    public void addGroup(Group group) {
+    public void addStudentGroup(Group group) {
         if (studentGroups == null) {
             studentGroups = new ArrayList<>();
         }
         studentGroups.add(group);
     }
 
-    public void addManagedGroup(Group group) {
+    public void addTeacherGroup(Group group) {
         if (teacherGroups == null) {
             teacherGroups = new ArrayList<>();
         }
         teacherGroups.add(group);
     }
 
-    public void addLiveTestState(UserTestStatus userTestStatus) {
+    public void addUserTestStatus(UserTestStatus userTestStatus) {
         if (userTestStatuses == null) {
             userTestStatuses = new ArrayList<>();
         }

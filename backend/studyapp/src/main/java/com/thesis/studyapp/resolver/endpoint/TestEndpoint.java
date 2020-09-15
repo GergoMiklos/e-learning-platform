@@ -14,7 +14,7 @@ public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final TestService testService;
 
-    public TestDto getTest(Long testId) {
+    public TestDto test(Long testId) {
         return testService.getTest(testId);
     }
 
@@ -28,7 +28,7 @@ public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
     }
 
     public TestDto changeTestStatus(Long testId, String status) {
-        return testService.changeTestStatus(testId, Test.Status.ONLINE);
+        return testService.changeTestStatus(testId, Test.Status.ONLINE); //Todo
     }
 
 

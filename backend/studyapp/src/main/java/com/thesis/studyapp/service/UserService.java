@@ -7,13 +7,13 @@ import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class UserService {
 
@@ -23,6 +23,7 @@ public class UserService {
     public UserDto getUser(Long userId) {
         return UserDto.build(getUserById(userId, 0));
     }
+
 
     public List<UserDto> getUsersByIds(List<Long> ids) {
         return userRepository.findByIdIn(ids, 0).stream()
@@ -64,14 +65,20 @@ public class UserService {
     }
 
     public List<UserDto> getStudentsForGroup(Long groupId) {
+        //todo check group? NE, ez query (BONTSUK SZÉT ESZERINT? KÜLÖNÁLLÓ QUERY SERVICEK, MUTATIONOK PEDIG EZEKET HASZNÁLJÁK)
+        // HISZEN VANNAK KÜLÖNBSÉGEK, ILYENKOR PL NINCS EXCEPTION DOBÁS
+        // egy GRAPHQL ALKALMAZÁSBAN SOKK AZ ÖSSZEFÜGGÉS, DE MEGKELL PRÓBÁLNI CSÖKKENTENI AZOKAT7
+        // BEVÁLLT MÓDSZER NINCS :(
         return convertToDto(userRepository.findByStudentGroupsIdOrderByName(groupId, 0));
     }
 
     public List<UserDto> getTeachersForGroup(Long groupId) {
+        //todo check group?
         return convertToDto(userRepository.findByTeacherGroupsIdOrderByName(groupId, 0));
     }
 
     public List<UserDto> getStudentsForParent(Long parentId) {
+        //todo check user?
         return convertToDto(userRepository.findByParentsIdOrderByName(parentId, 0));
     }
 

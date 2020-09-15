@@ -1,5 +1,6 @@
 package com.thesis.studyapp.service;
 
+import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.GroupDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
@@ -8,19 +9,21 @@ import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class GroupService {
 
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+
+    private final DateUtil dateUtil;
 
     public GroupDto getGroup(Long groupId) {
         return convertToDto(getGroupById(groupId, 0));
@@ -54,6 +57,7 @@ public class GroupService {
     public GroupDto changeGroupNews(Long groupId, String news) {
         Group group = getGroupById(groupId, 0);
         group.setNews(news);
+        group.setNewsChangedDate(dateUtil.getCurrentTime());
         return convertToDto(groupRepository.save(group));
     }
 

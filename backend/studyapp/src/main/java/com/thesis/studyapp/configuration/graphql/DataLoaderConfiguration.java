@@ -1,4 +1,4 @@
-package com.thesis.studyapp.graphql;
+package com.thesis.studyapp.configuration.graphql;
 
 import com.thesis.studyapp.dto.GroupDto;
 import com.thesis.studyapp.dto.HasId;
@@ -17,7 +17,6 @@ import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.BatchLoader;
-import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderOptions;
 import org.dataloader.DataLoaderRegistry;
 import org.springframework.context.annotation.Bean;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
-public class DataLoaderConfig {
+public class DataLoaderConfiguration {
 
     private final UserService userService;
     private final TestService testService;
@@ -53,7 +52,7 @@ public class DataLoaderConfig {
                 .register("userTestSateLoader", userTestStateLoader());
     }
 
-    private DataLoader<Long, UserDto> userLoader() {
+    private org.dataloader.DataLoader<Long, UserDto> userLoader() {
         BatchLoader<Long, UserDto> userBatchLoader = new BatchLoader<Long, UserDto>() {
             @Override
             public CompletionStage<List<UserDto>> load(List<Long> userIds) {
@@ -63,10 +62,10 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return DataLoader.newDataLoader(userBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return org.dataloader.DataLoader.newDataLoader(userBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, TestDto> testLoader() {
+    private org.dataloader.DataLoader<Long, TestDto> testLoader() {
         BatchLoader<Long, TestDto> testBatchLoader = new BatchLoader<Long, TestDto>() {
             @Override
             public CompletionStage<List<TestDto>> load(List<Long> testIds) {
@@ -76,10 +75,10 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return DataLoader.newDataLoader(testBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return org.dataloader.DataLoader.newDataLoader(testBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, GroupDto> groupLoader() {
+    private org.dataloader.DataLoader<Long, GroupDto> groupLoader() {
         BatchLoader<Long, GroupDto> groupBatchLoader = new BatchLoader<Long, GroupDto>() {
             @Override
             public CompletionStage<List<GroupDto>> load(List<Long> groupIds) {
@@ -89,10 +88,10 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return DataLoader.newDataLoader(groupBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return org.dataloader.DataLoader.newDataLoader(groupBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, UserTestStatusDto> userTestStateLoader() {
+    private org.dataloader.DataLoader<Long, UserTestStatusDto> userTestStateLoader() {
         BatchLoader<Long, UserTestStatusDto> batchLoader = new BatchLoader<Long, UserTestStatusDto>() {
             @Override
             public CompletionStage<List<UserTestStatusDto>> load(List<Long> userTestStatusIds) {
@@ -102,10 +101,10 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return org.dataloader.DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, TaskDto> taskLoader() {
+    private org.dataloader.DataLoader<Long, TaskDto> taskLoader() {
         BatchLoader<Long, TaskDto> taskBatchLoader = new BatchLoader<Long, TaskDto>() {
             @Override
             public CompletionStage<List<TaskDto>> load(List<Long> taskIds) {
@@ -115,10 +114,10 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return org.dataloader.DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private DataLoader<Long, TestTaskDto> testTaskLoader() {
+    private org.dataloader.DataLoader<Long, TestTaskDto> testTaskLoader() {
         BatchLoader<Long, TestTaskDto> taskBatchLoader = new BatchLoader<Long, TestTaskDto>() {
             @Override
             public CompletionStage<List<TestTaskDto>> load(List<Long> testTaskIds) {
@@ -128,7 +127,7 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return org.dataloader.DataLoader.newDataLoader(taskBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private <T extends HasId> List<T> sortListByIds(List<T> list, List<Long> ids) {

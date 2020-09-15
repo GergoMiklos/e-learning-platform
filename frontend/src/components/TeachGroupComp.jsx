@@ -2,24 +2,15 @@ import React, { Component } from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
 
-const GROUP = gql`
-    query Group($id: ID!) {
-        group(id: $id) {
+const TEACHER_GROUP = gql`
+    query getGroup($groupId: ID!) {
+        group(groupId: $groupId) {
             id
             name
             code
-            description,
-            news {
-                text
-                sinceRefreshHours
-            }
-            liveTests {
-                id
-                sinceCreatedDays
-                test {
-                    name
-                }
-            }
+            description
+            news
+            newsChangedDate
             tests {
                 id
                 name
@@ -27,11 +18,19 @@ const GROUP = gql`
         }
     }`;
 
-const CHANGENEWS = gql`
+const CHANGE_NEWS = gql`
     mutation ChangeNews($groupId: ID!, $text: String!) {
-        changeNews(groupId: $groupId, text: $text) {
+        changeGroupNews(groupId: $groupId, text: $text) {
             id
-            text
+            name
+            code
+            description
+            news
+            newsChangedDate
+            tests {
+                id
+                name
+            }
         }
     }`;
 
@@ -45,21 +44,18 @@ class TeachGroupComp extends Component {
     }
 
     componentDidMount() {
-        this.refreshGroup();
+        this.loadData();
     }
 
-    refreshGroup = () => {
+    loadData = () => {
         client
             .query({
-                query: GROUP,
-                variables: {id: this.props.match.params.groupid},
-                fetchPolicy: 'network-only'
+                query: TEACHER_GROUP,
+                variables: {groupId: this.props.match.params.groupid},
+                fetchPolicy: 'network-only',
             })
             .then(result => {
-                console.log(result);
-                if(!result.data.group) {
-                    console.log("GraphQL query no result");
-                } else {
+                if(result.data) {
                     this.setState({group: result.data.group});
                 }
             })
@@ -76,12 +72,13 @@ class TeachGroupComp extends Component {
         if(!this.state.changeNewsText)
             return
         client.mutate({
-                mutation: CHANGENEWS,
-                variables: {groupId: this.state.group.id, text: this.state.changeNewsText}
+                mutation: CHANGE_NEWS,
+                variables: {groupId: this.state.group.id, text: this.state.changeNewsText},
             })
             .then(result => {
-                console.log(result);
-                this.refreshGroup();
+                if(result.data) {
+                    this.setState({group: result.data.group});
+                }
             })
             .catch(errors => {
                 console.log(errors);
@@ -159,7 +156,7 @@ class TeachGroupComp extends Component {
                 {this.state.group.news &&
                 <div className="row alert alert-warning my-3">
                     <span className="badge badge-primary text-center mr-2 mb-1 py-1">
-                        {this.getNewsRefreshTime(this.state.group.news.sinceRefreshHours)}
+                        {this.getNewsRefreshTime(this.state.group.newsChangedDate)}
                     </span>
                     <i>{this.state.group.news.text}</i>
                 </div> }

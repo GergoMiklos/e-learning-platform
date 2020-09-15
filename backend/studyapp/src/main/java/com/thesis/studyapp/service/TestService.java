@@ -9,14 +9,14 @@ import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.TestRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class TestService {
 
@@ -53,7 +53,7 @@ public class TestService {
         return convertToDto(testRepository.save(test));
     }
 
-    //TODO ez ronda
+    //TODO ez ronda, kell kezdő current task!
     @Transactional
     public TestDto changeTestStatus(Long testId, Test.Status status) {
         Test test = getTestById(testId, 2);

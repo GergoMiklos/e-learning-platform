@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import gql from "graphql-tag";
 import client from "../ApolloClient";
 
@@ -15,12 +15,12 @@ const state = {
     IN_PROGRESS: "bg-success",
     PROBLEM: "bg-danger",
     INACTIVE: "bg-warning",
-    FINISHED: "bg-info"
-}
+    FINISHED: "bg-info",
+};
 
 class TeachLiveTestComp extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             liveTest: {
                 test: {name: "Maths 2.A - 1. practice", discription: "Addition, subtraction and multiplication revision"},
@@ -41,7 +41,7 @@ class TeachLiveTestComp extends Component {
     }
 
     navigateBack = () => {
-        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`)
+        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`);
     }
 
     componentDidMount() {
@@ -50,7 +50,7 @@ class TeachLiveTestComp extends Component {
 
     render() {
         if(!this.state.liveTest) {
-            return (<div></div>)
+            return (<div/>);
         }
         return (
             <div className="container">
@@ -73,18 +73,10 @@ class TeachLiveTestComp extends Component {
                 <div className="row my-3">
                     <table className="col-12 table table-striped rounded shadow">
                         <thead>
-                            <th>
-                                Name
-                            </th>
-                            <th>
-                                Code
-                            </th>
-                            <th>
-                                Started
-                            </th>
-                            <th>
-                                State
-                            </th>
+                            <th>Name</th>
+                            <th>Code</th>
+                            <th>Started </th>
+                            <th> State </th>
                         </thead>
                         <tbody>
                         {

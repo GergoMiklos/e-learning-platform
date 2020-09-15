@@ -9,14 +9,14 @@ import com.thesis.studyapp.repository.TaskRepository;
 import com.thesis.studyapp.repository.TestRepository;
 import com.thesis.studyapp.repository.TestTaskRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class TestTaskService {
 
@@ -64,6 +64,9 @@ public class TestTaskService {
         testTaskRepository.deleteById(testTaskId);
     }
 
+    //Todo, minden Query típusú függvény Optional-lal térjen vissza (GraphQL kezeli),
+    // és ha get->null-nál ne dobjunk kivételt,
+    // csak Mutation-nél, amikor már tényleg probléma van
     private TestTask getTestTaskById(Long testTaskId, int depth) {
         return testTaskRepository.findById(testTaskId, Math.max(depth, 1))
                 .orElseThrow(() -> new CustomGraphQLException("No testTask with id: " + testTaskId));

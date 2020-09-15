@@ -1,17 +1,15 @@
 package com.thesis.studyapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -24,13 +22,18 @@ public class Task {
     private Long id;
 
     private String question;
-    private List<String> answers;
-    private int solution;
+    //    @Properties
+//    @Convert(IntegerMapConverter.class)
+//    private Map<Integer, String> answers;
+    private int solutionNumber;
+
+    private Set<TaskAnswer> answers = new HashSet<>();
     private int usage;
 
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @Relationship(type = "TASKOWNER", direction = Relationship.OUTGOING)
-    private User owner;
+    //todo @JsonIgnoreProperties("createdTasks")?
+//    @JsonIgnore
+//    @EqualsAndHashCode.Exclude
+//    @Relationship(type = "TASKOWNER", direction = Relationship.OUTGOING)
+//    private User owner;
 
 }

@@ -13,7 +13,7 @@ public class GroupEndpoint implements GraphQLQueryResolver, GraphQLMutationResol
 
     private final GroupService groupService;
 
-    public GroupDto getGroup(Long groupId) {
+    public GroupDto group(Long groupId) {
         return groupService.getGroup(groupId);
     }
 
@@ -34,11 +34,11 @@ public class GroupEndpoint implements GraphQLQueryResolver, GraphQLMutationResol
     }
 
     public void deleteStudentFromGroup(Long userId, Long groupId) {
-        groupService.deleteStudentFromGroup(groupId, userId);
+        groupService.deleteStudentFromGroup(userId, groupId);
     }
 
     public void deleteTeacherFromGroup(Long userId, Long groupId) {
-        groupService.deleteTeacherFromGroup(groupId, userId);
+        groupService.deleteTeacherFromGroup(userId, groupId);
     }
 
 

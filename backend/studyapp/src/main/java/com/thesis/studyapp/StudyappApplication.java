@@ -2,6 +2,7 @@ package com.thesis.studyapp;
 
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.Task;
+import com.thesis.studyapp.model.TaskAnswer;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
@@ -12,29 +13,30 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @SpringBootApplication
 public class StudyappApplication {
-	public static boolean RUNTEST = true;
-	public static boolean HUGETEST = false;
+    public static boolean RUNTEST = true;
+    public static boolean HUGETEST = false;
 
-	public static void main(String[] args) {
-		SpringApplication.run(StudyappApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(StudyappApplication.class, args);
+    }
 
-	@Bean
-	CommandLineRunner demo(UserRepository userRepository) {
-		return args -> {
-			if (!RUNTEST)
-				return;
-			if (userRepository.count() != 0)
-				return;
+    @Bean
+    CommandLineRunner demo(UserRepository userRepository) {
+        return args -> {
+            if (!RUNTEST)
+                return;
+            if (userRepository.count() != 0)
+                return;
 
-			User user = new User();
-			user.setName("User");
-			user.setCode("UUU001");
+            User user = new User();
+            user.setName("User");
+            user.setCode("UUU001");
 
             User user2 = new User();
             user2.setName("User2");
@@ -45,72 +47,84 @@ public class StudyappApplication {
             User user4 = new User();
             user4.setName("User4");
             user4.setCode("UUU004");
+
             Group group = new Group();
             group.setName("Group");
             group.setCode("GGG001");
-            group.setDescription("Helóbeló kobaka");
+            group.setDescription("Group1 initial test desc.");
+            group.setNews("Test news!");
+            group.setNewsChangedDate(LocalDateTime.now());
             Group group2 = new Group();
             group2.setName("Group2");
             group2.setCode("GGG002");
-            group2.setDescription("Helóbeló kobaka2");
+            group2.setDescription("And Group2 initial test desc.");
 
-            ArrayList<String> answers = new ArrayList<String>();
-            answers.add("Lóhere táncol");
-            answers.add("Csipike is táncol");
-			answers.add("hamradik válasz");
-			answers.add("de vajon melyik a hejes??");
-			Task task = new Task();
-			task.setQuestion("Task");
-			task.setAnswers(answers);
-			Task task2 = new Task();
-			task2.setQuestion("Task2");
-			task2.setAnswers(answers);
-			TestTask testTask = new TestTask();
-			testTask.setLevel(4);
-			Test test = new Test();
-			test.setName("Test");
-			test.setDescription("Test1 leírása az élő állatokról");
-			test.addTask(testTask);
-			task.setOwner(user);
-			testTask.setTask(task);
-			testTask.setTest(test);
+//            Map<Integer, String> answers = new LinkedHashMap<>();
+//            answers.put(1, "Answer 1 is here");
+//            answers.put(2, "Answer 2 is a little bit longer than answer 1 if you don't mind");
+//            answers.put(3, "3.");
+//            answers.put(4, "This is only for testing");
+            Set<TaskAnswer> answers = new HashSet<>();
+            answers.add(TaskAnswer.builder().number(1).answer("Answer 1 is here").build());
+            answers.add(TaskAnswer.builder().number(1)
+                    .answer("Answer 2 is a little bit longer than answer 1 if you don't mind (and lets have some extra %/=* character too").build());
+            answers.add(TaskAnswer.builder().number(1).answer("3.").build());
+            answers.add(TaskAnswer.builder().number(1).answer("This is only for testing").build());
 
-			group.setNews("news");
-			group.setNewsChangedDate(new Date());
+            Task task = Task.builder()
+                    .question("Task1, the soltuion is the number 1")
+                    .solutionNumber(1)
+                    .answers(answers)
+                    .build();
+            Task task2 = Task.builder()
+                    .question("Task2 is a little bit longer for making the development testing easier for me. Solution is number 2!")
+                    .solutionNumber(2)
+                    .answers(answers)
+                    .build();
 
-			user.addManagedGroup(group);
-			user2.addManagedGroup(group);
-			user.addGroup(group);
-			user.addGroup(group2);
-			user2.addGroup(group);
-			user2.addGroup(group2);
-			user3.addGroup(group);
-			user4.addGroup(group2);
+            Test test = new Test();
+            test.setName("Test");
+            test.setDescription("Test1 desc. about something interesting");
 
-			UserTestStatus userTestStatus = new UserTestStatus();
-			group.addTest(test);
-			test.addUserTestStatus(userTestStatus);
-			userTestStatus.setUser(user);
-			user.addLiveTestState(userTestStatus);
-			userTestStatus.setTest(test);
-			userTestStatus.setCurrentTask(task2);
-			userTestStatus.setDeprecated(false);
-			testTask.setTask(task);
-			test.addTask(testTask);
+            TestTask testTask = new TestTask();
+            testTask.setLevel(4);
+            test.addTask(testTask);
+            testTask.setTask(task);
+            testTask.setTest(test);
 
-			userRepository.save(user);
-			userRepository.save(user2);
-			userRepository.save(user3);
-			userRepository.save(user4);
+            user.addTeacherGroup(group);
+            user2.addTeacherGroup(group);
+            user.addStudentGroup(group);
+            user.addStudentGroup(group2);
+            user2.addStudentGroup(group);
+            user2.addStudentGroup(group2);
+            user3.addStudentGroup(group);
+            user4.addStudentGroup(group2);
 
-			if (HUGETEST) {
-				for (int i = 1; i < 100; i++) {
-					user = new User();
-					user.setName("UserTest" + i);
-					user.addGroup(group);
-					userRepository.save(user);
-				}
-			}
-		};
-	}
+            UserTestStatus userTestStatus = new UserTestStatus();
+            group.addTest(test);
+            test.addUserTestStatus(userTestStatus);
+            userTestStatus.setUser(user);
+            user.addUserTestStatus(userTestStatus);
+            userTestStatus.setTest(test);
+            userTestStatus.setCurrentTask(task2);
+            userTestStatus.setDeprecated(false);
+            testTask.setTask(task);
+            test.addTask(testTask);
+
+            userRepository.save(user);
+            userRepository.save(user2);
+            userRepository.save(user3);
+            userRepository.save(user4);
+
+            if (HUGETEST) {
+                for (int i = 1; i < 100; i++) {
+                    user = new User();
+                    user.setName("UserTest" + i);
+                    user.addStudentGroup(group);
+                    userRepository.save(user);
+                }
+            }
+        };
+    }
 }

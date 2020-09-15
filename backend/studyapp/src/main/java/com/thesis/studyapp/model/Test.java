@@ -12,7 +12,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @NodeEntity
@@ -27,8 +26,6 @@ public class Test {
 
     private String name;
     private String description;
-    private Status status = Status.OFFLINE;
-    private Date timeStatusChanged;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude

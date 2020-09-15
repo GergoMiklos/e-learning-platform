@@ -36,7 +36,7 @@ public class UserTestStatusDto implements HasId {
 
     public static UserTestStatusDto build(UserTestStatus userTestStatus) {
         if (userTestStatus.getTest() == null || userTestStatus.getUser() == null) {
-            throw new IllegalStateException("Relationships needed when converting to UserTestStatusDto!");
+            throw new IllegalStateException("Relationships needed for converting UserTestStatus!");
         }
         return UserTestStatusDto.builder()
                 .id(userTestStatus.getId())

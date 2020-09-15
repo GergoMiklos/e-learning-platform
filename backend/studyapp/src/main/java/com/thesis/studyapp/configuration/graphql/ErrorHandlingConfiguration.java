@@ -1,4 +1,4 @@
-package com.thesis.studyapp.graphql;
+package com.thesis.studyapp.configuration.graphql;
 
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.exception.GraphQLErrorAdapter;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-public class GraphQLErrorConfig {
+public class ErrorHandlingConfiguration {
 
     @Bean
     public GraphQLErrorHandler errorHandler() {
