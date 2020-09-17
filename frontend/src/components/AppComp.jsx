@@ -7,7 +7,7 @@ import LearnGroupComp from "./LearnGroupComp";
 import TeachGroupComp from "./TeachGroupComp";
 import LearnLiveTestComp from "./LearnLiveTestComp";
 import EditGroupComp from "./EditGroupComp";
-import TaskListComp from "./TaskListComp"
+import NewTaskSearchComp from "./NewTaskSearchComp"
 import NewTaskComp from "./NewTaskComp";
 import NewGroupComp from "./NewGroupComp";
 import NewTestComp from "./NewTestComp";
@@ -37,7 +37,7 @@ class AppComp extends Component {
                         <Route path="/teach/group/:groupid/edit" component={EditGroupComp}/>
                         <Route path="/teach/group/:groupid" component={TeachGroupComp}/>
                         <Route path="/teach/test/:testid/tasks/new" component={NewTaskComp}/>
-                        <Route path="/teach/test/:testid/tasks" component={TaskListComp}/>
+                        <Route path="/teach/test/:testid/tasks" component={NewTaskSearchComp}/>
                         <Route path="/group/test/:id" component={NewGroupComp}/>
                         <Route component={ErrorComp}/>
                     </Switch>

@@ -39,18 +39,10 @@ public interface GroupRepository extends Neo4jRepository<Group, Long> {
     @Query("MATCH (student:User)-[gs:GROUPSTUDENT]-(g:Group)" +
             " WHERE id(student) = $studentId AND id(g) = $groupId" +
             " DELETE gs")
-    void deleteStudent(
-            @Param("groupId")
-                    Long groupId,
-            @Param("studentId")
-                    Long studentId);
+    void deleteStudent(@Param("groupId") Long groupId, @Param("studentId") Long studentId);
 
     @Query("MATCH (teacher:User)-[gt:GROUPTEACHER]-(g:Group)" +
             " WHERE id(teacher) = $teacherId AND id(g) = $groupId" +
             " DELETE gt")
-    void deleteTeacher(
-            @Param("groupId")
-                    Long groupId,
-            @Param("teacherId")
-                    Long teacherId);
+    void deleteTeacher(@Param("groupId") Long groupId, @Param("teacherId") Long teacherId);
 }

@@ -2,6 +2,6 @@ type Query {
     user(userId: ID!): User
     group(groupId: ID!): Group
     test(testId: ID!): Test
-    tasks(searchString: String): [Task]
+    searchTasks(searchText: String, page: Int!): TaskSearchResult!
     task(userId: ID!, testId: ID!): Task
 }

@@ -2,14 +2,20 @@ package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.TaskDto;
 import com.thesis.studyapp.dto.TaskInputDto;
+import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.TaskAnswer;
 import com.thesis.studyapp.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,8 +33,13 @@ public class TaskService {
         return convertToDto(taskRepository.findByIdIn(ids, 1));
     }
 
-    public List<TaskDto> getTasks(String searchString) {
-        return convertToDto(taskRepository.findByQuestionLikeOrderByUsage(searchString, 1));
+    public TaskSearchResultDto searchTasks(Optional<String> searchText, int page) {
+        Pageable pageable = PageRequest.of(page, 25, Sort.Direction.DESC, "usage");
+        if(searchText.isPresent() && !searchText.get().trim().isEmpty()) {
+            return convertToDto(taskRepository.findByQuestionContainingIgnoreCase(searchText.get(), pageable,  1));
+        } else {
+            return convertToDto(taskRepository.findAll(pageable, 1));
+        }
     }
 
     //todo convertInputToTask...
@@ -50,6 +61,7 @@ public class TaskService {
                 .question(taskInputDto.getQuestion())
                 .answers(allAnswer.collect(Collectors.toSet()))
                 .solutionNumber(solutionNumber)
+                .usage(0L)
                 .build();
         return convertToDto(taskRepository.save(task));
     }
@@ -67,6 +79,14 @@ public class TaskService {
         return tasks.stream()
                 .map(TaskDto::build)
                 .collect(Collectors.toList());
+    }
+
+    private TaskSearchResultDto convertToDto(Page<Task> tasks) {
+        return TaskSearchResultDto.builder()
+                .totalPages(tasks.getTotalPages())
+                .totalElements(tasks.getTotalElements())
+                .tasks(convertToDto(tasks.getContent()))
+                .build();
     }
 }
 

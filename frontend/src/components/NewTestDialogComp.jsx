@@ -6,14 +6,14 @@ import AuthenticationService from "../AuthenticationService";
 import {Modal} from "react-bootstrap";
 import toaster from "toasted-notes";
 
-const CREATE_GROUP = gql`
-    mutation CreateGroup($userId: ID!, $name: String!, $description: String!) {
-        createGroup(userId: $userId, name: $name, description: $description) {
+const CREATE_TEST = gql`
+    mutation CreateTest($groupId: ID!, $name: String!, $description: String!) {
+        createTest(groupId: $groupId, name: $name, description: $description) {
             name
         }
     }`;
 
-class NewGroupDialogComp extends Component {
+class NewTestDialogComp extends Component {
     constructor(props) {
         super(props);
     }
@@ -34,14 +34,13 @@ class NewGroupDialogComp extends Component {
     }
 
     onSubmit = (values) => {
-        let userId = AuthenticationService.getUserId();
         client.mutate({
-            mutation: CREATE_GROUP,
-            variables: {name: values.name, description: values.description, userId: userId},
+            mutation: CREATE_TEST,
+            variables: {name: values.name, description: values.description, groupId: this.props.groupId},
         })
-            .then(result => {
+            .then(() => {
                 this.showNotification({
-                    text: 'Group created successfully',
+                    text: 'Test created successfully',
                     type: 'success',
                 })
                 this.props.onHide();
@@ -70,7 +69,7 @@ class NewGroupDialogComp extends Component {
                 <div className="container">
 
                     <div className="row bg-primary text-light shadow p-3">
-                        <h1 className="col-10">New Group</h1>
+                        <h1 className="col-10">New Test</h1>
                     </div>
 
                     <Formik
@@ -115,7 +114,6 @@ class NewGroupDialogComp extends Component {
         );
     }
 
-
 }
 
-export default NewGroupDialogComp;
+export default NewTestDialogComp;

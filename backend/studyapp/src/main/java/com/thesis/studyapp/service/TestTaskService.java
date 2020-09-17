@@ -53,7 +53,7 @@ public class TestTaskService {
                 .task(task)
                 .test(test)
                 .build();
-        return convertToDto(testTaskRepository.save(testTask));
+        return convertToDto(testTaskRepository.save(testTask, 1));
     }
 
     public List<TestTaskDto> getTestTasksForTest(Long testId) {

@@ -4,11 +4,13 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.TaskDto;
 import com.thesis.studyapp.dto.TaskInputDto;
+import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,8 +18,8 @@ public class TaskEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final TaskService taskService;
 
-    public List<TaskDto> tasks(String searchString) {
-        return taskService.getTasks(searchString);
+    public TaskSearchResultDto searchTasks(Optional<String> searchText, int page) {
+        return taskService.searchTasks(searchText, page);
     }
 
     public TaskDto createTask(TaskInputDto taskInputDto) {

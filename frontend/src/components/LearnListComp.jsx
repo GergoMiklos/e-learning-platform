@@ -57,7 +57,7 @@ class LearnListComp extends Component {
             })
             .catch(errors => {
                 console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'error'})
+                this.showNotification({text: 'Something went wrong', type: 'danger'})
 
             });
     }
@@ -67,14 +67,18 @@ class LearnListComp extends Component {
     }
 
     formatDate = (date) => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+        const options = {
+            weekday: 'long',
+            hour: 'numeric',
+            minute: 'numeric'
+        }
         return new Date(date).toLocaleString(/*navigator.language*/ 'en', options); //todo
     }
 
     isFresh = (date) => {
         const now = new Date();
         const week = 1000 * 60 * 60 * 24 * 7;
-        return (now - date) > week;
+        return (now - date) < week;
     }
 
     joinGroup = () => {
@@ -88,13 +92,16 @@ class LearnListComp extends Component {
             .then(result => {
                 if (result.data.addStudentToGroupFromCode) {
                     this.setState({joinGroupCode: ''});
-                    this.showNotification({text: `Joined to group: ${result.data.addStudentToGroupFromCode.name}`, type: 'success'})
+                    this.showNotification({
+                        text: `Joined to group: ${result.data.addStudentToGroupFromCode.name}`,
+                        type: 'success'
+                    })
                     this.loadData();
                 }
             })
             .catch(errors => {
                 console.log(errors);
-                this.showNotification({text: `No group with code: ${this.state.joinGroupCode}`, type: 'error'})
+                this.showNotification({text: `No group with code: ${this.state.joinGroupCode}`, type: 'danger'})
             })
     }
 
@@ -145,24 +152,22 @@ class LearnListComp extends Component {
 
                 {this.state.user.studentGroups &&
                 <div className="row my-3">
-                    <table className="col-12 table table-striped table-hover rounded shadow">
-                        <tbody>
-                        {
-                            this.state.user.studentGroups.map(
-                                group =>
-                                    <tr key={group.id} onClick={() => this.groupClicked(group.id)}>
-                                        <td>
-                                            <strong className="mx-2"> {group.name}</strong>
-                                            {group.news && this.isFresh(new Date(group.newsChangedDate)) &&
-                                            <span className="badge badge-pill bg-warning mx-2 px-2 py-1">
-                                                {this.formatDate(new Date(group.newsChangedDate))}
-                                            </span>}
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
+                    <ul className="col-12 list-group">
+                        {this.state.user.studentGroups.map(group =>
+                            <li
+                                className="list-group-item list-group-item-action"
+                                key={group.id} onClick={() =>
+                                this.groupClicked(group.id)}>
+
+                                <strong className="mx-2"> {group.name}</strong>
+
+                                {group.news && this.isFresh(new Date(group.newsChangedDate)) &&
+                                <span className="badge badge-pill bg-warning mx-2 px-2 py-1">
+                                    {this.formatDate(new Date(group.newsChangedDate))}
+                                </span>}
+                            </li>
+                        )}
+                    </ul>
                 </div>}
             </div>
         );

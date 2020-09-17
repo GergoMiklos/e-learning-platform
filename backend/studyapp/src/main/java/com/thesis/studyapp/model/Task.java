@@ -28,7 +28,7 @@ public class Task {
     private int solutionNumber;
 
     private Set<TaskAnswer> answers = new HashSet<>();
-    private int usage;
+    private Long usage;
 
     //todo @JsonIgnoreProperties("createdTasks")?
 //    @JsonIgnore

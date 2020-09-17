@@ -1,33 +1,32 @@
-import React, { Component } from 'react'
-import {ErrorMessage, Field, Form, Formik} from "formik";
+import React, {Component} from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
+import toaster from "toasted-notes";
+import EditTestDetailsComp from "./EditTestDetailsComp";
 
 const TEST = gql`
-    query Test($id: ID!) {
-        test(id: $id) {
+    query getTest($testId: ID!) {
+        test(testId: $testId) {
             id
             name
             description
-            tasks {
+            testTasks {
                 id
-                question
-                answers
                 level
+                task {
+                    id
+                    question
+                    answers {
+                        number
+                        answer
+                    }
+                    solutionNumber
+                }
             }
         }
     }`;
 
-const EDITTEST = gql`
-    mutation EditTest($id: ID!, $name: String!, $description: String!) {
-        editTest(id: $id, name: $name, description: $description) {
-            id
-            name
-            description
-        }
-    }`;
-
-const DELETETASK = gql`
+const DELETE_TASK = gql`
     mutation DeleteTaskFromTest($testTaskId: ID!) {
         deleteTaskFromTest(testTaskId: $testTaskId)
     }`;
@@ -37,103 +36,62 @@ class EditTestComp extends Component {
         super(props)
         this.state = {
             test: null,
-            selected: null,
+            selectedTestTaskId: null,
             error: null,
             success: null
         };
     }
 
-    validate = (values) => {
-        let errors = {}
-        if(!values.name) {
-            errors.name = 'Enter a name!'
-        } else if(values.name.toString().length > 50 || values.name.toString().length < 5) {
-            errors.name = 'Enter a name has min 5 and max 50 characters!'
-        } else if(!values.description) {
-            errors.description = 'Enter a description!'
-        } else if(values.name.toString().length > 150 || values.name.toString().length < 5) {
-            errors.description = 'Enter a description has min 5 and max 150 characters!'
-        }
-        return errors
-    }
-
-    onSubmit = (values) => {
-        client.mutate({
-            mutation: EDITTEST,
-            variables: {name: values.name, description: values.description, id: this.state.test.id}
-        })
-            .then(result => {
-                console.log(result);
-                this.setState({success: 'Saved!', error: null});
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.setState({error: 'Error!'});
-            })
-    }
-
-    deleteTask = (taskId) => {
-        client.mutate({
-            mutation: DELETETASK,
-            variables: {testTaskId: taskId}
-        })
-            .then(result => {
-                console.log(result);
-                this.setState({success: 'Deleted!', error: null});
-                this.refreshTest();
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.setState({error: 'Error!', success: null});
-            })
-    }
-
     navigateBack = () => {
-        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`)
+        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`);
     }
 
-    taskClicked = (id) => {;
-        if(this.state.selected === id) {
-            this.setState({selected: null});
+    selectTestTask = (id) => {
+        if (this.state.selectedTestTaskId === id) {
+            this.setState({selectedTestTaskId: null});
         } else {
-            this.setState({selected: id});
+            this.setState({selectedTestTaskId: id});
         }
     }
 
-    newTask= () => {
-        this.props.history.push(`/teach/test/${this.state.test.id}/tasks`)
+    newTask = () => {
+        this.props.history.push(`/teach/test/${this.state.test.id}/tasks`);
     }
 
     componentDidMount() {
-        this.refreshTest();
+        this.loadData();
     }
 
-    refreshTest = () => {
+    loadData = () => {
         client
             .query({
                 query: TEST,
-                variables: {id: this.props.match.params.testid},
-                fetchPolicy: 'network-only'
+                variables: {testId: this.props.match.params.testid},
+                fetchPolicy: 'network-only',
             })
             .then(result => {
-                console.log(result);
-                if(!result.data.test) {
-                    console.log("GraphQL query no result");
-                } else {
+                if (result.data) {
                     this.setState({test: result.data.test});
                 }
             })
             .catch(errors => {
                 console.log(errors);
+                this.showNotification({text: 'Something went wrong', type: 'danger'});
             });
     }
 
+    showNotification = ({text, type}) => {
+        toaster.notify(() => (
+            <div className={`alert alert-${type}`}>
+                {text}
+            </div>
+        ))
+    }
+
     render() {
-        if(!this.state.test) {
-            return (<div></div>)
+        if (!this.state.test) {
+            return (<div/>)
         }
-        let name = this.state.test.name;
-        let description = this.state.test.description;
         return (
             <div className="container">
                 <button className="row btn btn-secondary mt-1" onClick={() => this.navigateBack()}>
@@ -141,78 +99,103 @@ class EditTestComp extends Component {
                 </button>
 
                 <div className="row bg-primary text-light rounded shadow my-3 p-3">
-                    <h1 className="col-auto">Edit test</h1>
+                    <h1 className="col-auto">Edit Test</h1>
                 </div>
 
-                {this.state.error && <div className="alert alert-danger">{this.state.error}</div>}
-                {this.state.success && <div className="alert alert-success">{this.state.success}</div>}
+                <EditTestDetailsComp className="row"
+                                     testId={this.state.test.id}
+                                     name={this.state.test.name}
+                                     description={this.state.test.description}
+                />
 
-                <Formik
-                    initialValues={{name: name, description: description}}
-                    onSubmit={this.onSubmit}
-                    validateOnChange={false}
-                    validateOnBlur={true}
-                    validate={this.validate}
-                    enableReinitialize={true}
-                >
-                    {
-                        (props) => (
-                            <Form>
-                                <ErrorMessage name="name" component="div" className="alert alert-warning"></ErrorMessage>
-                                <ErrorMessage name="description" component="div" className="alert alert-warning"></ErrorMessage>
-
-                                <fieldset className="from-group">
-                                    <label>Name</label>
-                                    <Field className="form-control" type="text" name="name" placeholder="Name"></Field>
-                                </fieldset>
-                                <fieldset className="from-group">
-                                    <label>Description</label>
-                                    <Field className="form-control" type="text" name="description" placeholder="Description"></Field>
-                                </fieldset>
-
-                                <button type="submit" className="btn btn-primary my-1">Save</button>
-                            </Form>
-                        )
-                    }
-                </Formik>
-
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Tasks</h1>
-                    <button className="col-2 btn btn-primary btn" onClick={() => this.newTask()}>New</button>
+                <div className="row rounded shadow my-3 p-3 d-flex justify-content-between">
+                    <h1>Tasks</h1>
+                    <button className="btn btn-primary btn" onClick={() => this.newTask()}>Add New</button>
                 </div>
 
-                {this.state.test.tasks &&
+                {this.state.test.testTasks &&
                 <div className="row my-3">
-                    <table className="col-12 table table-striped rounded shadow">
-                        <tbody>
+                    <ul className="col-12 list-group">
                         {
-                            this.state.test.tasks.map(
-                                task =>
-                                    <tr key={task.id} onClick={() => this.taskClicked(task.id)}>
-                                        <td>
-                                            <div className="container">
-                                                <div className="row">
-                                                    <strong className="col-10">{task.question}</strong>
-                                                    {(this.state.selected === task.id) &&
-                                                    <button className="col-2 btn btn-danger" onClick={() => this.deleteTask(task.id)}>
-                                                        Delete
-                                                    </button>}
-                                                </div>
-                                                {(this.state.selected === task.id) && task.answers.map(
-                                                    (answer, i) =>
-                                                        <div key={i} className="row">{answer}</div>
-                                                )}
-                                            </div>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
+                            this.state.test.testTasks.map(testTask =>
+                                <li
+                                    className="list-group-item list-group-item-action"
+                                    key={testTask.id}
+                                    onClick={() => this.selectTestTask(testTask.id)}
+                                >
+                                    <EditTestElementComp
+                                        testTask={testTask}
+                                        selectedTestTaskId={this.state.selectedTestTaskId}
+                                        onDelete={() => this.loadData()}
+                                    />
+                                </li>
+                            )}
+                    </ul>
                 </div>}
             </div>
         );
     }
+
+}
+
+
+class EditTestElementComp extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            selectedLevel: 1,
+        };
+    }
+
+    deleteTask = (testTaskId) => {
+        client.mutate({
+            mutation: DELETE_TASK,
+            variables: {testTaskId: testTaskId}
+        })
+            .then(() => {
+                this.showNotification({text: 'Task deleted successfully', type: 'success'});
+                this.props.onDelete()
+            })
+            .catch(errors => {
+                console.log(errors);
+                this.showNotification({text: 'Something went wrong', type: 'danger'});
+            })
+    }
+
+    showNotification = ({text, type}) => {
+        toaster.notify(() => (
+            <div className={`alert alert-${type}`}>
+                {text}
+            </div>
+        ))
+    }
+
+    render() {
+        return (
+            <div>
+                <div className="d-flex justify-content-between">
+
+                    <strong>{this.props.testTask.task.question}</strong>
+
+                    {(this.props.selectedTestTaskId === this.props.testTask.id) &&
+                    <button className="btn btn-danger btn-sm" onClick={() => this.deleteTask(this.props.testTask.id)}>
+                        Delete
+                    </button>}
+                </div>
+
+                {(this.props.selectedTestTaskId === this.props.testTask.id) && this.props.testTask.task.answers.map(
+                    (answer, i) =>
+                        <div className="collapse show">
+                            <div key={answer.number}
+                                 className={(answer.number === this.props.testTask.task.solutionNumber) ? 'font-weight-bold' : 'font-weight-light'}>
+                                {`${i + 1}. ${answer.answer}`}
+                            </div>
+                        </div>
+                )}
+            </div>
+        );
+    }
+
 
 }
 

@@ -25,7 +25,6 @@ public class UserTestStatus {
     private Long id;
 
     private Status status = Status.NOT_STARTED;
-    private boolean deprecated;
 
     private int correctAnswersInRow;
     private int wrongAnswersInRow;

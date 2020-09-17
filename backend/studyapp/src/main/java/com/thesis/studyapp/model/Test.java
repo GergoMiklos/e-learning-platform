@@ -12,7 +12,9 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -34,28 +36,24 @@ public class Test {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TESTTASK", direction = Relationship.OUTGOING)
-    private List<TestTask> testTasks;
+    private Set<TestTask> testTasks = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TESTSTATUS", direction = Relationship.OUTGOING)
-    private List<UserTestStatus> userTestStatuses;
+    private Set<UserTestStatus> userTestStatuses = new HashSet<>();
 
     public void addUserTestStatus(UserTestStatus userTestStatus) {
         if (userTestStatuses == null) {
-            userTestStatuses = new ArrayList<>();
+            userTestStatuses = new HashSet<>();
         }
         userTestStatuses.add(userTestStatus);
     }
 
     public void addTask(TestTask task) {
         if (testTasks == null) {
-            testTasks = new ArrayList<>();
+            testTasks = new HashSet<>();
         }
         testTasks.add(task);
-    }
-
-    public enum Status {
-        OFFLINE, ONLINE
     }
 
 }

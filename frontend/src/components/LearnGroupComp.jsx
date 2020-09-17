@@ -16,6 +16,7 @@ const STUDENT_GROUP = gql`
             tests {
                 id
                 name
+                description
             }
         }
     }`;
@@ -30,6 +31,7 @@ class LearnGroupComp extends Component {
         super(props);
         this.state = {
             group: null,
+            selectedTestId: null,
         };
     }
 
@@ -44,23 +46,37 @@ class LearnGroupComp extends Component {
                 variables: {groupId: this.props.match.params.groupid},
             })
             .then(result => {
-                console.log(result);
                 if (result.data) {
                     this.setState({group: result.data.group});
                 }
             })
             .catch(errors => {
                 console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'error'});
+                this.showNotification({text: 'Something went wrong', type: 'danger'});
             });
     }
 
-    testClicked = (id) => {
+    startTest = (id) => {
         this.props.history.push(`/learn/group/${this.props.match.params.groupid}/test/${id}`);
     }
 
+    selectTest = (id) => {
+        if (this.state.selectedTestId === id) {
+            this.setState({selectedTestId: null});
+        } else {
+            this.setState({selectedTestId: id});
+        }
+    }
+
     formatDate = (date) => {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        };
         return new Date(date).toLocaleString(/*navigator.language*/ 'en', options); //todo
     }
 
@@ -76,7 +92,7 @@ class LearnGroupComp extends Component {
             })
             .catch(errors => {
                 console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'error'});
+                this.showNotification({text: 'Something went wrong', type: 'danger'});
             })
     }
 
@@ -131,20 +147,30 @@ class LearnGroupComp extends Component {
 
                 {this.state.group.tests &&
                 <div className="row my-3">
-                    <table className="col-12 table table-striped table-hover rounded shadow">
-                        <tbody>
-                        {
-                            this.state.group.tests.map(
-                                test =>
-                                    <tr key={test.id} onClick={() => this.testClicked(test.id)}>
-                                        <td>
-                                            <strong>{test.name}</strong>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
+                    <ul className="col-12 list-group">
+                        {this.state.group.tests.map(test =>
+                            <li
+                                className="list-group-item list-group-item-action"
+                                key={test.id}
+                                onClick={() => this.selectTest(test.id)}
+                            >
+                                <div className="d-flex justify-content-between">
+
+                                    <strong>{test.name}</strong>
+
+                                    {(this.state.selectedTestId === test.id) &&
+                                    <button className="btn btn-primary btn-sm" onClick={() => this.startTest(test.id)}>
+                                        Start
+                                    </button>}
+                                </div>
+
+                                {(this.state.selectedTestId === test.id) &&
+                                <div className="font-weight-light">
+                                    {test.description}
+                                </div>}
+                            </li>
+                        )}
+                    </ul>
                 </div>}
             </div>
         );

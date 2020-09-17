@@ -18,6 +18,7 @@ public class TaskDto implements HasId {
     private String question;
     private List<TaskAnswerDto> answers;
     private int solutionNumber;
+    private Long usage;
 
     public static TaskDto build(Task task) {
         if (task.getAnswers() == null) {
@@ -34,6 +35,7 @@ public class TaskDto implements HasId {
                         .map(answer -> new TaskAnswerDto(answer.getNumber(), answer.getAnswer()))
                         .collect(Collectors.toList()))
                 .solutionNumber(task.getSolutionNumber())
+                .usage(task.getUsage())
                 .build();
     }
 

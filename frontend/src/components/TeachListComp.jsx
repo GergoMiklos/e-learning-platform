@@ -11,6 +11,8 @@ const TEACHER_GROUPS = gql`
     query User($userId: ID!) {
         user(userId: $userId) {
             id
+            name
+            code
             teacherGroups {
                 id
                 name
@@ -28,11 +30,10 @@ class TeachListComp extends Component {
     }
 
     newGroup = () => {
-        //this.props.history.push(`/teach/group/new`);
         this.setState({showNewGroupDialog: true});
     }
 
-    onNewGroupDialogHide = (groupCreated) => {
+    onNewGroupDialogHide = () => {
         this.loadData();
         this.setState({showNewGroupDialog: false});
     }
@@ -61,7 +62,7 @@ class TeachListComp extends Component {
             })
             .catch(errors => {
                 console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'error'})
+                this.showNotification({text: 'Something went wrong', type: 'danger'})
             });
     }
 
@@ -79,6 +80,12 @@ class TeachListComp extends Component {
         }
         return (
             <div className="container">
+
+                <div className="row bg-warning text-light rounded shadow my-3 p-3">
+                    <h1 className="col-auto">{this.state.user.name}</h1>
+                    <h1 className="col-auto rounded-pill bg-primary px-3">{this.state.user.code}</h1>
+                </div>
+
                 <div className="row rounded shadow my-3 p-3">
                     <h1 className="col-10">Teacher Groups</h1>
                     <button className="col-2 btn btn-primary" onClick={() => this.newGroup()}>
@@ -93,21 +100,16 @@ class TeachListComp extends Component {
 
                 {this.state.user.teacherGroups &&
                 <div className="row my-3">
-                    <table className="col-12 table table-striped table-hover rounded shadow">
-                        <tbody>
-                        {
-                            this.state.user.teacherGroups.map(
-                                group =>
-                                    <tr key={group.id} onClick={() => this.groupClicked(group.id)}>
-                                        <td>
-                                            <strong>{group.name}</strong>
-                                            <div>{group.description}</div>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
+                    <ul className="col-12 list-group">
+                        {this.state.user.teacherGroups.map(group =>
+                            <li
+                                className="list-group-item list-group-item-action"
+                                key={group.id}
+                                onClick={() => this.groupClicked(group.id)}>
+                                <strong>{group.name}</strong>
+                            </li>
+                        )}
+                    </ul>
                 </div>}
 
             </div>

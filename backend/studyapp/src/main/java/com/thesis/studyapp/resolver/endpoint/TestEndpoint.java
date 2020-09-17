@@ -24,12 +24,6 @@ public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     public TestDto editTest(Long testId, String name, String description) {
         return testService.editTest(testId, name, description);
-
     }
-
-    public TestDto changeTestStatus(Long testId, String status) {
-        return testService.changeTestStatus(testId, Test.Status.ONLINE); //Todo
-    }
-
 
 }

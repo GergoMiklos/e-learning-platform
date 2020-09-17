@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
+import NewTestDialogComp from "./NewTestDialogComp";
+import toaster from "toasted-notes";
 
 const TEACHER_GROUP = gql`
     query getGroup($groupId: ID!) {
@@ -14,6 +16,7 @@ const TEACHER_GROUP = gql`
             tests {
                 id
                 name
+                description
             }
         }
     }`;
@@ -30,6 +33,7 @@ const CHANGE_NEWS = gql`
             tests {
                 id
                 name
+                description
             }
         }
     }`;
@@ -39,7 +43,9 @@ class TeachGroupComp extends Component {
         super(props)
         this.state = {
             group: null,
-            changeNewsText: null
+            changeNewsText: null,
+            showNewTestDialog: false,
+            selectedTestId: null,
         };
     }
 
@@ -55,7 +61,7 @@ class TeachGroupComp extends Component {
                 fetchPolicy: 'network-only',
             })
             .then(result => {
-                if(result.data) {
+                if (result.data) {
                     this.setState({group: result.data.group});
                 }
             })
@@ -64,40 +70,27 @@ class TeachGroupComp extends Component {
             });
     }
 
-    liveTestClicked = (id) => {
-        this.props.history.push(`/teach/group/${this.state.group.id}/test/${id}`)
-    }
-
     changeNews = () => {
-        if(!this.state.changeNewsText)
+        if (!this.state.changeNewsText)
             return
         client.mutate({
-                mutation: CHANGE_NEWS,
-                variables: {groupId: this.state.group.id, text: this.state.changeNewsText},
-            })
+            mutation: CHANGE_NEWS,
+            variables: {groupId: this.state.group.id, text: this.state.changeNewsText},
+        })
             .then(result => {
-                if(result.data) {
-                    this.setState({group: result.data.group});
+                if (result.data) {
+                    this.setState({group: result.data.changeGroupNews});
+                    this.showNotification({text: 'News changed successfully', type: 'success'})
                 }
             })
             .catch(errors => {
                 console.log(errors);
+                this.showNotification({text: 'Something went wrong', type: 'danger'})
             });
     }
 
     handleNewsChange = (event) => {
-        this.setState({changeNewsText: event.target.value});
-    }
-
-    getNewsRefreshTime = (sinceHours) => {
-        if(sinceHours <= 24)
-            return `${sinceHours} hours ago`
-        else
-            return `${parseInt(sinceHours/24)} days ago`
-    }
-
-    newLiveTest = () => {
-        this.props.history.push(`/teach/group/${this.state.group.id}/livetest/new`)
+        this.setState({changeNewsText: event.target.value.slice(0, 500)});
     }
 
     editGroup = () => {
@@ -105,20 +98,58 @@ class TeachGroupComp extends Component {
     }
 
     newTest = () => {
-        this.props.history.push(`/teach/group/${this.state.group.id}/test/new`)
+        this.setState({showNewTestDialog: true});
     }
 
-    testClicked = (id) => {
+    onNewTestDialogHide = () => {
+        this.loadData();
+        this.setState({showNewTestDialog: false});
+    }
+
+    editTest = (id) => {
         this.props.history.push(`/teach/group/${this.state.group.id}/test/${id}/edit`)
+    }
+
+    testStatuses = (id) => {
+        this.props.history.push(`/teach/group/${this.state.group.id}/test/${id}`)
+    }
+
+    selectTest = (id) => {
+        if (this.state.selectedTestId === id) {
+            this.setState({selectedTestId: null});
+        } else {
+            this.setState({selectedTestId: id});
+        }
+
     }
 
     navigateBack = () => {
         this.props.history.push(`/teach`)
     }
 
+    formatDate = (date) => {
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        };
+        return new Date(date).toLocaleString(/*navigator.language*/ 'en', options); //todo
+    }
+
+    showNotification = ({text, type}) => {
+        toaster.notify(() => (
+            <div className={`alert alert-${type}`}>
+                {text}
+            </div>
+        ))
+    }
+
     render() {
-        if(!this.state.group) {
-            return (<div></div>)
+        if (!this.state.group) {
+            return (<div/>)
         }
         return (
             <div className="container">
@@ -143,11 +174,14 @@ class TeachGroupComp extends Component {
 
                 <div className="row input-group mb-3">
                     <div className="input-group-prepend">
-                        <span className="input-group-text">Change news</span>
+                        <span className="input-group-text">
+                            Change news
+                        </span>
                     </div>
                     <input type="text" className="form-control" placeholder="news" onChange={this.handleNewsChange}/>
                     <div className="input-group-append">
-                        <button className="btn btn-outline-primary" onClick={() => this.changeNews()}>
+                        <button className="btn btn-outline-primary" onClick={() => this.changeNews()}
+                                disabled={!this.state.changeNewsText}>
                             Change
                         </button>
                     </div>
@@ -155,64 +189,53 @@ class TeachGroupComp extends Component {
 
                 {this.state.group.news &&
                 <div className="row alert alert-warning my-3">
-                    <span className="badge badge-primary text-center mr-2 mb-1 py-1">
-                        {this.getNewsRefreshTime(this.state.group.newsChangedDate)}
-                    </span>
-                    <i>{this.state.group.news.text}</i>
-                </div> }
+                    <div className="badge badge-primary text-center mr-2 mb-1 py-1">
+                        {this.formatDate(new Date(this.state.group.newsChangedDate))}
+                    </div>
+                    <div className="col-12 ">
+                        {this.state.group.news}
+                    </div>
+                </div>}
 
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Online Tests</h1>
-                    <button className="col-2 btn btn-primary" onClick={() => this.newLiveTest()}>
+                <div className="row rounded shadow my-3 p-3 d-flex justify-content-between">
+                    <h1>Tests</h1>
+                    <button className="btn btn-primary" onClick={() => this.newTest()}>
                         New
                     </button>
                 </div>
 
-                {this.state.group.liveTests &&
-                <div className="row my-3">
-                    <table className="col-12 table table-striped table-hover rounded shadow">
-                        <tbody>
-                        {
-                            this.state.group.liveTests.filter(lt => lt.test).map(
-                                liveTest =>
-                                    <tr key={liveTest.id} onClick={() => this.liveTestClicked(liveTest.id)}>
-                                        <td>
-                                            <strong>{liveTest.test.name}</strong>
-                                        </td>
-                                        <td className="text-sm-right">
-                                            <i>{liveTest.sinceCreatedDays} days ago</i>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
-                </div> }
-
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Offline Tests</h1>
-                    <button className="col-2 btn btn-primary" onClick={() => this.newTest()}>
-                        New
-                    </button>
-                </div>
+                <NewTestDialogComp
+                    show={this.state.showNewTestDialog}
+                    onHide={this.onNewTestDialogHide}
+                    groupId={this.state.group.id}
+                />
 
                 {this.state.group.tests &&
                 <div className="row my-3">
-                    <table className="col-12 table table-striped table-hover rounded shadow">
-                        <tbody>
-                        {
-                            this.state.group.tests.map(
-                                test =>
-                                    <tr key={test.id} onClick={() => this.testClicked(test.id)}>
-                                        <td>
-                                            <strong>{test.name}</strong>
-                                        </td>
-                                    </tr>
-                            )
-                        }
-                        </tbody>
-                    </table>
-                </div> }
+                    <ul className="col-12 list-group">
+                        {this.state.group.tests.map(test =>
+                            <li
+                                className="list-group-item list-group-item-action"
+                                key={test.id}
+                                onClick={() => this.selectTest(test.id)}>
+                                <div className="d-flex justify-content-between">
+                                    <strong>{test.name}</strong>
+                                    {this.state.selectedTestId === test.id &&
+                                    <span>
+                                        <button className="btn btn-primary btn-sm"
+                                                onClick={() => this.testStatuses(test.id)}>
+                                            Statuses
+                                        </button>
+                                        <button className="btn btn-outline-warning btn-sm"
+                                                onClick={() => this.editTest(test.id)}>
+                                            Edit
+                                        </button>
+                                    </span>}
+                                </div>
+                            </li>
+                        )}
+                    </ul>
+                </div>}
             </div>
         );
     }

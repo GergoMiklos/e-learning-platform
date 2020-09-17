@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,15 +33,16 @@ public class TestService {
     }
 
 
+    //TODO first task? ha valaki később csatlakozik?
     @Transactional
     public TestDto createTest(Long groupId, String name, String description) {
-        Group group = groupRepository.findById(groupId, 0)
+        Group group = groupRepository.findById(groupId, 1)
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
         Test test = Test.builder()
                 .name(name)
                 .description(description)
                 .group(group)
-                .userTestStatuses(new ArrayList<>())
+                .userTestStatuses(createUserTestStatuses(group.getStudents()))
                 .build();
         return convertToDto(testRepository.save(test));
     }
@@ -53,38 +55,18 @@ public class TestService {
         return convertToDto(testRepository.save(test));
     }
 
-    //TODO ez ronda, kell kezdő current task!
-    @Transactional
-    public TestDto changeTestStatus(Long testId, Test.Status status) {
-        Test test = getTestById(testId, 2);
-        if (!status.equals(test.getStatus())) {
-            if (status.equals(Test.Status.ONLINE)) {
-                createUserTestStatuses(test);
-            } else if (status.equals((Test.Status.OFFLINE))) {
-                for (UserTestStatus userTestStatus : test.getUserTestStatuses()) {
-                    userTestStatus.setDeprecated(true);
-                }
-            }
-            test.setStatus(status);
-            return convertToDto(testRepository.save(test));
-        }
-        return convertToDto(test);
-    }
-
     public List<TestDto> getTestsForGroup(Long groupId) {
         return convertToDto(testRepository.findByGroupIdOrderByName(groupId, 0));
     }
 
-    //todo ezek menjenek másik service-be?
-    private void createUserTestStatuses(Test test) {
-        for (User user : test.getGroup().getStudents()) {
-            UserTestStatus userTestStatus = UserTestStatus.builder()
-                    .user(user)
-                    .test(test)
-                    .deprecated(false)
-                    .build();
-            test.getUserTestStatuses().add(userTestStatus);
-        }
+    //
+    private Set<UserTestStatus> createUserTestStatuses(Set<User> users) {
+        return users.stream()
+                .map(user -> UserTestStatus.builder()
+                        .user(user)
+                        .build()
+                )
+                .collect(Collectors.toSet());
     }
 
     public Test getTestById(Long testId, int depth) {

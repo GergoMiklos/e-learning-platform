@@ -66,20 +66,22 @@ public class StudyappApplication {
 //            answers.put(4, "This is only for testing");
             Set<TaskAnswer> answers = new HashSet<>();
             answers.add(TaskAnswer.builder().number(1).answer("Answer 1 is here").build());
-            answers.add(TaskAnswer.builder().number(1)
+            answers.add(TaskAnswer.builder().number(2)
                     .answer("Answer 2 is a little bit longer than answer 1 if you don't mind (and lets have some extra %/=* character too").build());
-            answers.add(TaskAnswer.builder().number(1).answer("3.").build());
-            answers.add(TaskAnswer.builder().number(1).answer("This is only for testing").build());
+            answers.add(TaskAnswer.builder().number(3).answer("3.").build());
+            answers.add(TaskAnswer.builder().number(4).answer("This is only for testing").build());
 
             Task task = Task.builder()
                     .question("Task1, the soltuion is the number 1")
                     .solutionNumber(1)
                     .answers(answers)
+                    .usage(1L)
                     .build();
             Task task2 = Task.builder()
                     .question("Task2 is a little bit longer for making the development testing easier for me. Solution is number 2!")
                     .solutionNumber(2)
                     .answers(answers)
+                    .usage(2L)
                     .build();
 
             Test test = new Test();
@@ -108,7 +110,6 @@ public class StudyappApplication {
             user.addUserTestStatus(userTestStatus);
             userTestStatus.setTest(test);
             userTestStatus.setCurrentTask(task2);
-            userTestStatus.setDeprecated(false);
             testTask.setTask(task);
             test.addTask(testTask);
 

@@ -40,7 +40,7 @@ public class GroupService {
                 .name(name)
                 .description(description)
                 .code(RandomStringUtils.random(8).toUpperCase())
-                .teachers(Collections.singletonList(user))
+                .teachers(Collections.singleton(user))
                 .build();
         return convertToDto(groupRepository.save(group));
     }
@@ -61,11 +61,12 @@ public class GroupService {
         return convertToDto(groupRepository.save(group));
     }
 
+    //todo userteststatus minden teszthez a groupban
     @Transactional
     public GroupDto addStudentToGroupFromCode(Long studentId, String groupCode) {
         User user = getUserById(studentId, 0);
         Group group = getGroupByCode(groupCode, 1);
-        group.getStudents().add(user);
+        group.addStudent(user);
         return convertToDto(groupRepository.save(group));
     }
 

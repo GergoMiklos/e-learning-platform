@@ -31,11 +31,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+
+    //todo userteststatus minden teszthez a groupban
     @Transactional
     public UserDto addStudentFromCodeToGroup(Long groupId, String studentCode) {
         User user = getUserByCode(studentCode, 1);
         Group group = getGroupById(groupId, 0);
-        user.getStudentGroups().add(group);
+        user.addStudentGroup(group);
         return UserDto.build(userRepository.save(user));
     }
 
@@ -43,7 +45,7 @@ public class UserService {
     public UserDto addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
         User user = getUserByCode(teacherCode, 1);
         Group group = getGroupById(groupId, 0);
-        user.getTeacherGroups().add(group);
+        user.addTeacherGroup(group);
         return UserDto.build(userRepository.save(user));
     }
 

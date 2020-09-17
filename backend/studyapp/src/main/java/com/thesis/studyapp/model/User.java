@@ -13,7 +13,9 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @NodeEntity
 @Data
@@ -34,52 +36,52 @@ public class User {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "GROUPSTUDENT", direction = Relationship.OUTGOING)
-    private List<Group> studentGroups;
+    private Set<Group> studentGroups = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "GROUPTEACHER", direction = Relationship.OUTGOING)
-    private List<Group> teacherGroups;
+    private Set<Group> teacherGroups = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKOWNER", direction = Relationship.INCOMING)
-    private List<Task> createdTasks;
+    private Set<Task> createdTasks = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "USERSTATUS", direction = Relationship.INCOMING)
-    private List<UserTestStatus> userTestStatuses;
+    private Set<UserTestStatus> userTestStatuses = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "STUDENTPARENT", direction = Relationship.OUTGOING)
-    private List<User> followedStudents;
+    private Set<User> followedStudents = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "STUDENTPARENT", direction = Relationship.INCOMING)
-    private List<User> parents;
+    private Set<User> parents = new HashSet<>();
 
     public void addStudentGroup(Group group) {
         if (studentGroups == null) {
-            studentGroups = new ArrayList<>();
+            studentGroups = new HashSet<>();
         }
         studentGroups.add(group);
     }
 
     public void addTeacherGroup(Group group) {
         if (teacherGroups == null) {
-            teacherGroups = new ArrayList<>();
+            teacherGroups = new HashSet<>();
         }
         teacherGroups.add(group);
     }
 
     public void addUserTestStatus(UserTestStatus userTestStatus) {
         if (userTestStatuses == null) {
-            userTestStatuses = new ArrayList<>();
+            userTestStatuses = new HashSet<>();
         }
         userTestStatuses.add(userTestStatus);
     }
 
     public void addCreatedTask(Task task) {
         if (createdTasks == null) {
-            createdTasks = new ArrayList<>();
+            createdTasks = new HashSet<>();
         }
         createdTasks.add(task);
     }
