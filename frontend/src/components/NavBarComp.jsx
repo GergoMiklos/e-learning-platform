@@ -20,10 +20,13 @@ class NavBarComp extends Component {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav">
                             <li className="nav-item">
-                                <a className="nav-link" href="/learn">Learn<span className="sr-only">(current)</span></a>
+                                <a className="nav-link" href="/learn">Student<span className="sr-only">(current)</span></a>
                             </li>
                             <li className="nav-item">
-                                <a className="nav-link" href="/teach">Teach</a>
+                                <a className="nav-link" href="/teach">Teacher</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="/parent">Parent</a>
                             </li>
                         </ul>
                     </div>

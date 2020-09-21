@@ -38,7 +38,7 @@ const CHANGE_NEWS = gql`
         }
     }`;
 
-class TeachGroupComp extends Component {
+class TeacherGroupPageComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -232,6 +232,10 @@ class TeachGroupComp extends Component {
                                         </button>
                                     </span>}
                                 </div>
+                                {this.state.selectedTestId === test.id &&
+                                <div className='font-weight-light'>
+                                    {test.description}
+                                </div>}
                             </li>
                         )}
                     </ul>
@@ -243,4 +247,4 @@ class TeachGroupComp extends Component {
 
 }
 
-export default TeachGroupComp;
+export default TeacherGroupPageComp;

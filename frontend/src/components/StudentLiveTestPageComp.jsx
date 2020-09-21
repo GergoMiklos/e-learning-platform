@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class LearnLiveTestComp extends Component {
+class StudentLiveTestPageComp extends Component {
     constructor(props){
         super(props)
         this.state = {
@@ -74,4 +74,4 @@ class LearnLiveTestComp extends Component {
     }
 }
 
-export default LearnLiveTestComp;
+export default StudentLiveTestPageComp;

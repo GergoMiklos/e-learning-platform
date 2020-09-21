@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Alert, Toast} from 'react-bootstrap';
-import TeachLiveTestComp from "./TeachLiveTestComp";
+import TeacherLiveTestPageComp from "./TeacherLiveTestPageComp";
 
 
 //Todo storeból kapja az adatokat, AppCompba lesz beágyazva

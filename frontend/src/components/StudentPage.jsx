@@ -29,7 +29,7 @@ const JOIN_GROUP = gql`
         }
     }`;
 
-class LearnListComp extends Component {
+class StudentPage extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -77,13 +77,14 @@ class LearnListComp extends Component {
 
     isFresh = (date) => {
         const now = new Date();
-        const week = 1000 * 60 * 60 * 24 * 7;
-        return (now - date) < week;
+        const sixDays = 1000 * 60 * 60 * 24 * 6;
+        return (now.getTime() - date.getTime()) < sixDays;
     }
 
     joinGroup = () => {
-        if (!this.state.joinGroupCode)
+        if (!this.state.joinGroupCode) {
             return;
+        }
         let userId = AuthenticationService.getUserId();
         client.mutate({
             mutation: JOIN_GROUP,
@@ -106,11 +107,7 @@ class LearnListComp extends Component {
     }
 
     handleInputChange = (event) => {
-        this.setState(
-            {
-                joinGroupCode: event.target.value.toUpperCase().slice(0, 8),
-            }
-        );
+        this.setState({joinGroupCode: event.target.value.toUpperCase().slice(0, 8),});
     }
 
     showNotification = ({text, type}) => {
@@ -175,4 +172,4 @@ class LearnListComp extends Component {
 
 }
 
-export default LearnListComp;
+export default StudentPage;

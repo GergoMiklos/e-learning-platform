@@ -48,22 +48,21 @@ public class StudyappApplication {
             user4.setName("User4");
             user4.setCode("UUU004");
 
-            Group group = new Group();
-            group.setName("Group");
-            group.setCode("GGG001");
-            group.setDescription("Group1 initial test desc.");
-            group.setNews("Test news!");
-            group.setNewsChangedDate(LocalDateTime.now());
-            Group group2 = new Group();
-            group2.setName("Group2");
-            group2.setCode("GGG002");
-            group2.setDescription("And Group2 initial test desc.");
+            Group group = Group.builder()
+                    .name("Group")
+                    .description("group 1 init disc")
+                    .news("News!")
+                    .newsChangedDate(LocalDateTime.now())
+                    .code("GGG001")
+                    .build();
+            Group group2 = Group.builder()
+                    .name("Group2")
+                    .description("group 2 init disc")
+                    .news("News 2!")
+                    .newsChangedDate(LocalDateTime.now())
+                    .code("GGG002")
+                    .build();
 
-//            Map<Integer, String> answers = new LinkedHashMap<>();
-//            answers.put(1, "Answer 1 is here");
-//            answers.put(2, "Answer 2 is a little bit longer than answer 1 if you don't mind");
-//            answers.put(3, "3.");
-//            answers.put(4, "This is only for testing");
             Set<TaskAnswer> answers = new HashSet<>();
             answers.add(TaskAnswer.builder().number(1).answer("Answer 1 is here").build());
             answers.add(TaskAnswer.builder().number(2)
@@ -103,12 +102,17 @@ public class StudyappApplication {
             user3.addStudentGroup(group);
             user4.addStudentGroup(group2);
 
-            UserTestStatus userTestStatus = new UserTestStatus();
+            UserTestStatus userTestStatus = UserTestStatus.builder()
+                    .status(UserTestStatus.Status.IN_PROGRESS)
+                    .statusChangedDate(LocalDateTime.now())
+                    .user(user)
+                    .test(test)
+                    .allAnswers(56)
+                    .correctAnswers(18)
+                    .build();
             group.addTest(test);
             test.addUserTestStatus(userTestStatus);
-            userTestStatus.setUser(user);
             user.addUserTestStatus(userTestStatus);
-            userTestStatus.setTest(test);
             userTestStatus.setCurrentTask(task2);
             testTask.setTask(task);
             test.addTask(testTask);

@@ -47,7 +47,7 @@ const ADD_STUDENT = gql`
         }
     }`;
 
-class EditGroupComp extends Component {
+class EditGroupPageComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -211,10 +211,10 @@ class EditGroupComp extends Component {
                     />
                     <div className="input-group-append">
                         <button className="btn btn-primary" onClick={() => this.addStudent()}>
-                            User
+                            Student
                         </button>
                         <button className="btn btn-outline-secondary" onClick={() => this.addTeacher()}>
-                            Admin
+                            Teacher
                         </button>
                     </div>
                 </div>
@@ -284,4 +284,4 @@ function UserListElementComp(props) {
     );
 }
 
-export default EditGroupComp;
+export default EditGroupPageComp;

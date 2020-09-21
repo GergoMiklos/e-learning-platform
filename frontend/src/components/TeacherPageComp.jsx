@@ -20,7 +20,7 @@ const TEACHER_GROUPS = gql`
         }
     }`;
 
-class TeachListComp extends Component {
+class TeacherPageComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -86,9 +86,9 @@ class TeachListComp extends Component {
                     <h1 className="col-auto rounded-pill bg-primary px-3">{this.state.user.code}</h1>
                 </div>
 
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Teacher Groups</h1>
-                    <button className="col-2 btn btn-primary" onClick={() => this.newGroup()}>
+                <div className="row rounded shadow my-3 p-3 d-flex justify-content-between">
+                    <h1>Teacher Groups</h1>
+                    <button className="btn btn-primary" onClick={() => this.newGroup()}>
                         New
                     </button>
                 </div>
@@ -118,4 +118,4 @@ class TeachListComp extends Component {
 
 }
 
-export default TeachListComp;
+export default TeacherPageComp;

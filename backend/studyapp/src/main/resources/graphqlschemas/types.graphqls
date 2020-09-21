@@ -36,6 +36,8 @@ type UserTestStatuses {
     currentTask: Task!
     status: String!
     statusChangedTime: String!
+    correctAnswers: Int!
+    allAnswers: Int!
 }
 
 type Task {

@@ -7,6 +7,8 @@ import com.thesis.studyapp.service.UserTestStatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 @RequiredArgsConstructor
 public class UserTestStatusEndpoint implements GraphQLQueryResolver, GraphQLMutationResolver {
@@ -20,7 +22,8 @@ public class UserTestStatusEndpoint implements GraphQLQueryResolver, GraphQLMuta
     }
 
     //todo ezt hova? kilehetne egészíteni plusz infókkal?
-    public TaskDto task(Long userId, Long testId) {
+    //TODO ez menjen a taskendpointba, az töltse be a UserTestStatust és ott szémoljon?
+    public Optional<TaskDto> task(Long userId, Long testId) {
         return userTestStatusService.getNextTask(userId, testId);
     }
 

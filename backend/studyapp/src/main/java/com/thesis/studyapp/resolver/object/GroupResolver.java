@@ -21,8 +21,6 @@ public class GroupResolver implements GraphQLResolver<GroupDto> {
     private final UserService userService;
     private final TestService testService;
 
-    private final DateUtil dateUtil;
-
     public CompletableFuture<List<UserDto>> students(GroupDto groupDTO) {
         return CompletableFuture.supplyAsync(() ->
                 userService.getStudentsForGroup(groupDTO.getId())
@@ -42,9 +40,7 @@ public class GroupResolver implements GraphQLResolver<GroupDto> {
     }
 
     public CompletableFuture<String> newsChangedDate(GroupDto groupDTO) {
-        //Todo null pointer exception
-        LocalDateTime newsChangedDate = groupDTO.getNewsChangedDate();
-        return CompletableFuture.completedFuture(newsChangedDate == null ? null : dateUtil.convertToIsoString(newsChangedDate));
+        return CompletableFuture.completedFuture(DateUtil.convertToIsoString(groupDTO.getNewsChangedDate()));
     }
 
 }

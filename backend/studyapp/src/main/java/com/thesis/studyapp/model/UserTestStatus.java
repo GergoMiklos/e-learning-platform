@@ -11,6 +11,7 @@ import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 //Todo sok minden
@@ -24,15 +25,15 @@ public class UserTestStatus {
     @GeneratedValue
     private Long id;
 
-    private Status status = Status.NOT_STARTED;
+    private Status status;
 
     private int correctAnswersInRow;
     private int wrongAnswersInRow;
     private int correctAnswers;
-    private int wrongAnswers;
+    private int allAnswers;
     //    private Date timeStartedTest;
 //    private Date startedLastTaskDate;
-    private Date statusChangedDate;
+    private LocalDateTime statusChangedDate;
 
 //    List<Long> completedTasksId;
 //    List<Long> failedTasksId;

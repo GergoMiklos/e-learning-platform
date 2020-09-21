@@ -22,8 +22,8 @@ class NewGroupDialogComp extends Component {
         let errors = {};
         if (!values.name) {
             errors.name = 'Name is required!';
-        } else if (!values.name || values.name.toString().length > 50 || values.name.toString().length < 5) {
-            errors.name = 'Name should be between min 5 and max 50 characters!';
+        } else if (!values.name || values.name.toString().length > 150 || values.name.toString().length < 5) {
+            errors.name = 'Name should be between min 5 and max 150 characters!';
         }
         if (!values.description) {
             errors.description = 'Description is required!';

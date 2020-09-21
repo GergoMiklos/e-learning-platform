@@ -1,6 +1,7 @@
 package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
+import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.TaskDto;
 import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.dto.UserDto;
@@ -38,7 +39,7 @@ public class UserTestStatusResolver implements GraphQLResolver<UserTestStatusDto
     }
 
     public CompletableFuture<String> statusChangedTime(UserTestStatusDto userTestStatusDto) {
-        return CompletableFuture.supplyAsync(() -> userTestStatusDto.getStatusChangedTime().toString());
+        return CompletableFuture.supplyAsync(() -> DateUtil.convertToIsoString(userTestStatusDto.getStatusChangedTime()));
     }
 
     public CompletableFuture<String> status(UserTestStatusDto userTestStatusDto) {

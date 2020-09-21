@@ -65,7 +65,7 @@ class NewTaskDialogComp extends Component {
     addTaskToTest = (taskId) => {
         client.mutate({
             mutation: ADD_TASK,
-            variables: {taskId: taskId, testId: this.props.testId, level: 0},
+            variables: {taskId: taskId, testId: this.props.testId, level: this.props.selectedLevel},
         })
             .then(() => {
                 this.showNotification({
@@ -123,7 +123,7 @@ class NewTaskDialogComp extends Component {
                                     <Field className="form-control"
                                            type="text"
                                            name="correct"
-                                           placeholder="the correct answer"/>
+                                           placeholder="The correct answer"/>
                                 </fieldset>
                                 <fieldset className="from-group m-3">
                                     <label>Incorrect answers:</label>
@@ -140,6 +140,18 @@ class NewTaskDialogComp extends Component {
                                            name="bad3"
                                            placeholder="Incorrect answer 3"/>
                                     <ErrorMessage className="text-danger" name="question" component="div"/>
+                                </fieldset>
+                                <fieldset className="from-group m-3">
+                                    <label>Task level:</label>
+                                    <select value={this.props.selectedLevel}
+                                            className="m-1"
+                                            onChange={(event) => this.props.selectLevel(event.target.value)}>
+                                        {this.props.levels.map((level) =>
+                                            <option value={level} key={level}>
+                                                Level: {level}
+                                            </option>
+                                        )}
+                                    </select>
                                 </fieldset>
                                 <div className="btn-group my-2">
                                     <button type="submit" className="btn btn-primary" disabled={!isValid}>

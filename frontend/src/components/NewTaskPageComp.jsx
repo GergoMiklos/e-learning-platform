@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
 import NewTaskDialogComp from "./NewTaskDialogComp";
+import toaster from "toasted-notes";
 
 const TASKS = gql`
     query SearchTasks($searchText: String, $page: Int!) {
@@ -28,7 +29,7 @@ const ADD_TASK = gql`
         }
     }`;
 
-class NewTaskSearchComp extends Component {
+class NewTaskPageComp extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -39,15 +40,17 @@ class NewTaskSearchComp extends Component {
             tasks: [],
             searchText: '',
             showNewTaskDialog: false,
+            selectedLevel: 1,
+            levels: Array.from({length: 10}, (v, k) => k + 1),
         };
     }
 
     selectTask = (id) => {
-        if (this.state.selectedTaskId === id) {
-            this.setState({selectedTaskId: null});
-        } else {
-            this.setState({selectedTaskId: id});
-        }
+        this.setState({selectedTaskId: id});
+    }
+
+    selectLevel = (level) => {
+        this.setState({selectedLevel: level});
     }
 
     newTask = () => {
@@ -91,7 +94,16 @@ class NewTaskSearchComp extends Component {
             })
             .catch(errors => {
                 console.log(errors);
+                this.showNotification({text: 'Something went wrong', type: 'danger'});
             });
+    }
+
+    showNotification = ({text, type}) => {
+        toaster.notify(() => (
+            <div className={`alert alert-${type}`}>
+                {text}
+            </div>
+        ))
     }
 
 
@@ -105,9 +117,9 @@ class NewTaskSearchComp extends Component {
                     Back
                 </button>
 
-                <div className="row rounded shadow my-3 p-3">
-                    <h1 className="col-10">Add Tasks</h1>
-                    <button className="col-2 btn btn-primary" onClick={() => this.newTask()}>
+                <div className="row justify-content-between rounded shadow my-3 p-3">
+                    <h1>Add Tasks</h1>
+                    <button className="btn btn-primary" onClick={() => this.newTask()}>
                         New
                     </button>
                 </div>
@@ -116,6 +128,9 @@ class NewTaskSearchComp extends Component {
                     show={this.state.showNewTaskDialog}
                     onHide={() => this.onNewTaskDialogHide()}
                     testId={this.props.match.params.testid}
+                    levels={this.state.levels}
+                    selectedLevel={this.state.selectedLevel}
+                    selectLevel={(level) => this.selectLevel(level)}
                 />
 
                 <div className="row input-group mb-3">
@@ -128,7 +143,7 @@ class NewTaskSearchComp extends Component {
                     </div>
                 </div>
 
-                <i className="row">
+                <i className="row m-1">
                     {`${this.state.totalElements} results:`}
                 </i>
 
@@ -144,6 +159,9 @@ class NewTaskSearchComp extends Component {
                                     testId={this.props.match.params.testid}
                                     task={task}
                                     selectedTaskId={this.state.selectedTaskId}
+                                    levels={this.state.levels}
+                                    selectedLevel={this.state.selectedLevel}
+                                    selectLevel={(level) => this.selectLevel(level)}
                                 />
                             </li>
                         )}
@@ -165,49 +183,65 @@ class NewTaskSearchComp extends Component {
 class NewTaskSearchElementComp extends Component {
     constructor(props) {
         super(props)
-        this.state = {
-            selectedLevel: 1,
-        };
     }
 
     addTask = (taskId) => {
         client.mutate({
             mutation: ADD_TASK,
-            variables: {testId: this.props.testId, taskId: taskId, level: this.state.selectedLevel}
+            variables: {testId: this.props.testId, taskId: taskId, level: this.props.selectedLevel}
         })
-            .then(result => {
-                console.log(result);
-                this.setState({success: 'Task added!', error: null});
+            .then(() => {
+                this.showNotification({text: 'Task added successfully', type: 'success'});
             })
             .catch(errors => {
                 console.log(errors);
-                this.setState({error: 'Error!', success: null});
+                this.showNotification({text: 'Something went wrong', type: 'danger'});
             })
+    }
+
+    showNotification = ({text, type}) => {
+        toaster.notify(() => (
+            <div className={`alert alert-${type}`}>
+                {text}
+            </div>
+        ))
     }
 
     render() {
         return (
-            <div>
-                <div className="d-flex justify-content-between">
-
-                    <strong>{this.props.task.question}</strong>
-
-                    {(this.props.selectedTaskId === this.props.task.id) ?
-                        <button className="btn btn-primary btn-sm"
-                                onClick={() => this.addTask(this.props.task.id)}>
-                            Add
-                        </button> :
-                        <span>{this.props.task.usage}</span>
-                    }
+            <div className="container">
+                <div className="row justify-content-between">
+                    <strong className="col-10">{this.props.task.question}</strong>
+                    <span className="col-auto">{this.props.task.usage}</span>
                 </div>
 
-                {(this.props.selectedTaskId === this.props.task.id) && this.props.task.answers.map(
+                {(this.props.selectedTaskId === this.props.task.id) &&
+                <div className="row"> {this.props.task.answers.map(
                     (answer, i) =>
                         <div key={answer.number}
-                             className={(answer.number === this.props.task.solutionNumber) ? 'font-weight-bold' : 'font-weight-light'}>
+                             className={(answer.number === this.props.task.solutionNumber) ? 'font-weight-bold col-12' : 'font-weight-light col-12'}>
                             {`${i + 1}. ${answer.answer}`}
                         </div>
                 )}
+                </div>
+                }
+
+                {(this.props.selectedTaskId === this.props.task.id) &&
+                <div className="row justify-content-end">
+                    <select value={this.props.selectedLevel}
+                            onChange={(event) => this.props.selectLevel(event.target.value)}>
+                        {this.props.levels.map((level) =>
+                            <option value={level} key={level}>
+                                Level: {level}
+                            </option>
+                        )}
+                    </select>
+                    <button className="btn btn-primary btn-sm"
+                            onClick={() => this.addTask(this.props.task.id)}>
+                        Add
+                    </button>
+                </div>
+                }
             </div>
         );
     }
@@ -215,4 +249,4 @@ class NewTaskSearchElementComp extends Component {
 
 }
 
-export default NewTaskSearchComp;
+export default NewTaskPageComp;

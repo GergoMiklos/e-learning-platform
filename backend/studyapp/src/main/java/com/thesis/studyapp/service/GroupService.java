@@ -39,8 +39,10 @@ public class GroupService {
         Group group = Group.builder()
                 .name(name)
                 .description(description)
-                .code(RandomStringUtils.random(8).toUpperCase())
+                .code(RandomStringUtils.randomAlphanumeric(8).toUpperCase())
                 .teachers(Collections.singleton(user))
+                .news(user.getName() + " created the group")
+                .newsChangedDate(dateUtil.getCurrentTime())
                 .build();
         return convertToDto(groupRepository.save(group));
     }

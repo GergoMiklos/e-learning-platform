@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,12 +36,12 @@ public class UserTestStatusService {
     // (FONTOS: objectresolvernél ha errort dobunk egy filednél, attól még a többi meglehet (külön folyamat))
     public List<UserTestStatusDto> getUserTestStatusesForTest(Long testId) {
         //todo check test?
-        return convertToDto(userTestStatusRepository.findByTestId(testId, 1));
+        return convertToDto(userTestStatusRepository.findByTestIdOrderByUserName(testId, 1));
     }
 
     public List<UserTestStatusDto> getUserTestStatusesForUser(Long userId) {
         //todo check user?
-        return convertToDto(userTestStatusRepository.findByUserId(userId, 1));
+        return convertToDto(userTestStatusRepository.findByUserIdOrderByTestName(userId, 1));
     }
 
     private UserTestStatus getUserTestStatusById(Long userTestStatusId, int depth) {
@@ -82,12 +83,12 @@ public class UserTestStatusService {
 
     //TODO todo todo !!!!!!!! Ez itt exception lesz, merrt a taskanswerek nem jönnek!
     //todo ezt hova? kilehetne egészíteni plusz infókkal?
-    public TaskDto getNextTask(Long userId, Long testId) {
+    public Optional<TaskDto> getNextTask(Long userId, Long testId) {
         UserTestStatus userTestStatus = userTestStatusRepository
                 .findFirstByUserIdAndTestId(userId, testId, 2)
                 .orElseThrow(() -> new CustomGraphQLException("No UserTestStatus available")); //TODO, ez csak query, kell-e?
 //        return TaskDto.build(userTestStatus.getCurrentTask());
-        return TaskDto.build(creatTaskSZAR());
+        return Optional.of(TaskDto.build(creatTaskSZAR()));
     }
 
     private Task creatTaskSZAR() {

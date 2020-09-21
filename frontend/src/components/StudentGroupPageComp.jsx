@@ -26,7 +26,7 @@ const LEAVE_GROUP = gql`
         deleteStudentFromGroup(userId: $userId, groupId: $groupId)
     }`;
 
-class LearnGroupComp extends Component {
+class StudentGroupPageComp extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -178,4 +178,4 @@ class LearnGroupComp extends Component {
 
 }
 
-export default LearnGroupComp;
+export default StudentGroupPageComp;

@@ -1,5 +1,6 @@
 package com.thesis.studyapp.service;
 
+import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +25,8 @@ public class TestService {
 
     private final TestRepository testRepository;
     private final GroupRepository groupRepository;
+
+    private final DateUtil dateUtil;
 
     public TestDto getTest(Long testId) {
         return convertToDto(getTestById(testId, 0));
@@ -59,11 +63,13 @@ public class TestService {
         return convertToDto(testRepository.findByGroupIdOrderByName(groupId, 0));
     }
 
-    //
+    //todo ez csak akkor működik ha vizsgálod !!! :(
     private Set<UserTestStatus> createUserTestStatuses(Set<User> users) {
         return users.stream()
                 .map(user -> UserTestStatus.builder()
                         .user(user)
+                        .status(UserTestStatus.Status.NOT_STARTED)
+                        .statusChangedDate(dateUtil.getCurrentTime())
                         .build()
                 )
                 .collect(Collectors.toSet());

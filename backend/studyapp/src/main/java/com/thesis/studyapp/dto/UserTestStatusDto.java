@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @QueryResult
@@ -21,18 +22,18 @@ public class UserTestStatusDto implements HasId {
 //    private int failsInRow;
 
     private UserTestStatus.Status status;
-    private Date statusChangedTime;
+    private LocalDateTime statusChangedTime;
 
 //    List<Long> completedTaskIds;
 //    List<Long> failedTaskIds;
 
+    //todo currentTask nincs is!
     private Long currentTaskId;
     private Long userId;
     private Long testId;
 
-//    private TaskDto currentTask;
-//    private UserDto user;
-//    private TestDto test;
+    private int correctAnswers;
+    private int allAnswers;
 
     public static UserTestStatusDto build(UserTestStatus userTestStatus) {
         if (userTestStatus.getTest() == null || userTestStatus.getUser() == null) {
@@ -44,7 +45,10 @@ public class UserTestStatusDto implements HasId {
                 .statusChangedTime(userTestStatus.getStatusChangedDate())
                 .testId(userTestStatus.getTest().getId())
                 .userId(userTestStatus.getUser().getId())
+                //todo ez nem kell, ezt majd a nexTask fogja kiszámolni??
                 .currentTaskId(userTestStatus.getCurrentTask() != null ? userTestStatus.getCurrentTask().getId() : null)
+                .correctAnswers(userTestStatus.getCorrectAnswers())
+                .allAnswers(userTestStatus.getAllAnswers())
                 .build();
     }
 }

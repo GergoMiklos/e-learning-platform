@@ -34,11 +34,11 @@ public class TestTaskService {
     }
 
     //todo ezeknek az isolation leveleknek nézz utána
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional
     public TestTaskDto changeTestTaskLevel(Long testTaskId, int newLevel) {
         TestTask testTask = getTestTaskById(testTaskId, 1);
         testTask.setLevel(newLevel);
-        return convertToDto(testTaskRepository.save(testTask));
+        return convertToDto(testTaskRepository.save(testTask, 1));
     }
 
     @Transactional

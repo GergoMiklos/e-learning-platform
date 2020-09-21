@@ -19,9 +19,11 @@ public interface UserTestStatusRepository extends Neo4jRepository<UserTestStatus
 
     List<UserTestStatus> findByIdIn(List<Long> ids, @Depth int depth);
 
-    List<UserTestStatus> findByTestId(Long testId, @Depth int depth);
+    //todo
+    List<UserTestStatus> findByTestIdOrderByUserName(Long testId, @Depth int depth);
 
-    List<UserTestStatus> findByUserId(Long testId, @Depth int depth);
+    //todo order by nem működik
+    List<UserTestStatus> findByUserIdOrderByTestName(Long testId, @Depth int depth);
 
     Optional<UserTestStatus> findFirstByUserIdAndTestId(Long userId, Long testId, @Depth int depth);
 
