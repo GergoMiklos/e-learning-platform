@@ -1,12 +1,12 @@
 package com.thesis.studyapp.dto;
 
+import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.UserTestStatus;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @QueryResult
 @Data
@@ -24,9 +24,6 @@ public class UserTestStatusDto implements HasId {
     private UserTestStatus.Status status;
     private LocalDateTime statusChangedTime;
 
-//    List<Long> completedTaskIds;
-//    List<Long> failedTaskIds;
-
     //todo currentTask nincs is!
     private Long currentTaskId;
     private Long userId;
@@ -34,21 +31,34 @@ public class UserTestStatusDto implements HasId {
 
     private int correctAnswers;
     private int allAnswers;
+    private int answeredTasks;
 
-    public static UserTestStatusDto build(UserTestStatus userTestStatus) {
-        if (userTestStatus.getTest() == null || userTestStatus.getUser() == null) {
+    public static UserTestStatusDto build(UserTestStatus uts) {
+        if (uts.getTest() == null || uts.getUser() == null || uts.getTaskStatuses() == null) {
             throw new IllegalStateException("Relationships needed for converting UserTestStatus!");
         }
         return UserTestStatusDto.builder()
-                .id(userTestStatus.getId())
-                .status(userTestStatus.getStatus())
-                .statusChangedTime(userTestStatus.getStatusChangedDate())
-                .testId(userTestStatus.getTest().getId())
-                .userId(userTestStatus.getUser().getId())
+                .id(uts.getId())
+                .status(uts.getStatus())
+                .statusChangedTime(uts.getStatusChangedDate())
+                .testId(uts.getTest().getId())
+                .userId(uts.getUser().getId())
                 //todo ez nem kell, ezt majd a nexTask fogja kiszámolni??
-                .currentTaskId(userTestStatus.getCurrentTask() != null ? userTestStatus.getCurrentTask().getId() : null)
-                .correctAnswers(userTestStatus.getCorrectAnswers())
-                .allAnswers(userTestStatus.getAllAnswers())
+                //.currentTaskId(uts.getCurrentTestTask() == null ? null : uts.getCurrentTestTask().getId())
+                .correctAnswers(uts.getCorrectAnswers())
+                .allAnswers(uts.getAllAnswers())
+                .answeredTasks(uts.getTaskStatuses().size())
                 .build();
+    }
+
+    @Data
+    @Builder
+    public static class TaskStatusDto {
+        private TestTask testTask;
+
+        private int correctAnswers;
+        private int allAnswers;
+        private int correctAnswersInRow;
+        private int wrongAnswersInRow;
     }
 }

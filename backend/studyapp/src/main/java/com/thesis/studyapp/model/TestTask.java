@@ -24,6 +24,9 @@ public class TestTask {
 
     private int level;
 
+    private int allAnswers;
+    private int correctAnswers;
+
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASK", direction = Relationship.OUTGOING)

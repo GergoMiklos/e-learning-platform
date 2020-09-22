@@ -17,6 +17,10 @@ public class TestTaskDto implements HasId {
     private Long taskId;
 
     public static TestTaskDto build(TestTask testTask) {
+        if (testTask.getTask() == null) {
+            throw new IllegalStateException("Relationships needed for converting TestTask");
+        }
+
         return TestTaskDto.builder()
                 .id(testTask.getId())
                 .level(testTask.getLevel())

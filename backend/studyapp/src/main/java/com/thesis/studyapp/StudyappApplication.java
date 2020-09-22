@@ -113,7 +113,7 @@ public class StudyappApplication {
             group.addTest(test);
             test.addUserTestStatus(userTestStatus);
             user.addUserTestStatus(userTestStatus);
-            userTestStatus.setCurrentTask(task2);
+            userTestStatus.setCurrentTestTask(testTask);
             testTask.setTask(task);
             test.addTask(testTask);
 

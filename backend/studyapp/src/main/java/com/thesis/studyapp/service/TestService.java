@@ -1,6 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.configuration.DateUtil;
+import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
@@ -13,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -29,7 +28,7 @@ public class TestService {
     private final DateUtil dateUtil;
 
     public TestDto getTest(Long testId) {
-        return convertToDto(getTestById(testId, 0));
+        return convertToDto(getTestById(testId, 1));
     }
 
     public List<TestDto> getTestsByIds(List<Long> ids) {
@@ -37,30 +36,32 @@ public class TestService {
     }
 
 
-    //TODO first task? ha valaki később csatlakozik?
+    //TODO first task? Ha valaki később csatlakozik?
     @Transactional
-    public TestDto createTest(Long groupId, String name, String description) {
+    public TestDto createTest(Long groupId, NameDescInputDto input) {
+        input.validate();
         Group group = groupRepository.findById(groupId, 1)
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
         Test test = Test.builder()
-                .name(name)
-                .description(description)
+                .name(input.getName())
+                .description(input.getDescription())
                 .group(group)
                 .userTestStatuses(createUserTestStatuses(group.getStudents()))
                 .build();
-        return convertToDto(testRepository.save(test));
+        return convertToDto(testRepository.save(test, 1));
     }
 
     @Transactional
-    public TestDto editTest(Long testId, String name, String description) {
+    public TestDto editTest(Long testId, NameDescInputDto input) {
+        input.validate();
         Test test = getTestById(testId, 0);
-        test.setName(name);
-        test.setDescription(description);
-        return convertToDto(testRepository.save(test));
+        test.setName(input.getName());
+        test.setDescription(input.getDescription());
+        return convertToDto(testRepository.save(test, 1));
     }
 
     public List<TestDto> getTestsForGroup(Long groupId) {
-        return convertToDto(testRepository.findByGroupIdOrderByName(groupId, 0));
+        return convertToDto(testRepository.findByGroupIdOrderByName(groupId, 1));
     }
 
     //todo ez csak akkor működik ha vizsgálod !!! :(
@@ -70,6 +71,8 @@ public class TestService {
                         .user(user)
                         .status(UserTestStatus.Status.NOT_STARTED)
                         .statusChangedDate(dateUtil.getCurrentTime())
+                        .currentLevel(1)
+                        .currentCycle(1)
                         .build()
                 )
                 .collect(Collectors.toSet());

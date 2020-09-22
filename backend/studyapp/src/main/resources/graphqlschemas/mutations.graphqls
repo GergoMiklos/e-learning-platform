@@ -1,6 +1,6 @@
 type Mutation {
-    createGroup(userId: ID!, name: String!, description: String!): Group!
-    editGroup(groupId: ID!, name: String!, description: String!): Group!
+    createGroup(userId: ID!, input: NameDescInput!): Group!
+    editGroup(groupId: ID!, input: NameDescInput!): Group!
     changeGroupNews(groupId: ID!, text: String!): Group!
 
     addStudentFromCodeToGroup(groupId: ID!, userCode: String!): User!
@@ -12,13 +12,13 @@ type Mutation {
     addStudentFromCodeToParent(parentId: ID!, studentCode: String!): User!
     deleteStudentFromParent(parentId: ID!, studentId: ID!): Boolean
 
-    createTest(groupId: ID!, name: String!, description: String!): Test!
-    editTest(testId: ID!, name: String!, description: String!): Test!
+    createTest(groupId: ID!, input: NameDescInput!): Test!
+    editTest(testId: ID!, input: NameDescInput!): Test!
 
     createTask(taskInput: TaskInput!): Task
     addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask!
     deleteTaskFromTest(testTaskId: ID!): Boolean
-    changeTestTaskLevel(testTaskId: ID!, level: Int): TestTask!
+    changeTestTaskLevel(testTaskInputs: [TestTaskInput!]): [TestTask!]
 
     checkSolution(userId: ID!, testId: ID!, solutionNumber: Int!): Int!
 

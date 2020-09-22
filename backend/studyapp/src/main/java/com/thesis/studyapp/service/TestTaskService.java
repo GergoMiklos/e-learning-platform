@@ -1,6 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.TestTaskDto;
+import com.thesis.studyapp.dto.TestTaskInputDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.Test;
@@ -10,10 +11,11 @@ import com.thesis.studyapp.repository.TestRepository;
 import com.thesis.studyapp.repository.TestTaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,12 +35,16 @@ public class TestTaskService {
         return convertToDto(testTaskRepository.findByIdIn(ids, 1));
     }
 
-    //todo ezeknek az isolation leveleknek nézz utána
+    //todo ezeknek az isolation leveleknek nézz utána (DE errort dobott a neo4j amikor itt repeatable volt)
     @Transactional
-    public TestTaskDto changeTestTaskLevel(Long testTaskId, int newLevel) {
-        TestTask testTask = getTestTaskById(testTaskId, 1);
-        testTask.setLevel(newLevel);
-        return convertToDto(testTaskRepository.save(testTask, 1));
+    public List<TestTaskDto> changeTestTaskLevel(List<TestTaskInputDto> testTaskInputDtos) {
+        Map<Long, Integer> inputMap = testTaskInputDtos.stream()
+                .collect(Collectors.toMap(TestTaskInputDto::getId, TestTaskInputDto::getLevel));
+        List<TestTask> testTasks = testTaskRepository.findByIdIn(new ArrayList<>(inputMap.keySet()), 1);
+        testTasks.forEach(testTask -> {
+            testTask.setLevel(inputMap.get(testTask.getId()));
+        });
+        return convertToDto(testTaskRepository.save(testTasks, 1));
     }
 
     @Transactional

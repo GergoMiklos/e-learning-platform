@@ -2,6 +2,7 @@ package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.GroupDto;
+import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
@@ -34,11 +35,12 @@ public class GroupService {
     }
 
     @Transactional
-    public GroupDto createGroup(Long userId, String name, String description) {
+    public GroupDto createGroup(Long userId, NameDescInputDto input) {
+        input.validate();
         User user = getUserById(userId, 0);
         Group group = Group.builder()
-                .name(name)
-                .description(description)
+                .name(input.getName())
+                .description(input.getDescription())
                 .code(RandomStringUtils.randomAlphanumeric(8).toUpperCase())
                 .teachers(Collections.singleton(user))
                 .news(user.getName() + " created the group")
@@ -48,10 +50,11 @@ public class GroupService {
     }
 
     @Transactional
-    public GroupDto editGroup(Long groupId, String name, String description) {
+    public GroupDto editGroup(Long groupId, NameDescInputDto input) {
+        input.validate();
         Group group = getGroupById(groupId, 0);
-        group.setName(name);
-        group.setDescription(description);
+        group.setName(input.getName());
+        group.setDescription(input.getDescription());
         return convertToDto(groupRepository.save(group));
     }
 

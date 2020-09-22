@@ -18,6 +18,8 @@ public interface TestTaskRepository extends Neo4jRepository<TestTask, Long> {
 
     List<TestTask> findByIdIn(List<Long> ids, @Depth int depth);
 
+    List<TestTask> save(List<TestTask> testTasks, @Depth int depth);
+
 //    @Query("MATCH (tt:TestTask) WHERE id(tt) IN $0" + RETURN_TESTTASKDTO)
 //    List<TestTaskDto> getByIds(List<Long> ids);
 

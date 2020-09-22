@@ -14,8 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,10 +33,11 @@ public class TaskService {
         return convertToDto(taskRepository.findByIdIn(ids, 1));
     }
 
-    public TaskSearchResultDto searchTasks(Optional<String> searchText, int page) {
+    public TaskSearchResultDto searchTasks(@Nullable String searchText, int page) {
         Pageable pageable = PageRequest.of(page, 25, Sort.Direction.DESC, "usage");
-        if(searchText.isPresent() && !searchText.get().trim().isEmpty()) {
-            return convertToDto(taskRepository.findByQuestionContainingIgnoreCase(searchText.get(), pageable,  1));
+        if (searchText != null && !searchText.trim().isEmpty()) {
+            //List<String> searchWords = searchText.trim().split("\\s+").;
+            return convertToDto(taskRepository.findByQuestionContainingIgnoreCase(searchText, pageable, 1));
         } else {
             return convertToDto(taskRepository.findAll(pageable, 1));
         }

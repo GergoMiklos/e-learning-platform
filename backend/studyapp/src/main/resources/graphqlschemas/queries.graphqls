@@ -3,5 +3,5 @@ type Query {
     group(groupId: ID!): Group
     test(testId: ID!): Test
     searchTasks(searchText: String, page: Int!): TaskSearchResult!
-    task(userId: ID!, testId: ID!): Task
+    nextTask(userId: ID!, testId: ID!): TestTask
 }

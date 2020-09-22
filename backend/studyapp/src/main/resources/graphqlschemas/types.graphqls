@@ -20,20 +20,19 @@ type Group {
     tests: [Test]
 }
 
-
 type Test {
     id: ID!
     name: String!
     description: String
     testTasks: [TestTask]
     userTestStatuses: [UserTestStatuses]
+    group: Group!
 }
 
 type UserTestStatuses {
     id: ID!
     test: Test!
     user: User!
-    currentTask: Task!
     status: String!
     statusChangedTime: String!
     correctAnswers: Int!
@@ -53,10 +52,13 @@ type TaskAnswer {
     answer: String!
 }
 
-input TaskInput {
-    question: String!
-    correctAnswer: String!
-    incorrectAnswers: [String!]!
+type TaskSolution {
+    chosenAnswerNumber: Int!
+    solutionNumber: Int!
+    allAnswers: Int!
+    correctAnswers: Int!
+    answeredTasks: Int!
+    allTasks: Int!
 }
 
 type TaskSearchResult {
@@ -69,4 +71,20 @@ type TestTask {
     id: ID!
     level: Int!
     task: Task!
+}
+
+input TestTaskInput {
+    id: ID!
+    level: Int!
+}
+
+input TaskInput {
+    question: String!
+    correctAnswer: String!
+    incorrectAnswers: [String!]!
+}
+
+input NameDescInput {
+    name: String!
+    description: String!
 }

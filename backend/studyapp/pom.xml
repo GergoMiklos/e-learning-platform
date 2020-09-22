@@ -7,39 +7,36 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
-    </parent>
-    <groupId>com.thesis</groupId>
-    <artifactId>studyapp</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>studyapp</name>
-    <description>Project for my thesis</description>
+	</parent>
+	<groupId>com.thesis</groupId>
+	<artifactId>studyapp</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>studyapp</name>
+	<description>Project for my thesis</description>
 
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-neo4j</artifactId>
-        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter-data-neo4j</artifactId>
 		</dependency>
-
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo4j-ogm-bolt-native-types</artifactId>
+			<version>3.2.16</version>
 			<scope>runtime</scope>
-			<optional>true</optional>
 		</dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
+
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-spring-boot-starter</artifactId>
@@ -61,6 +58,16 @@
 			<version>5.0.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

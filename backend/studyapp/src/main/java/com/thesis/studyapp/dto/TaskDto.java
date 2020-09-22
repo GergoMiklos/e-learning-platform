@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,16 +25,16 @@ public class TaskDto implements HasId {
         if (task.getAnswers() == null) {
             throw new IllegalStateException("Answers needed for converting Task!");
         }
-        ;
+
+        List<TaskAnswerDto> answers = task.getAnswers().stream()
+                .map(answer -> new TaskAnswerDto(answer.getNumber(), answer.getAnswer()))
+                .collect(Collectors.toList());
+        Collections.shuffle(answers);
+
         return TaskDto.builder()
                 .id(task.getId())
                 .question(task.getQuestion())
-//                .answers(task.getAnswers().keySet().stream()
-//                        .map(number -> new TaskAnswerDto(number, task.getAnswers().get(number)))
-//                        .collect(Collectors.toList()))
-                .answers(task.getAnswers().stream()
-                        .map(answer -> new TaskAnswerDto(answer.getNumber(), answer.getAnswer()))
-                        .collect(Collectors.toList()))
+                .answers(answers)
                 .solutionNumber(task.getSolutionNumber())
                 .usage(task.getUsage())
                 .build();

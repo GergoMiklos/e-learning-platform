@@ -9,8 +9,7 @@ import com.thesis.studyapp.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Optional;
+import javax.annotation.Nullable;
 
 @Component
 @RequiredArgsConstructor
@@ -18,7 +17,7 @@ public class TaskEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final TaskService taskService;
 
-    public TaskSearchResultDto searchTasks(Optional<String> searchText, int page) {
+    public TaskSearchResultDto searchTasks(@Nullable String searchText, int page) {
         return taskService.searchTasks(searchText, page);
     }
 

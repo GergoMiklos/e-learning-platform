@@ -12,7 +12,8 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 //Todo sok minden
 @NodeEntity
@@ -27,6 +28,8 @@ public class UserTestStatus {
 
     private Status status;
 
+    private int currentLevel;
+    private int currentCycle;
     private int correctAnswersInRow;
     private int wrongAnswersInRow;
     private int correctAnswers;
@@ -40,8 +43,8 @@ public class UserTestStatus {
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    @Relationship(type = "CURRENTTASK", direction = Relationship.OUTGOING)
-    Task currentTask;
+    @Relationship(type = "CURRENTTESTTASK", direction = Relationship.OUTGOING)
+    private TestTask currentTestTask;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "USERSTATUS", direction = Relationship.INCOMING)
@@ -49,10 +52,43 @@ public class UserTestStatus {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TESTSTATUS", direction = Relationship.INCOMING)
-    Test test;
+    private Test test;
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "TASKSTATUSDATA", direction = Relationship.OUTGOING)
+    private Set<TaskStatus> taskStatuses;
+
+    public void addTaskStatusData(TaskStatus taskStatus) {
+        if (this.taskStatuses == null) {
+            this.taskStatuses = new HashSet<>();
+        }
+        this.taskStatuses.add(taskStatus);
+    }
+
 
     public enum Status {
-        NOT_STARTED, IN_PROGRESS, PROBLEM, FINISHED
+        NOT_STARTED, IN_PROGRESS, PROBLEM
+    }
+
+    @NodeEntity
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TaskStatus {
+        @Id
+        @GeneratedValue
+        private Long id;
+
+        @JsonIgnore
+        @EqualsAndHashCode.Exclude
+        @Relationship(type = "STATUSDATATASK", direction = Relationship.OUTGOING)
+        private TestTask testTask;
+
+        private int correctAnswers;
+        private int allAnswers;
+        private int correctAnswersInRow;
+        private int wrongAnswersInRow;
     }
 
 }
