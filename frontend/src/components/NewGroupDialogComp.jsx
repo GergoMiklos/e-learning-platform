@@ -7,8 +7,8 @@ import {Modal} from "react-bootstrap";
 import toaster from "toasted-notes";
 
 const CREATE_GROUP = gql`
-    mutation CreateGroup($userId: ID!, $name: String!, $description: String!) {
-        createGroup(userId: $userId, name: $name, description: $description) {
+    mutation CreateGroup($userId: ID!, $input: NameDescInput!) {
+        createGroup(userId: $userId, input: $input) {
             name
         }
     }`;
@@ -37,7 +37,7 @@ class NewGroupDialogComp extends Component {
         let userId = AuthenticationService.getUserId();
         client.mutate({
             mutation: CREATE_GROUP,
-            variables: {name: values.name, description: values.description, userId: userId},
+            variables: {input: {description: values.description, name: values.name}, userId: userId},
         })
             .then(result => {
                 this.showNotification({
@@ -65,7 +65,7 @@ class NewGroupDialogComp extends Component {
             <Modal
                 show={this.props.show}
                 centered
-                onHide = {() => this.props.onHide()}
+                onHide={() => this.props.onHide()}
             >
                 <div className="container">
 
@@ -82,33 +82,33 @@ class NewGroupDialogComp extends Component {
                         enableReinitialize={true}
                     >
                         {({isValid}) => (
-                                <Form>
-                                    <fieldset className="from-group m-3">
-                                        <label>Name</label>
-                                        <Field className="form-control"
-                                               type="text"
-                                               name="name"
-                                               placeholder="Name"/>
-                                        <ErrorMessage className="text-danger" name="name" component="div"/>
-                                    </fieldset>
-                                    <fieldset className="from-group m-3">
-                                        <label>Description</label>
-                                        <Field className="form-control"
-                                               type="text"
-                                               name="description"
-                                               placeholder="Description"/>
-                                        <ErrorMessage className="text-danger" name="description" component="div"/>
-                                    </fieldset>
-                                    <div className="btn-group my-2">
-                                        <button type="submit" className="btn btn-primary" disabled={!isValid}>
-                                            Save
-                                        </button>
-                                        <button className="btn btn-light" onClick={() => this.props.onHide()}>
-                                            Back
-                                        </button>
-                                    </div>
-                                </Form>
-                            )}
+                            <Form>
+                                <fieldset className="from-group m-3">
+                                    <label>Name</label>
+                                    <Field className="form-control"
+                                           type="text"
+                                           name="name"
+                                           placeholder="Name"/>
+                                    <ErrorMessage className="text-danger" name="name" component="div"/>
+                                </fieldset>
+                                <fieldset className="from-group m-3">
+                                    <label>Description</label>
+                                    <Field className="form-control"
+                                           type="text"
+                                           name="description"
+                                           placeholder="Description"/>
+                                    <ErrorMessage className="text-danger" name="description" component="div"/>
+                                </fieldset>
+                                <div className="btn-group my-2">
+                                    <button type="submit" className="btn btn-primary" disabled={!isValid}>
+                                        Save
+                                    </button>
+                                    <button className="btn btn-light" onClick={() => this.props.onHide()}>
+                                        Back
+                                    </button>
+                                </div>
+                            </Form>
+                        )}
                     </Formik>
                 </div>
             </Modal>

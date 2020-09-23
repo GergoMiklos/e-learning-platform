@@ -7,8 +7,8 @@ import {Modal} from "react-bootstrap";
 import toaster from "toasted-notes";
 
 const CREATE_TEST = gql`
-    mutation CreateTest($groupId: ID!, $name: String!, $description: String!) {
-        createTest(groupId: $groupId, name: $name, description: $description) {
+    mutation CreateTest($groupId: ID!, $input: NameDescInput!) {
+        createTest(groupId: $groupId, input: $input) {
             name
         }
     }`;
@@ -36,7 +36,7 @@ class NewTestDialogComp extends Component {
     onSubmit = (values) => {
         client.mutate({
             mutation: CREATE_TEST,
-            variables: {name: values.name, description: values.description, groupId: this.props.groupId},
+            variables: {groupId: this.props.groupId, input: {description: values.description, name: values.name} },
         })
             .then(() => {
                 this.showNotification({

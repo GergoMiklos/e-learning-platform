@@ -5,8 +5,8 @@ import client from "../ApolloClient";
 import toaster from "toasted-notes";
 
 const EDIT_GROUP = gql`
-    mutation EditGroup($groupId: ID!, $name: String!, $description: String!) {
-        editGroup(groupId: $groupId, name: $name, description: $description) {
+    mutation EditGroup($groupId: ID!, $input: NameDescInput!) {
+        editGroup(groupId: $groupId, input: $input) {
             id
         }
     }`;
@@ -34,7 +34,7 @@ class EditGroupDetailsComp extends Component {
     onSubmit = (values, {resetForm}) => {
         client.mutate({
             mutation: EDIT_GROUP,
-            variables: {name: values.name, description: values.description, groupId: this.props.groupId},
+            variables: {input: {description: values.description, name: values.name}, groupId: this.props.groupId},
         })
             .then(() => {
                 this.showNotification({

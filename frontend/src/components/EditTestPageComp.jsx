@@ -29,8 +29,8 @@ const TEST = gql`
 
 //TODO
 const CHANGE_TESTTASK_LEVEL = gql`
-    mutation DeleteTaskFromTest($testTaskId: ID!, $level: Int!) {
-        changeTestTaskLevel(testTaskId: $testTaskId, level: $level) {
+    mutation DeleteTaskFromTest($testTaskInputs: [TestTaskInput!]) {
+        changeTestTaskLevel(testTaskInputs: $testTaskInputs) {
             id
         }
     }`;
@@ -104,8 +104,8 @@ class EditTestPageComp extends Component {
         client.mutate({
             mutation: CHANGE_TESTTASK_LEVEL,
             variables: {
-                testTaskLevels: [...this.state.unsavedTestTaskLevels]
-                    .map(([testTaskId, level]) => ({testTaskId: testTaskId, level: level}))
+                testTaskInputs: [...this.state.unsavedTestTaskLevels]
+                    .map(([testTaskId, level]) => ({id: testTaskId, level: level}))
             },
         })
             .then(() => {

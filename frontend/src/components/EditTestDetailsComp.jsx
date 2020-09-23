@@ -7,8 +7,8 @@ import {Modal} from "react-bootstrap";
 import toaster from "toasted-notes";
 
 const EDIT_TEST = gql`
-    mutation EditTest($testId: ID!, $name: String!, $description: String!) {
-        editTest(testId: $testId, name: $name, description: $description) {
+    mutation EditTest($testId: ID!, $input: NameDescInput!) {
+        editTest(testId: $testId, input: $input) {
             id
         }
     }`;
@@ -36,7 +36,7 @@ class EditTestDetailsComp extends Component {
     onSubmit = (values, {resetForm}) => {
         client.mutate({
             mutation: EDIT_TEST,
-            variables: {name: values.name, description: values.description, testId: this.props.testId},
+            variables: {input: {description: values.description, name: values.name}, testId: this.props.testId},
         })
             .then(() => {
                 this.showNotification({
