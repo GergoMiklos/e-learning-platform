@@ -1,18 +1,18 @@
 package com.thesis.studyapp.configuration;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    public static final ZoneOffset zoneOffset = ZoneOffset.UTC;
 
-    public LocalDateTime getCurrentTime() {
-        return LocalDateTime.now();
+    public ZonedDateTime getCurrentTime() {
+        return ZonedDateTime.now(zoneOffset);
     }
 
-    public static String convertToIsoString(LocalDateTime localDateTime) {
-        return localDateTime.atZone(ZoneId.systemDefault()).format(formatter);
+    public static String convertToIsoString(ZonedDateTime zonedDateTime) {
+        return zonedDateTime.withZoneSameInstant(zoneOffset).format(formatter);
     }
 }

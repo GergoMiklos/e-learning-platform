@@ -11,7 +11,7 @@ import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,7 +36,7 @@ public class UserTestStatus {
     private int allAnswers;
     //    private Date timeStartedTest;
 //    private Date startedLastTaskDate;
-    private LocalDateTime statusChangedDate;
+    private ZonedDateTime statusChangedDate;
 
 //    List<Long> completedTasksId;
 //    List<Long> failedTasksId;

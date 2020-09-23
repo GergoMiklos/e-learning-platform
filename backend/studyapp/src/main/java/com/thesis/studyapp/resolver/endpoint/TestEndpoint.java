@@ -2,8 +2,8 @@ package com.thesis.studyapp.resolver.endpoint;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.dto.TestDto;
-import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.service.TestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,12 +18,12 @@ public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
         return testService.getTest(testId);
     }
 
-    public TestDto createTest(Long groupId, String name, String description) {
-        return testService.createTest(groupId, name, description);
+    public TestDto createTest(Long groupId, NameDescInputDto input) {
+        return testService.createTest(groupId, input);
     }
 
-    public TestDto editTest(Long testId, String name, String description) {
-        return testService.editTest(testId, name, description);
+    public TestDto editTest(Long testId, NameDescInputDto input) {
+        return testService.editTest(testId, input);
     }
 
 }

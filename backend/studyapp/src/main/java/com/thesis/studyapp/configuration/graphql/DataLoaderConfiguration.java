@@ -131,7 +131,7 @@ public class DataLoaderConfiguration {
     }
 
     private <T extends HasId> List<T> sortListByIds(List<T> list, List<Long> ids) {
-        Map<Long, T> map = list.stream().collect(Collectors.toMap(HasId::getId, user -> user));
+        Map<Long, T> map = list.stream().collect(Collectors.toMap(HasId::getId, t -> t));
         List<T> result = new ArrayList<>();
         for (Long id : ids) {
             result.add(map.get(id));

@@ -12,9 +12,7 @@ import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @NodeEntity
@@ -77,6 +75,20 @@ public class User {
             userTestStatuses = new HashSet<>();
         }
         userTestStatuses.add(userTestStatus);
+    }
+
+    public void addParent(User user) {
+        if (parents == null) {
+            parents = new HashSet<>();
+        }
+        parents.add(user);
+    }
+
+    public void addFollowedStudent(User user) {
+        if (followedStudents == null) {
+            followedStudents = new HashSet<>();
+        }
+        followedStudents.add(user);
     }
 
     public void addCreatedTask(Task task) {

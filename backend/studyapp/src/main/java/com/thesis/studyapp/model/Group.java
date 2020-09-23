@@ -12,10 +12,8 @@ import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @NodeEntity
@@ -34,7 +32,7 @@ public class Group {
     private String name;
     private String description;
     private String news;
-    private LocalDateTime newsChangedDate;
+    private ZonedDateTime newsChangedDate;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude

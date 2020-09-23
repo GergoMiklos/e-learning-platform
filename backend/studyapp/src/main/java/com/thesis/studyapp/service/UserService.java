@@ -24,13 +24,11 @@ public class UserService {
         return UserDto.build(getUserById(userId, 0));
     }
 
-
     public List<UserDto> getUsersByIds(List<Long> ids) {
         return userRepository.findByIdIn(ids, 0).stream()
                 .map(UserDto::build)
                 .collect(Collectors.toList());
     }
-
 
     //todo userteststatus minden teszthez a groupban
     @Transactional
@@ -53,7 +51,7 @@ public class UserService {
     public UserDto addStudentFromCodeToParent(Long parentId, String studentCode) {
         User student = getUserByCode(studentCode, 0);
         User parent = getUserById(parentId, 1);
-        student.getParents().add(parent);
+        student.addParent(parent);
         return UserDto.build(userRepository.save(student));
     }
 

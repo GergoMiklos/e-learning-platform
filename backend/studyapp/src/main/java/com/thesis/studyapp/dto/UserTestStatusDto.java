@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @QueryResult
 @Data
@@ -22,7 +22,7 @@ public class UserTestStatusDto implements HasId {
 //    private int failsInRow;
 
     private UserTestStatus.Status status;
-    private LocalDateTime statusChangedTime;
+    private ZonedDateTime statusChangedTime;
 
     //todo currentTask nincs is!
     private Long currentTaskId;

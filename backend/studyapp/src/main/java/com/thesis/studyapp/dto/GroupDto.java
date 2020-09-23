@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @QueryResult
 @Data
@@ -18,7 +18,7 @@ public class GroupDto implements HasId {
     private String name;
     private String description;
     private String news;
-    private LocalDateTime newsChangedDate;
+    private ZonedDateTime newsChangedDate;
 
     public static GroupDto build(Group group) {
         return GroupDto.builder()

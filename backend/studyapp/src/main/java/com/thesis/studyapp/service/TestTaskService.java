@@ -38,12 +38,16 @@ public class TestTaskService {
     //todo ezeknek az isolation leveleknek nézz utána (DE errort dobott a neo4j amikor itt repeatable volt)
     @Transactional
     public List<TestTaskDto> changeTestTaskLevel(List<TestTaskInputDto> testTaskInputDtos) {
+        testTaskInputDtos.forEach(TestTaskInputDto::validate);
+
         Map<Long, Integer> inputMap = testTaskInputDtos.stream()
                 .collect(Collectors.toMap(TestTaskInputDto::getId, TestTaskInputDto::getLevel));
+
         List<TestTask> testTasks = testTaskRepository.findByIdIn(new ArrayList<>(inputMap.keySet()), 1);
         testTasks.forEach(testTask -> {
             testTask.setLevel(inputMap.get(testTask.getId()));
         });
+
         return convertToDto(testTaskRepository.save(testTasks, 1));
     }
 
@@ -53,12 +57,14 @@ public class TestTaskService {
                 .orElseThrow(() -> new CustomGraphQLException("No test with id: " + testId));
         Task task = taskRepository.findById(taskId, 0)
                 .orElseThrow(() -> new CustomGraphQLException("No task with id: " + taskId));
+
         task.setUsage(task.getUsage() + 1);
         TestTask testTask = TestTask.builder()
                 .level(level)
                 .task(task)
                 .test(test)
                 .build();
+
         return convertToDto(testTaskRepository.save(testTask, 1));
     }
 
