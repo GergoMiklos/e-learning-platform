@@ -2,7 +2,6 @@ package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.configuration.DateUtil;
-import com.thesis.studyapp.dto.TaskDto;
 import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.dto.UserDto;
 import com.thesis.studyapp.dto.UserTestStatusDto;
@@ -29,14 +28,14 @@ public class UserTestStatusResolver implements GraphQLResolver<UserTestStatusDto
         return testLoader.load(userTestStatusDto.getTestId());
     }
 
-    public CompletableFuture<TaskDto> currentTask(UserTestStatusDto userTestStatusDto) {
-        if (userTestStatusDto.getCurrentTaskId() != null) {
-            DataLoader<Long, TaskDto> taskLoader = dataLoaderRegistry.getDataLoader("taskLoader");
-            return taskLoader.load(userTestStatusDto.getCurrentTaskId());
-        } else {
-            return CompletableFuture.completedFuture(null);
-        }
-    }
+//    public CompletableFuture<TaskDto> user(UserTestStatusDto userTestStatusDto) {
+//        if (userTestStatusDto.getCurrentTaskId() != null) {
+//            DataLoader<Long, TaskDto> taskLoader = dataLoaderRegistry.getDataLoader("taskLoader");
+//            return taskLoader.load(userTestStatusDto.getCurrentTaskId());
+//        } else {
+//            return CompletableFuture.completedFuture(null);
+//        }
+//    }
 
     public CompletableFuture<String> statusChangedTime(UserTestStatusDto userTestStatusDto) {
         return CompletableFuture.supplyAsync(() -> DateUtil.convertToIsoString(userTestStatusDto.getStatusChangedTime()));

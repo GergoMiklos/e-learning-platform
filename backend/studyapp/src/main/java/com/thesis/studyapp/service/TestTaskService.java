@@ -1,7 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.TestTaskDto;
-import com.thesis.studyapp.dto.TestTaskInputDto;
+import com.thesis.studyapp.dto.TestTaskInput;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.Test;
@@ -37,11 +37,11 @@ public class TestTaskService {
 
     //todo ezeknek az isolation leveleknek nézz utána (DE errort dobott a neo4j amikor itt repeatable volt)
     @Transactional
-    public List<TestTaskDto> changeTestTaskLevel(List<TestTaskInputDto> testTaskInputDtos) {
-        testTaskInputDtos.forEach(TestTaskInputDto::validate);
+    public List<TestTaskDto> changeTestTaskLevel(List<TestTaskInput> testTaskInputs) {
+        testTaskInputs.forEach(TestTaskInput::validate);
 
-        Map<Long, Integer> inputMap = testTaskInputDtos.stream()
-                .collect(Collectors.toMap(TestTaskInputDto::getId, TestTaskInputDto::getLevel));
+        Map<Long, Integer> inputMap = testTaskInputs.stream()
+                .collect(Collectors.toMap(TestTaskInput::getId, TestTaskInput::getLevel));
 
         List<TestTask> testTasks = testTaskRepository.findByIdIn(new ArrayList<>(inputMap.keySet()), 1);
         testTasks.forEach(testTask -> {

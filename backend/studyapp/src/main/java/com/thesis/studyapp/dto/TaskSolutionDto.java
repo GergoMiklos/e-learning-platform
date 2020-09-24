@@ -8,8 +8,8 @@ import lombok.Data;
 public class TaskSolutionDto {
     private int chosenAnswerNumber;
     private int solutionNumber;
-    private int allAnswers;
-    private int correctAnswers;
-    private int answeredTasks;
+    private int allSolutions;
+    private int correctSolutions;
+    private int solvedTasks;
     private int allTasks;
 }

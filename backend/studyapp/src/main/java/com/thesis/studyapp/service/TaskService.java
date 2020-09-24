@@ -1,7 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.TaskDto;
-import com.thesis.studyapp.dto.TaskInputDto;
+import com.thesis.studyapp.dto.TaskInput;
 import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
@@ -44,22 +44,22 @@ public class TaskService {
     }
 
     //todo convertInputToTask...
-    public TaskDto createTask(TaskInputDto taskInputDto) {
-        int solutionNumber = taskInputDto.getIncorrectAnswers().size();
+    public TaskDto createTask(TaskInput taskInput) {
+        int solutionNumber = taskInput.getIncorrectAnswers().size();
         Stream<TaskAnswer> allAnswer = Stream.concat(
-                Stream.of(taskInputDto.getCorrectAnswer())
+                Stream.of(taskInput.getCorrectAnswer())
                         .map(answer -> TaskAnswer.builder()
                                 .answer(answer)
                                 .number(solutionNumber)
                                 .build()),
-                taskInputDto.getIncorrectAnswers().stream()
+                taskInput.getIncorrectAnswers().stream()
                         .map(answer -> TaskAnswer.builder()
                                 .answer(answer)
-                                .number(taskInputDto.getIncorrectAnswers().indexOf(answer))
+                                .number(taskInput.getIncorrectAnswers().indexOf(answer))
                                 .build())
         );
         Task task = Task.builder()
-                .question(taskInputDto.getQuestion())
+                .question(taskInput.getQuestion())
                 .answers(allAnswer.collect(Collectors.toSet()))
                 .solutionNumber(solutionNumber)
                 .usage(0L)

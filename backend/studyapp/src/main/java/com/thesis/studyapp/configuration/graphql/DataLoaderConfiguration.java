@@ -49,7 +49,8 @@ public class DataLoaderConfiguration {
                 .register("testLoader", testLoader())
                 .register("taskLoader", taskLoader())
                 .register("testTaskLoader", testTaskLoader())
-                .register("userTestSateLoader", userTestStateLoader());
+                .register("userTestStatusLoader", userTestStatusLoader())
+                .register("userTestTaskStatusLoader", userTestTaskStatusLoader());
     }
 
     private org.dataloader.DataLoader<Long, UserDto> userLoader() {
@@ -91,13 +92,26 @@ public class DataLoaderConfiguration {
         return org.dataloader.DataLoader.newDataLoader(groupBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private org.dataloader.DataLoader<Long, UserTestStatusDto> userTestStateLoader() {
+    private org.dataloader.DataLoader<Long, UserTestStatusDto> userTestStatusLoader() {
         BatchLoader<Long, UserTestStatusDto> batchLoader = new BatchLoader<Long, UserTestStatusDto>() {
             @Override
             public CompletionStage<List<UserTestStatusDto>> load(List<Long> userTestStatusIds) {
                 return CompletableFuture.supplyAsync(() -> {
                     List<UserTestStatusDto> userTestStatuses = userTestStatusService.getUserTestStatusesByIds(userTestStatusIds);
                     return sortListByIds(userTestStatuses, userTestStatusIds);
+                });
+            }
+        };
+        return org.dataloader.DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+    }
+
+    private org.dataloader.DataLoader<Long, UserTestStatusDto.UserTestTaskStatusDto> userTestTaskStatusLoader() {
+        BatchLoader<Long, UserTestStatusDto.UserTestTaskStatusDto> batchLoader = new BatchLoader<Long, UserTestStatusDto.UserTestTaskStatusDto>() {
+            @Override
+            public CompletionStage<List<UserTestStatusDto.UserTestTaskStatusDto>> load(List<Long> userTestTaskStatusIds) {
+                return CompletableFuture.supplyAsync(() -> {
+                    List<UserTestStatusDto.UserTestTaskStatusDto> userTestStatuses = userTestStatusService.getUserTestTaskStatusesByIds(userTestTaskStatusIds);
+                    return sortListByIds(userTestStatuses, userTestTaskStatusIds);
                 });
             }
         };

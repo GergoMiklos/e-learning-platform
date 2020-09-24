@@ -1,7 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.configuration.DateUtil;
-import com.thesis.studyapp.dto.NameDescInputDto;
+import com.thesis.studyapp.dto.NameDescInput;
 import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
@@ -38,7 +38,7 @@ public class TestService {
 
     //TODO first task? Ha valaki később csatlakozik?
     @Transactional
-    public TestDto createTest(Long groupId, NameDescInputDto input) {
+    public TestDto createTest(Long groupId, NameDescInput input) {
         input.validate();
         Group group = groupRepository.findById(groupId, 1)
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
@@ -52,7 +52,7 @@ public class TestService {
     }
 
     @Transactional
-    public TestDto editTest(Long testId, NameDescInputDto input) {
+    public TestDto editTest(Long testId, NameDescInput input) {
         input.validate();
         Test test = getTestById(testId, 0);
         test.setName(input.getName());

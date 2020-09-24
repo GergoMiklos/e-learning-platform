@@ -3,7 +3,7 @@ package com.thesis.studyapp.resolver.endpoint;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.GroupDto;
-import com.thesis.studyapp.dto.NameDescInputDto;
+import com.thesis.studyapp.dto.NameDescInput;
 import com.thesis.studyapp.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,11 @@ public class GroupEndpoint implements GraphQLQueryResolver, GraphQLMutationResol
         return groupService.getGroup(groupId);
     }
 
-    public GroupDto createGroup(Long userId, NameDescInputDto input) {
+    public GroupDto createGroup(Long userId, NameDescInput input) {
         return groupService.createGroup(userId, input);
     }
 
-    public GroupDto editGroup(Long groupId, NameDescInputDto input) {
+    public GroupDto editGroup(Long groupId, NameDescInput input) {
         return groupService.editGroup(groupId, input);
     }
 

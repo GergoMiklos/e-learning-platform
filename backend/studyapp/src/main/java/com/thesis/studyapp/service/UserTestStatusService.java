@@ -1,6 +1,7 @@
 package com.thesis.studyapp.service;
 
 
+import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.TaskSolutionDto;
 import com.thesis.studyapp.dto.TestTaskDto;
 import com.thesis.studyapp.dto.UserTestStatusDto;
@@ -9,6 +10,7 @@ import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.repository.UserTestStatusRepository;
+import com.thesis.studyapp.repository.UserTestTaskStatusRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +28,9 @@ import static java.lang.Math.max;
 public class UserTestStatusService {
 
     private final UserTestStatusRepository userTestStatusRepository;
+    private final UserTestTaskStatusRepository userTestTaskStatusRepository;
+
+    private final DateUtil dateUtil;
 
     public UserTestStatusDto getUserTestStatus(Long userTestStatusId) {
         return convertToDto(getUserTestStatusById(userTestStatusId, 1));
@@ -33,6 +38,10 @@ public class UserTestStatusService {
 
     public List<UserTestStatusDto> getUserTestStatusesByIds(List<Long> ids) {
         return convertToDto(userTestStatusRepository.findByIdIn(ids, 1));
+    }
+
+    public List<UserTestStatusDto.UserTestTaskStatusDto> getUserTestTaskStatusesByIds(List<Long> ids) {
+        return UserTestStatusDto.UserTestTaskStatusDto.build(userTestTaskStatusRepository.findByIdIn(ids, 1));
     }
 
     //TODO ilyenkor testId check? vagy pl get Test with depth 1, filter userId == userId && deprecated == false
@@ -57,13 +66,13 @@ public class UserTestStatusService {
         return UserTestStatusDto.build(userTestStatus);
     }
 
+    //Todo mehet ez is az osztályba?
     private List<UserTestStatusDto> convertToDto(List<UserTestStatus> userTestStatuses) {
         return userTestStatuses.stream()
                 .map(UserTestStatusDto::build)
                 .collect(Collectors.toList());
     }
 
-    //TODO set TesTask correct / all
     public TaskSolutionDto checkSolution(Long userId, Long testId, int chosenAnswerNumber) {
         UserTestStatus userTestStatus = userTestStatusRepository
                 .findFirstByUserIdAndTestId(userId, testId, 2)
@@ -83,76 +92,79 @@ public class UserTestStatusService {
         return TaskSolutionDto.builder()
                 .chosenAnswerNumber(chosenAnswerNumber)
                 .solutionNumber(correctSolutionNumber)
-                .correctAnswers(userTestStatus.getCorrectAnswers())
-                .allAnswers(userTestStatus.getAllAnswers())
-                .answeredTasks(userTestStatus.getTaskStatuses().size())
+                .correctSolutions(userTestStatus.getCorrectSolutions())
+                .allSolutions(userTestStatus.getAllSolutions())
+                .solvedTasks(userTestStatus.getUserTestTaskStatuses().size())
                 .allTasks(userTestStatus.getTest().getTestTasks().size())
                 .build();
     }
 
     //todo mehetnek ki függvénybe a dolgok
     private void setCorrectSolution(UserTestStatus uts) {
-        uts.setCorrectAnswers(uts.getCorrectAnswers() + 1);
-        uts.setAllAnswers(uts.getAllAnswers() + 1);
-        uts.setCorrectAnswersInRow(uts.getCorrectAnswersInRow() + 1);
-        uts.setWrongAnswersInRow(0);
+        uts.setCorrectSolutions(uts.getCorrectSolutions() + 1);
+        uts.setAllSolutions(uts.getAllSolutions() + 1);
+        uts.setCorrectSolutionsInRow(uts.getCorrectSolutionsInRow() + 1);
+        uts.setWrongSolutionsInRow(0);
 
-        Optional<UserTestStatus.TaskStatus> taskStatusData = uts.getTaskStatuses().stream()
+        Optional<UserTestStatus.UserTestTaskStatus> taskStatusData = uts.getUserTestTaskStatuses().stream()
                 .filter(tsd -> tsd.getTestTask().getId().equals(uts.getCurrentTestTask().getId()))
                 .findFirst();
         if (taskStatusData.isPresent()) {
             //Todo extract to func.
-            taskStatusData.get().setCorrectAnswers(uts.getCorrectAnswers() + 1);
-            taskStatusData.get().setAllAnswers(uts.getAllAnswers() + 1);
-            taskStatusData.get().setCorrectAnswersInRow(uts.getCorrectAnswersInRow() + 1);
-            taskStatusData.get().setWrongAnswersInRow(0);
+            taskStatusData.get().setCorrectSolutions(uts.getCorrectSolutions() + 1);
+            taskStatusData.get().setAllSolutions(uts.getAllSolutions() + 1);
+            taskStatusData.get().setCorrectSolutionsInRow(uts.getCorrectSolutionsInRow() + 1);
+            taskStatusData.get().setWrongSolutionsInRow(0);
         } else {
-            uts.addTaskStatusData(UserTestStatus.TaskStatus.builder()
+            uts.addTaskStatusData(UserTestStatus.UserTestTaskStatus.builder()
                     .testTask(uts.getCurrentTestTask())
-                    .allAnswers(1)
-                    .correctAnswers(1)
-                    .correctAnswersInRow(1)
-                    .wrongAnswersInRow(0)
+                    .lastSolutionTime(dateUtil.getCurrentTime())
+                    .allSolutions(1)
+                    .correctSolutions(1)
+                    .correctSolutionsInRow(1)
+                    .wrongSolutionsInRow(0)
                     .build());
         }
     }
 
     private void setWrongSolution(UserTestStatus uts) {
-        uts.setAllAnswers(uts.getAllAnswers() + 1);
-        uts.setCorrectAnswersInRow(0);
-        uts.setWrongAnswersInRow(uts.getWrongAnswersInRow() + 1);
+        uts.setAllSolutions(uts.getAllSolutions() + 1);
+        uts.setCorrectSolutionsInRow(0);
+        uts.setWrongSolutionsInRow(uts.getWrongSolutionsInRow() + 1);
 
-        Optional<UserTestStatus.TaskStatus> taskStatusData = uts.getTaskStatuses().stream()
+        Optional<UserTestStatus.UserTestTaskStatus> taskStatusData = uts.getUserTestTaskStatuses().stream()
                 .filter(tsd -> tsd.getTestTask().getId().equals(uts.getCurrentTestTask().getId()))
                 .findFirst();
         if (taskStatusData.isPresent()) {
-            taskStatusData.get().setAllAnswers(uts.getAllAnswers() + 1);
-            taskStatusData.get().setCorrectAnswersInRow(0);
-            taskStatusData.get().setWrongAnswersInRow(0);
+            taskStatusData.get().setAllSolutions(uts.getAllSolutions() + 1);
+            taskStatusData.get().setCorrectSolutionsInRow(0);
+            taskStatusData.get().setWrongSolutionsInRow(0);
+            taskStatusData.get().setLastSolutionTime(dateUtil.getCurrentTime());
         } else {
-            uts.addTaskStatusData(UserTestStatus.TaskStatus.builder()
+            uts.addTaskStatusData(UserTestStatus.UserTestTaskStatus.builder()
                     .testTask(uts.getCurrentTestTask())
-                    .allAnswers(1)
-                    .correctAnswers(0)
-                    .correctAnswersInRow(0)
-                    .wrongAnswersInRow(1)
+                    .lastSolutionTime(dateUtil.getCurrentTime())
+                    .allSolutions(1)
+                    .correctSolutions(0)
+                    .correctSolutionsInRow(0)
+                    .wrongSolutionsInRow(1)
                     .build());
         }
     }
 
     private void setStatus(UserTestStatus uts) {
-        double ratio = calculateRatio(uts.getCorrectAnswers(), uts.getAllAnswers());
+        double ratio = calculateRatio(uts.getCorrectSolutions(), uts.getAllSolutions());
         switch (uts.getStatus()) {
             case NOT_STARTED:
                 uts.setStatus(UserTestStatus.Status.IN_PROGRESS);
                 break;
             case IN_PROGRESS:
-                if (ratio < 0.5 || uts.getWrongAnswersInRow() >= 2) {
+                if (ratio < 0.5 || uts.getWrongSolutionsInRow() >= 2) {
                     uts.setStatus(UserTestStatus.Status.PROBLEM);
                 }
                 break;
             case PROBLEM:
-                if (ratio > 0.5 && uts.getCorrectAnswersInRow() >= 2) {
+                if (ratio > 0.5 && uts.getCorrectSolutionsInRow() >= 2) {
                     uts.setStatus(UserTestStatus.Status.IN_PROGRESS);
                 }
                 break;
@@ -180,11 +192,11 @@ public class UserTestStatusService {
         Set<TestTask> allTestTasks = uts.getTest().getTestTasks().stream()
                 .filter(testTask -> testTask.getLevel() == currentLevel)
                 .collect(Collectors.toSet());
-        Set<UserTestStatus.TaskStatus> solvedTaskStatuses = uts.getTaskStatuses().stream()
+        Set<UserTestStatus.UserTestTaskStatus> solvedUserTestTaskStatuses = uts.getUserTestTaskStatuses().stream()
                 .filter(status -> status.getTestTask().getLevel() == currentLevel && allTestTasks.contains(status.getTestTask()))
                 .collect(Collectors.toSet());
-        Set<TestTask> solvedTestTasks = solvedTaskStatuses.stream()
-                .map(UserTestStatus.TaskStatus::getTestTask)
+        Set<TestTask> solvedTestTasks = solvedUserTestTaskStatuses.stream()
+                .map(UserTestStatus.UserTestTaskStatus::getTestTask)
                 .collect(Collectors.toSet());
         Set<TestTask> newTestTasks = allTestTasks.stream()
                 .filter(testTask -> !solvedTestTasks.contains(testTask))
@@ -197,17 +209,17 @@ public class UserTestStatusService {
             }
 
             double weight = max(1, 0.75 + 0.05 * currentCycle);
-            if (solvedTaskStatuses.stream().anyMatch(status -> status.getCorrectAnswers() < currentCycle)
-                    || weight * calculateAverageRatio(solvedTaskStatuses) + (1 - weight) * calculatePreviousAverageRatio(uts.getUser()) < (weight - 0.05)) {
+            if (solvedUserTestTaskStatuses.stream().anyMatch(status -> status.getCorrectSolutions() < currentCycle)
+                    || weight * calculateAverageRatio(solvedUserTestTaskStatuses) + (1 - weight) * calculatePreviousAverageRatio(uts.getUser()) < (weight - 0.05)) {
                 //Todo ez biztos nem mindig ugyanazt adja?
                 TestTask nextTask = Collections.min(solvedTestTasks, new BestRatioComparator());
                 uts.setCurrentTestTask(nextTask);
                 return;
             }
 
-            Set<TestTask> wrongTestTasks = solvedTaskStatuses.stream()
-                    .filter(status -> status.getWrongAnswersInRow() > 0)
-                    .map(UserTestStatus.TaskStatus::getTestTask)
+            Set<TestTask> wrongTestTasks = solvedUserTestTaskStatuses.stream()
+                    .filter(status -> status.getWrongSolutionsInRow() > 0)
+                    .map(UserTestStatus.UserTestTaskStatus::getTestTask)
                     .collect(Collectors.toSet());
             if (!wrongTestTasks.isEmpty()) {
                 TestTask nextTask = Collections.max(wrongTestTasks, new BestRatioComparator());
@@ -226,14 +238,14 @@ public class UserTestStatusService {
 
     public static double calculatePreviousAverageRatio(User user) {
         return user.getUserTestStatuses().stream()
-                .mapToDouble(uts -> calculateRatio(uts.getCorrectAnswers(), uts.getAllAnswers()))
+                .mapToDouble(uts -> calculateRatio(uts.getCorrectSolutions(), uts.getAllSolutions()))
                 .average()
                 .orElse(1);
     }
 
-    public static double calculateAverageRatio(Set<UserTestStatus.TaskStatus> taskStatus) {
-        return taskStatus.stream()
-                .mapToDouble(status -> calculateRatio(status.getCorrectAnswers(), status.getAllAnswers()))
+    public static double calculateAverageRatio(Set<UserTestStatus.UserTestTaskStatus> userTestTaskStatuses) {
+        return userTestTaskStatuses.stream()
+                .mapToDouble(status -> calculateRatio(status.getCorrectSolutions(), status.getAllSolutions()))
                 .average()
                 .orElse(1);
     }
@@ -249,8 +261,8 @@ public class UserTestStatusService {
     public static class BestRatioComparator implements Comparator<TestTask> {
 
         @Override public int compare(TestTask tt1, TestTask tt2) {
-            double ratio1 = (double) tt1.getCorrectAnswers() / (double) tt1.getAllAnswers();
-            double ratio2 = (double) tt2.getCorrectAnswers() / (double) tt2.getAllAnswers();
+            double ratio1 = (double) tt1.getCorrectSolutions() / (double) tt1.getAllSolutions();
+            double ratio2 = (double) tt2.getCorrectSolutions() / (double) tt2.getAllSolutions();
             if (ratio1 > ratio2) {
                 return 1;
             } else {

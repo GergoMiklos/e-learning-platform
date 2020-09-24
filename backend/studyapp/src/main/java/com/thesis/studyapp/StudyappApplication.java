@@ -103,14 +103,14 @@ public class StudyappApplication {
             TestTask testTask = TestTask.builder()
                     .level(4)
                     .task(task)
-                    .allAnswers(5)
-                    .correctAnswers(3)
+                    .allSolutions(5)
+                    .correctSolutions(3)
                     .build();
             TestTask testTask2 = TestTask.builder()
                     .level(1)
                     .task(task2)
-                    .allAnswers(6)
-                    .correctAnswers(4)
+                    .allSolutions(6)
+                    .correctSolutions(4)
                     .build();
             test.addTask(testTask);
             test.addTask(testTask2);
@@ -121,11 +121,11 @@ public class StudyappApplication {
                     .statusChangedDate(ZonedDateTime.now(ZoneOffset.UTC))
                     .user(user)
                     .test(test)
-                    .allAnswers(56)
-                    .correctAnswers(18)
+                    .allSolutions(56)
+                    .correctSolutions(18)
                     .currentCycle(1)
                     .currentLevel(1)
-                    .correctAnswersInRow(2)
+                    .correctSolutionsInRow(2)
                     .build();
 
             test.addUserTestStatus(userTestStatus);

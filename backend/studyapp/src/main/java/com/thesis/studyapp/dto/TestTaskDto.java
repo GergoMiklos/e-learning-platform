@@ -13,6 +13,8 @@ public class TestTaskDto implements HasId {
     Long id;
 
     private int level;
+    private int allSolutions;
+    private int correctSolutions;
 
     private Long taskId;
 
@@ -24,6 +26,8 @@ public class TestTaskDto implements HasId {
         return TestTaskDto.builder()
                 .id(testTask.getId())
                 .level(testTask.getLevel())
+                .allSolutions(testTask.getAllSolutions())
+                .correctSolutions(testTask.getCorrectSolutions())
                 .taskId(testTask.getTask().getId())
                 .build();
     }

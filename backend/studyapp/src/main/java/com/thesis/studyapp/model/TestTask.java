@@ -24,8 +24,8 @@ public class TestTask {
 
     private int level;
 
-    private int allAnswers;
-    private int correctAnswers;
+    private int allSolutions;
+    private int correctSolutions;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude

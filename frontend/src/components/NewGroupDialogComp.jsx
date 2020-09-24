@@ -39,7 +39,7 @@ class NewGroupDialogComp extends Component {
             mutation: CREATE_GROUP,
             variables: {input: {description: values.description, name: values.name}, userId: userId},
         })
-            .then(result => {
+            .then(() => {
                 this.showNotification({
                     text: 'Group created successfully',
                     type: 'success',

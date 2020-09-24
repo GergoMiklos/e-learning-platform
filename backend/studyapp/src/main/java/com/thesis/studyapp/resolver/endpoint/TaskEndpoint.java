@@ -3,7 +3,7 @@ package com.thesis.studyapp.resolver.endpoint;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.TaskDto;
-import com.thesis.studyapp.dto.TaskInputDto;
+import com.thesis.studyapp.dto.TaskInput;
 import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class TaskEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
         return taskService.searchTasks(searchText, page);
     }
 
-    public TaskDto createTask(TaskInputDto taskInputDto) {
-        return taskService.createTask(taskInputDto);
+    public TaskDto createTask(TaskInput taskInput) {
+        return taskService.createTask(taskInput);
     }
 }

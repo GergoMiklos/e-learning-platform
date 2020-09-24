@@ -27,19 +27,14 @@ public class UserTestStatus {
     private Long id;
 
     private Status status;
-
     private int currentLevel;
     private int currentCycle;
-    private int correctAnswersInRow;
-    private int wrongAnswersInRow;
-    private int correctAnswers;
-    private int allAnswers;
-    //    private Date timeStartedTest;
-//    private Date startedLastTaskDate;
-    private ZonedDateTime statusChangedDate;
+    private int correctSolutionsInRow;
+    private int wrongSolutionsInRow;
+    private int correctSolutions;
+    private int allSolutions;
 
-//    List<Long> completedTasksId;
-//    List<Long> failedTasksId;
+    private ZonedDateTime statusChangedDate;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
@@ -56,15 +51,14 @@ public class UserTestStatus {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKSTATUSDATA", direction = Relationship.OUTGOING)
-    private Set<TaskStatus> taskStatuses;
+    private Set<UserTestTaskStatus> userTestTaskStatuses;
 
-    public void addTaskStatusData(TaskStatus taskStatus) {
-        if (this.taskStatuses == null) {
-            this.taskStatuses = new HashSet<>();
+    public void addTaskStatusData(UserTestTaskStatus userTestTaskStatus) {
+        if (this.userTestTaskStatuses == null) {
+            this.userTestTaskStatuses = new HashSet<>();
         }
-        this.taskStatuses.add(taskStatus);
+        this.userTestTaskStatuses.add(userTestTaskStatus);
     }
-
 
     public enum Status {
         NOT_STARTED, IN_PROGRESS, PROBLEM
@@ -75,7 +69,7 @@ public class UserTestStatus {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TaskStatus {
+    public static class UserTestTaskStatus {
         @Id
         @GeneratedValue
         private Long id;
@@ -85,10 +79,12 @@ public class UserTestStatus {
         @Relationship(type = "STATUSDATATASK", direction = Relationship.OUTGOING)
         private TestTask testTask;
 
-        private int correctAnswers;
-        private int allAnswers;
-        private int correctAnswersInRow;
-        private int wrongAnswersInRow;
+        private ZonedDateTime lastSolutionTime;
+        private int correctSolutions;
+        private int allSolutions;
+        private int correctSolutionsInRow;
+        private int wrongSolutionsInRow;
+
     }
 
 }

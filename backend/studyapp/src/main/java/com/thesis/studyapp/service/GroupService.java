@@ -2,7 +2,7 @@ package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.GroupDto;
-import com.thesis.studyapp.dto.NameDescInputDto;
+import com.thesis.studyapp.dto.NameDescInput;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
@@ -35,7 +35,7 @@ public class GroupService {
     }
 
     @Transactional
-    public GroupDto createGroup(Long userId, NameDescInputDto input) {
+    public GroupDto createGroup(Long userId, NameDescInput input) {
         input.validate();
         User user = getUserById(userId, 0);
         Group group = Group.builder()
@@ -50,7 +50,7 @@ public class GroupService {
     }
 
     @Transactional
-    public GroupDto editGroup(Long groupId, NameDescInputDto input) {
+    public GroupDto editGroup(Long groupId, NameDescInput input) {
         input.validate();
         Group group = getGroupById(groupId, 0);
         group.setName(input.getName());

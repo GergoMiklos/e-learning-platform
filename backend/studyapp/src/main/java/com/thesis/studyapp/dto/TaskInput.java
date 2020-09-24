@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskInputDto {
+public class TaskInput {
     String question;
     String correctAnswer;
     List<String> incorrectAnswers;
