@@ -1,4 +1,4 @@
-package com.thesis.studyapp.configuration.graphql;
+package com.thesis.studyapp.configuration;
 
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.exception.GraphQLErrorAdapter;
@@ -31,16 +31,16 @@ public class ErrorHandlingConfiguration {
                 if (clientErrors.size() + internalClientErrors.size() < errors.size()) {
                     clientErrors.add(new GenericGraphQLError("Internal Server Error(s) while executing query"));
 
-                    errors.stream().filter((error) -> {
-                        return !this.isClientError(error);
-                    }).forEach((error) -> {
-                        if (error instanceof Throwable) {
-                            log.error("Error executing query!", (Throwable)error);
-                        } else {
-                            log.error("Error executing query ({}): {}", error.getClass().getSimpleName(), error.getMessage());
-                        }
+                    errors.stream()
+                            .filter((error) -> !this.isClientError(error))
+                            .forEach((error) -> {
+                                if (error instanceof Throwable) {
+                                    log.error("Error executing query!", (Throwable) error);
+                                } else {
+                                    log.error("Error executing query ({}): {}", error.getClass().getSimpleName(), error.getMessage());
+                                }
 
-                    });
+                            });
                 }
 
                 List<GraphQLError> finalErrors = new ArrayList<>();
@@ -51,7 +51,8 @@ public class ErrorHandlingConfiguration {
 
             @Override
             protected List<GraphQLError> filterGraphQLErrors(List<GraphQLError> errors) {
-                return (List)errors.stream().filter(this::isClientError).collect(Collectors.toList());
+//                return (List)errors.stream().filter(this::isClientError).collect(Collectors.toList());
+                return errors.stream().filter(this::isClientError).collect(Collectors.toList());
             }
 
             @Override

@@ -9,7 +9,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 @NodeEntity
 @Data
 @Builder
-public class TaskAnswer {
+public class TaskAnswer implements HasId {
 
     @Id
     @GeneratedValue

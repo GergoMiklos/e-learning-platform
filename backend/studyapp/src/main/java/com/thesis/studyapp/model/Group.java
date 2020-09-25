@@ -13,6 +13,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Group {
+public class Group implements HasId {
     @Id
     //@GeneratedValue(strategy = CustomIdStrategy.class)
     @GeneratedValue
@@ -66,6 +67,13 @@ public class Group {
             tests = new HashSet<>();
         }
         tests.add(test);
+    }
+
+    public static class GroupComparator implements Comparator<Group> {
+
+        @Override public int compare(Group g1, Group g2) {
+            return g1.getName().compareTo(g2.getName());
+        }
     }
 
 }

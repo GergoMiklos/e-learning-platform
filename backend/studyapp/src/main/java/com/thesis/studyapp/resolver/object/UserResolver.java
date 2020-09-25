@@ -1,12 +1,10 @@
 package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.dto.GroupDto;
-import com.thesis.studyapp.dto.UserDto;
-import com.thesis.studyapp.dto.UserTestStatusDto;
-import com.thesis.studyapp.service.GroupService;
-import com.thesis.studyapp.service.UserService;
-import com.thesis.studyapp.service.UserTestStatusService;
+import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.User;
+import com.thesis.studyapp.model.UserTestStatus;
+import com.thesis.studyapp.util.DataLoaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,34 +13,24 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class UserResolver implements GraphQLResolver<UserDto> {
+public class UserResolver implements GraphQLResolver<User> {
 
-    private final GroupService groupService;
-    private final UserService userService;
-    private final UserTestStatusService userTestStatusService;
+    private final DataLoaderUtil dataLoaderUtil;
 
-    public CompletableFuture<List<GroupDto>> studentGroups(UserDto userDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                groupService.getGroupsForStudent(userDTO.getId())
-        );
+    public CompletableFuture<List<Group>> studentGroups(User user) {
+        return dataLoaderUtil.loadData(user.getStudentGroups(), DataLoaderUtil.GROUP_LOADER);
     }
 
-    public CompletableFuture<List<GroupDto>> teacherGroups(UserDto userDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                groupService.getGroupsForTeacher(userDTO.getId())
-        );
+    public CompletableFuture<List<Group>> teacherGroups(User user) {
+        return dataLoaderUtil.loadData(user.getTeacherGroups(), DataLoaderUtil.GROUP_LOADER);
     }
 
-    public CompletableFuture<List<UserDto>> followedStudents(UserDto userDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                userService.getStudentsForParent(userDTO.getId())
-        );
+    public CompletableFuture<List<User>> followedStudents(User user) {
+        return dataLoaderUtil.loadData(user.getFollowedStudents(), DataLoaderUtil.USER_LOADER);
     }
 
-    public CompletableFuture<List<UserTestStatusDto>> userTestStatuses(UserDto userDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                userTestStatusService.getUserTestStatusesForUser(userDTO.getId())
-        );
+    public CompletableFuture<List<UserTestStatus>> userTestStatuses(User user) {
+        return dataLoaderUtil.loadData(user.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER);
     }
 
 }

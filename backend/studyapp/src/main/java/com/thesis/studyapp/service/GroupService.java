@@ -1,13 +1,12 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.configuration.DateUtil;
-import com.thesis.studyapp.dto.GroupDto;
 import com.thesis.studyapp.dto.NameDescInput;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.UserRepository;
+import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,18 +24,18 @@ public class GroupService {
 
     private final DateUtil dateUtil;
 
-    public GroupDto getGroup(Long groupId) {
-        return convertToDto(getGroupById(groupId, 0));
+    public Group getGroup(Long groupId) {
+        return getGroupById(groupId, 1);
     }
 
-    public List<GroupDto> getGroupsByIds(List<Long> groupIds) {
-        return convertToDto(groupRepository.findByIdIn(groupIds, 0));
+    public List<Group> getGroupsByIds(List<Long> groupIds) {
+        return groupRepository.findByIdIn(groupIds, 1);
     }
 
     @Transactional
-    public GroupDto createGroup(Long userId, NameDescInput input) {
+    public Group createGroup(Long userId, NameDescInput input) {
         input.validate();
-        User user = getUserById(userId, 0);
+        User user = getUserById(userId, 1);
         Group group = Group.builder()
                 .name(input.getName())
                 .description(input.getDescription())
@@ -46,33 +44,33 @@ public class GroupService {
                 .news(user.getName() + " created the group")
                 .newsChangedDate(dateUtil.getCurrentTime())
                 .build();
-        return convertToDto(groupRepository.save(group));
+        return groupRepository.save(group, 1);
     }
 
     @Transactional
-    public GroupDto editGroup(Long groupId, NameDescInput input) {
+    public Group editGroup(Long groupId, NameDescInput input) {
         input.validate();
-        Group group = getGroupById(groupId, 0);
+        Group group = getGroupById(groupId, 1);
         group.setName(input.getName());
         group.setDescription(input.getDescription());
-        return convertToDto(groupRepository.save(group));
+        return groupRepository.save(group, 1);
     }
 
     @Transactional
-    public GroupDto changeGroupNews(Long groupId, String news) {
-        Group group = getGroupById(groupId, 0);
+    public Group changeGroupNews(Long groupId, String news) {
+        Group group = getGroupById(groupId, 1);
         group.setNews(news);
         group.setNewsChangedDate(dateUtil.getCurrentTime());
-        return convertToDto(groupRepository.save(group));
+        return groupRepository.save(group, 1);
     }
 
     //todo userteststatus minden teszthez a groupban
     @Transactional
-    public GroupDto addStudentToGroupFromCode(Long studentId, String groupCode) {
+    public Group addStudentToGroupFromCode(Long studentId, String groupCode) {
         User user = getUserById(studentId, 0);
         Group group = getGroupByCode(groupCode, 1);
         group.addStudent(user);
-        return convertToDto(groupRepository.save(group));
+        return groupRepository.save(group, 1);
     }
 
     public void deleteStudentFromGroup(Long studentId, Long groupId) {
@@ -91,12 +89,12 @@ public class GroupService {
         }
     }
 
-    public List<GroupDto> getGroupsForStudent(Long studentId) {
-        return convertToDto(groupRepository.findByStudentsIdOrderByName(studentId, 0));
+    public List<Group> getGroupsForStudent(Long studentId) {
+        return groupRepository.findByStudentsIdOrderByName(studentId, 1);
     }
 
-    public List<GroupDto> getGroupsForTeacher(Long studentId) {
-        return convertToDto(groupRepository.findByTeachersIdOrderByName(studentId, 0));
+    public List<Group> getGroupsForTeacher(Long studentId) {
+        return groupRepository.findByTeachersIdOrderByName(studentId, 1);
     }
 
     private Group getGroupById(Long groupId, int depth) {
@@ -109,19 +107,10 @@ public class GroupService {
                 .orElseThrow(() -> new CustomGraphQLException("No group with code: " + groupCode));
     }
 
+    //todo nem ide
     private User getUserById(Long userId, int depth) {
         return userRepository.findById(userId, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No user with id: " + userId));
-    }
-
-    private GroupDto convertToDto(Group group) {
-        return GroupDto.build(group);
-    }
-
-    private List<GroupDto> convertToDto(List<Group> groups) {
-        return groups.stream()
-                .map(GroupDto::build)
-                .collect(Collectors.toList());
     }
 
 

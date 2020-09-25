@@ -1,48 +1,46 @@
 package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.configuration.DateUtil;
-import com.thesis.studyapp.dto.TestDto;
-import com.thesis.studyapp.dto.UserDto;
-import com.thesis.studyapp.dto.UserTestStatusDto;
+import com.thesis.studyapp.model.Test;
+import com.thesis.studyapp.model.User;
+import com.thesis.studyapp.model.UserTestStatus;
+import com.thesis.studyapp.model.UserTestTaskStatus;
+import com.thesis.studyapp.util.DataLoaderUtil;
+import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
-import org.dataloader.DataLoader;
-import org.dataloader.DataLoaderRegistry;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class UserTestStatusResolver implements GraphQLResolver<UserTestStatusDto> {
+public class UserTestStatusResolver implements GraphQLResolver<UserTestStatus> {
 
-    private final DataLoaderRegistry dataLoaderRegistry;
+    private final DataLoaderUtil dataLoaderUtil;
 
-    public CompletableFuture<UserDto> user(UserTestStatusDto userTestStatusDto) {
-        DataLoader<Long, UserDto> userLoader = dataLoaderRegistry.getDataLoader("userLoader");
-        return userLoader.load(userTestStatusDto.getUserId());
+    public CompletableFuture<User> user(UserTestStatus userTestStatus) {
+        return dataLoaderUtil.loadData(userTestStatus.getUser(), DataLoaderUtil.USER_LOADER);
     }
 
-    public CompletableFuture<TestDto> test(UserTestStatusDto userTestStatusDto) {
-        DataLoader<Long, TestDto> testLoader = dataLoaderRegistry.getDataLoader("testLoader");
-        return testLoader.load(userTestStatusDto.getTestId());
+    public CompletableFuture<Test> test(UserTestStatus userTestStatus) {
+        return dataLoaderUtil.loadData(userTestStatus.getTest(), DataLoaderUtil.TEST_LOADER);
     }
 
-//    public CompletableFuture<TaskDto> user(UserTestStatusDto userTestStatusDto) {
-//        if (userTestStatusDto.getCurrentTaskId() != null) {
-//            DataLoader<Long, TaskDto> taskLoader = dataLoaderRegistry.getDataLoader("taskLoader");
-//            return taskLoader.load(userTestStatusDto.getCurrentTaskId());
-//        } else {
-//            return CompletableFuture.completedFuture(null);
-//        }
-//    }
-
-    public CompletableFuture<String> statusChangedTime(UserTestStatusDto userTestStatusDto) {
-        return CompletableFuture.supplyAsync(() -> DateUtil.convertToIsoString(userTestStatusDto.getStatusChangedTime()));
+    public CompletableFuture<List<UserTestTaskStatus>> userTestTaskStatuses(UserTestStatus userTestStatus) {
+        return dataLoaderUtil.loadData(userTestStatus.getUserTestTaskStatuses(), DataLoaderUtil.USERTESTTASKSTATUS_LOADER)
+                .thenApplyAsync((userTestTaskStatuses) -> {
+                    userTestTaskStatuses.sort(new UserTestTaskStatus.UserTestTaskStatusComparator());
+                    return userTestTaskStatuses;
+                });
     }
 
-    public CompletableFuture<String> status(UserTestStatusDto userTestStatusDto) {
-        return CompletableFuture.supplyAsync(() -> userTestStatusDto.getStatus().name());
+    public CompletableFuture<String> statusChangedTime(UserTestStatus userTestStatus) {
+        return CompletableFuture.supplyAsync(() -> DateUtil.convertToIsoString(userTestStatus.getStatusChangedDate()));
+    }
+
+    public CompletableFuture<String> status(UserTestStatus userTestStatus) {
+        return CompletableFuture.supplyAsync(() -> userTestStatus.getStatus().name());
     }
 
 

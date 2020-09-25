@@ -1,15 +1,12 @@
 package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.dto.GroupDto;
-import com.thesis.studyapp.dto.TestDto;
-import com.thesis.studyapp.dto.TestTaskDto;
-import com.thesis.studyapp.dto.UserTestStatusDto;
-import com.thesis.studyapp.service.TestTaskService;
-import com.thesis.studyapp.service.UserTestStatusService;
+import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.Test;
+import com.thesis.studyapp.model.TestTask;
+import com.thesis.studyapp.model.UserTestStatus;
+import com.thesis.studyapp.util.DataLoaderUtil;
 import lombok.RequiredArgsConstructor;
-import org.dataloader.DataLoader;
-import org.dataloader.DataLoaderRegistry;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -17,26 +14,24 @@ import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class TestResolver implements GraphQLResolver<TestDto> {
+public class TestResolver implements GraphQLResolver<Test> {
 
-    private final UserTestStatusService userTestStatusService;
-    private final TestTaskService testTaskService;
-    private final DataLoaderRegistry dataLoaderRegistry;
+    private final DataLoaderUtil dataLoaderUtil;
 
-    public CompletableFuture<List<TestTaskDto>> testTasks(TestDto testDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                testTaskService.getTestTasksForTest(testDTO.getId())
-        );
+    public CompletableFuture<List<TestTask>> testTasks(Test test) {
+        return dataLoaderUtil.loadData(test.getTestTasks(), DataLoaderUtil.TESTTASK_LOADER);
     }
 
-    public CompletableFuture<List<UserTestStatusDto>> userTestStatuses(TestDto testDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                userTestStatusService.getUserTestStatusesForTest(testDTO.getId())
-        );
+    public CompletableFuture<List<UserTestStatus>> userTestStatuses(Test test) {
+        return dataLoaderUtil.loadData(test.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER);
     }
 
-    public CompletableFuture<GroupDto> group(TestDto testDto) {
-        DataLoader<Long, GroupDto> groupLoader = dataLoaderRegistry.getDataLoader("groupLoader");
-        return groupLoader.load(testDto.getGroupId());
+    public CompletableFuture<Group> group(Test test) {
+        return dataLoaderUtil.loadData(test.getGroup(), DataLoaderUtil.GROUP_LOADER);
+    }
+
+    //todo szólni kéne ha null?
+    public CompletableFuture<Integer> allTasks(Test test) {
+        return CompletableFuture.completedFuture(test.getTestTasks() == null ? 0 : test.getTestTasks().size());
     }
 }

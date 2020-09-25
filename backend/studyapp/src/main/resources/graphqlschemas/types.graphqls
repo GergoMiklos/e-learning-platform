@@ -2,10 +2,10 @@ type User {
     id: ID!
     code: String!
     name: String!
-    studentGroups: [Group]
-    teacherGroups: [Group]
-    followedStudents: [User]
-    userTestStatuses: [UserTestStatus]
+    studentGroups: [Group!]
+    teacherGroups: [Group!]
+    followedStudents: [User!]
+    userTestStatuses: [UserTestStatus!]
 }
 
 type Group {
@@ -15,17 +15,18 @@ type Group {
     description: String
     news: String
     newsChangedDate: String
-    students: [User]
-    teachers: [User]
-    tests: [Test]
+    students: [User!]
+    teachers: [User!]
+    tests: [Test!]
 }
 
 type Test {
     id: ID!
     name: String!
     description: String
-    testTasks: [TestTask]
-    userTestStatuses: [UserTestStatus]
+    allTasks: Int!
+    testTasks: [TestTask!]
+    userTestStatuses: [UserTestStatus!]
     group: Group!
 }
 
@@ -37,13 +38,14 @@ type UserTestStatus {
     statusChangedTime: String!
     correctSolutions: Int!
     allSolutions: Int!
+    userTestTaskStatuses: [UserTestTaskStatuses!]
 }
 
 type Task {
     id: ID!
     usage: Int!
     question: String!
-    answers: [TaskAnswer]!
+    answers: [TaskAnswer!]!
     solutionNumber: Int!
 }
 
@@ -64,7 +66,7 @@ type TaskSolution {
 type TaskSearchResult {
     totalPages: Int!
     totalElements: Int!
-    tasks: [Task]!
+    tasks: [Task!]
 }
 
 type TestTask {
@@ -76,7 +78,6 @@ type TestTask {
 }
 
 type UserTestTaskStatuses {
-    id: ID!
     testTask: TestTask!
     lastSolutionTime: String!
     correctSolutions: Int!

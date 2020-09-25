@@ -1,16 +1,15 @@
 package com.thesis.studyapp.service;
 
 
-import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.TaskSolutionDto;
-import com.thesis.studyapp.dto.TestTaskDto;
-import com.thesis.studyapp.dto.UserTestStatusDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.model.UserTestStatus;
+import com.thesis.studyapp.model.UserTestTaskStatus;
 import com.thesis.studyapp.repository.UserTestStatusRepository;
 import com.thesis.studyapp.repository.UserTestTaskStatusRepository;
+import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -32,29 +31,29 @@ public class UserTestStatusService {
 
     private final DateUtil dateUtil;
 
-    public UserTestStatusDto getUserTestStatus(Long userTestStatusId) {
-        return convertToDto(getUserTestStatusById(userTestStatusId, 1));
+    public UserTestStatus getUserTestStatus(Long userTestStatusId) {
+        return getUserTestStatusById(userTestStatusId, 1);
     }
 
-    public List<UserTestStatusDto> getUserTestStatusesByIds(List<Long> ids) {
-        return convertToDto(userTestStatusRepository.findByIdIn(ids, 1));
+    public List<UserTestStatus> getUserTestStatusesByIds(List<Long> ids) {
+        return userTestStatusRepository.findByIdIn(ids, 1);
     }
 
-    public List<UserTestStatusDto.UserTestTaskStatusDto> getUserTestTaskStatusesByIds(List<Long> ids) {
-        return UserTestStatusDto.UserTestTaskStatusDto.build(userTestTaskStatusRepository.findByIdIn(ids, 1));
+    public List<UserTestTaskStatus> getUserTestTaskStatusesByIds(List<Long> ids) {
+        return userTestTaskStatusRepository.findByIdIn(ids, 1);
     }
 
     //TODO ilyenkor testId check? vagy pl get Test with depth 1, filter userId == userId && deprecated == false
     // vagy ez ne is legyen itt mert csak objectresolverből hívjuk?
     // (FONTOS: objectresolvernél ha errort dobunk egy filednél, attól még a többi meglehet (külön folyamat))
-    public List<UserTestStatusDto> getUserTestStatusesForTest(Long testId) {
+    public List<UserTestStatus> getUserTestStatusesForTest(Long testId) {
         //todo check test?
-        return convertToDto(userTestStatusRepository.findByTestIdOrderByUserName(testId, 1));
+        return userTestStatusRepository.findByTestIdOrderByUserName(testId, 1);
     }
 
-    public List<UserTestStatusDto> getUserTestStatusesForUser(Long userId) {
+    public List<UserTestStatus> getUserTestStatusesForUser(Long userId) {
         //todo check user?
-        return convertToDto(userTestStatusRepository.findByUserIdOrderByTestName(userId, 1));
+        return userTestStatusRepository.findByUserIdOrderByTestName(userId, 1);
     }
 
     private UserTestStatus getUserTestStatusById(Long userTestStatusId, int depth) {
@@ -62,17 +61,7 @@ public class UserTestStatusService {
                 .orElseThrow(() -> new CustomGraphQLException("No UserTestStatus with id: " + userTestStatusId));
     }
 
-    private UserTestStatusDto convertToDto(UserTestStatus userTestStatus) {
-        return UserTestStatusDto.build(userTestStatus);
-    }
-
-    //Todo mehet ez is az osztályba?
-    private List<UserTestStatusDto> convertToDto(List<UserTestStatus> userTestStatuses) {
-        return userTestStatuses.stream()
-                .map(UserTestStatusDto::build)
-                .collect(Collectors.toList());
-    }
-
+    //todo dto?
     public TaskSolutionDto checkSolution(Long userId, Long testId, int chosenAnswerNumber) {
         UserTestStatus userTestStatus = userTestStatusRepository
                 .findFirstByUserIdAndTestId(userId, testId, 2)
@@ -106,7 +95,7 @@ public class UserTestStatusService {
         uts.setCorrectSolutionsInRow(uts.getCorrectSolutionsInRow() + 1);
         uts.setWrongSolutionsInRow(0);
 
-        Optional<UserTestStatus.UserTestTaskStatus> taskStatusData = uts.getUserTestTaskStatuses().stream()
+        Optional<UserTestTaskStatus> taskStatusData = uts.getUserTestTaskStatuses().stream()
                 .filter(tsd -> tsd.getTestTask().getId().equals(uts.getCurrentTestTask().getId()))
                 .findFirst();
         if (taskStatusData.isPresent()) {
@@ -116,7 +105,7 @@ public class UserTestStatusService {
             taskStatusData.get().setCorrectSolutionsInRow(uts.getCorrectSolutionsInRow() + 1);
             taskStatusData.get().setWrongSolutionsInRow(0);
         } else {
-            uts.addTaskStatusData(UserTestStatus.UserTestTaskStatus.builder()
+            uts.addUserTestTaskStatus(UserTestTaskStatus.builder()
                     .testTask(uts.getCurrentTestTask())
                     .lastSolutionTime(dateUtil.getCurrentTime())
                     .allSolutions(1)
@@ -132,7 +121,7 @@ public class UserTestStatusService {
         uts.setCorrectSolutionsInRow(0);
         uts.setWrongSolutionsInRow(uts.getWrongSolutionsInRow() + 1);
 
-        Optional<UserTestStatus.UserTestTaskStatus> taskStatusData = uts.getUserTestTaskStatuses().stream()
+        Optional<UserTestTaskStatus> taskStatusData = uts.getUserTestTaskStatuses().stream()
                 .filter(tsd -> tsd.getTestTask().getId().equals(uts.getCurrentTestTask().getId()))
                 .findFirst();
         if (taskStatusData.isPresent()) {
@@ -141,7 +130,7 @@ public class UserTestStatusService {
             taskStatusData.get().setWrongSolutionsInRow(0);
             taskStatusData.get().setLastSolutionTime(dateUtil.getCurrentTime());
         } else {
-            uts.addTaskStatusData(UserTestStatus.UserTestTaskStatus.builder()
+            uts.addUserTestTaskStatus(UserTestTaskStatus.builder()
                     .testTask(uts.getCurrentTestTask())
                     .lastSolutionTime(dateUtil.getCurrentTime())
                     .allSolutions(1)
@@ -172,7 +161,7 @@ public class UserTestStatusService {
     }
 
 
-    public TestTaskDto getNextTask(Long userId, Long testId) {
+    public TestTask getNextTask(Long userId, Long testId) {
         UserTestStatus userTestStatus = userTestStatusRepository
                 .findFirstByUserIdAndTestId(userId, testId, 2)
                 .orElseThrow(() -> new CustomGraphQLException("No UserTestStatus available")); //TODO, ez csak query, kell-e?
@@ -180,7 +169,7 @@ public class UserTestStatusService {
         calculateNextTask(userTestStatus);
 
         userTestStatus = userTestStatusRepository.save(userTestStatus, 2);
-        return TestTaskDto.build(userTestStatus.getCurrentTestTask());
+        return userTestStatus.getCurrentTestTask();
     }
 
     public void calculateNextTask(UserTestStatus uts) {
@@ -192,11 +181,11 @@ public class UserTestStatusService {
         Set<TestTask> allTestTasks = uts.getTest().getTestTasks().stream()
                 .filter(testTask -> testTask.getLevel() == currentLevel)
                 .collect(Collectors.toSet());
-        Set<UserTestStatus.UserTestTaskStatus> solvedUserTestTaskStatuses = uts.getUserTestTaskStatuses().stream()
+        Set<UserTestTaskStatus> solvedUserTestTaskStatuses = uts.getUserTestTaskStatuses().stream()
                 .filter(status -> status.getTestTask().getLevel() == currentLevel && allTestTasks.contains(status.getTestTask()))
                 .collect(Collectors.toSet());
         Set<TestTask> solvedTestTasks = solvedUserTestTaskStatuses.stream()
-                .map(UserTestStatus.UserTestTaskStatus::getTestTask)
+                .map(UserTestTaskStatus::getTestTask)
                 .collect(Collectors.toSet());
         Set<TestTask> newTestTasks = allTestTasks.stream()
                 .filter(testTask -> !solvedTestTasks.contains(testTask))
@@ -219,7 +208,7 @@ public class UserTestStatusService {
 
             Set<TestTask> wrongTestTasks = solvedUserTestTaskStatuses.stream()
                     .filter(status -> status.getWrongSolutionsInRow() > 0)
-                    .map(UserTestStatus.UserTestTaskStatus::getTestTask)
+                    .map(UserTestTaskStatus::getTestTask)
                     .collect(Collectors.toSet());
             if (!wrongTestTasks.isEmpty()) {
                 TestTask nextTask = Collections.max(wrongTestTasks, new BestRatioComparator());
@@ -243,7 +232,7 @@ public class UserTestStatusService {
                 .orElse(1);
     }
 
-    public static double calculateAverageRatio(Set<UserTestStatus.UserTestTaskStatus> userTestTaskStatuses) {
+    public static double calculateAverageRatio(Set<UserTestTaskStatus> userTestTaskStatuses) {
         return userTestTaskStatuses.stream()
                 .mapToDouble(status -> calculateRatio(status.getCorrectSolutions(), status.getAllSolutions()))
                 .average()
@@ -261,8 +250,8 @@ public class UserTestStatusService {
     public static class BestRatioComparator implements Comparator<TestTask> {
 
         @Override public int compare(TestTask tt1, TestTask tt2) {
-            double ratio1 = (double) tt1.getCorrectSolutions() / (double) tt1.getAllSolutions();
-            double ratio2 = (double) tt2.getCorrectSolutions() / (double) tt2.getAllSolutions();
+            double ratio1 = calculateRatio(tt1.getCorrectSolutions(), tt1.getAllSolutions());
+            double ratio2 = calculateRatio(tt2.getCorrectSolutions(), tt2.getAllSolutions());
             if (ratio1 > ratio2) {
                 return 1;
             } else {

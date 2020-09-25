@@ -2,7 +2,7 @@ package com.thesis.studyapp.resolver.endpoint;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.thesis.studyapp.dto.UserDto;
+import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,19 +13,19 @@ public class UserEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final UserService userService;
 
-    public UserDto user(Long userId) {
+    public User user(Long userId) {
         return userService.getUser(userId);
     }
 
-    public UserDto addStudentFromCodeToGroup(Long groupId, String studentCode) {
+    public User addStudentFromCodeToGroup(Long groupId, String studentCode) {
         return userService.addStudentFromCodeToGroup(groupId, studentCode);
     }
 
-    public UserDto addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
+    public User addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
         return userService.addTeacherFromCodeToGroup(groupId, teacherCode);
     }
 
-    public UserDto addStudentFromCodeToParent(Long parentId, String studentCode) {
+    public User addStudentFromCodeToParent(Long parentId, String studentCode) {
         return userService.addStudentFromCodeToParent(parentId, studentCode);
     }
 

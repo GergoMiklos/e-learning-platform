@@ -1,6 +1,8 @@
 package com.thesis.studyapp.dto;
 
+import com.thesis.studyapp.model.HasId;
 import com.thesis.studyapp.model.UserTestStatus;
+import com.thesis.studyapp.model.UserTestTaskStatus;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
@@ -16,21 +18,15 @@ public class UserTestStatusDto implements HasId {
 
     private Long id;
 
-//    private int currentLevel;
-//    private int prevAvgLevel;
-//    private State currentState;
-//    private int correctsInRow;
-//    private int failsInRow;
-
     private UserTestStatus.Status status;
     private ZonedDateTime statusChangedTime;
-
-    private Long userId;
-    private Long testId;
-
     private int correctSolutions;
     private int allSolutions;
     private int solvedTasks;
+
+    private Long userId;
+    private Long testId;
+    private List<Long> userTestTaskStatusIds;
 
     public static UserTestStatusDto build(UserTestStatus uts) {
         if (uts.getTest() == null || uts.getUser() == null || uts.getUserTestTaskStatuses() == null) {
@@ -46,38 +42,9 @@ public class UserTestStatusDto implements HasId {
                 .correctSolutions(uts.getCorrectSolutions())
                 .allSolutions(uts.getAllSolutions())
                 .solvedTasks(uts.getUserTestTaskStatuses().size())
+                .userTestTaskStatusIds(uts.getUserTestTaskStatuses().stream()
+                        .map(UserTestTaskStatus::getId).collect(Collectors.toList()))
                 .build();
     }
 
-    @Data
-    @Builder
-    public static class UserTestTaskStatusDto implements HasId {
-        private Long id;
-
-        private Long testTaskId;
-
-        private ZonedDateTime lastSolutionTime;
-        private int correctSolutions;
-        private int allSolutions;
-
-        public static UserTestTaskStatusDto build(UserTestStatus.UserTestTaskStatus utts) {
-            if (utts.getTestTask() == null) {
-                throw new IllegalStateException("Relationships needed for converting UserTestTaskStatus!");
-            }
-
-            return UserTestTaskStatusDto.builder()
-                    .id(utts.getId())
-                    .testTaskId(utts.getTestTask().getId())
-                    .lastSolutionTime(utts.getLastSolutionTime())
-                    .correctSolutions(utts.getCorrectSolutions())
-                    .allSolutions(utts.getAllSolutions())
-                    .build();
-        }
-
-        public static List<UserTestTaskStatusDto> build(List<UserTestStatus.UserTestTaskStatus> userTestTaskStatuses) {
-            return userTestTaskStatuses.stream()
-                    .map(UserTestStatusDto.UserTestTaskStatusDto::build)
-                    .collect(Collectors.toList());
-        }
-    }
 }

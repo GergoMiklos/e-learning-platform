@@ -1,9 +1,13 @@
 package com.thesis.studyapp.dto;
 
+import com.thesis.studyapp.model.HasId;
 import com.thesis.studyapp.model.TestTask;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.neo4j.annotation.QueryResult;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @QueryResult
 @Data
@@ -30,6 +34,12 @@ public class TestTaskDto implements HasId {
                 .correctSolutions(testTask.getCorrectSolutions())
                 .taskId(testTask.getTask().getId())
                 .build();
+    }
+
+    public static List<TestTaskDto> build(List<TestTask> testTasks) {
+        return testTasks.stream()
+                .map(TestTaskDto::build)
+                .collect(Collectors.toList());
     }
 
 }

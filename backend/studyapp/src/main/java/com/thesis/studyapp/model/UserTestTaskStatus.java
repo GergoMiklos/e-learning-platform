@@ -11,44 +11,39 @@ import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 
-//Todo
 @NodeEntity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestTask implements HasId {
+public class UserTestTaskStatus implements HasId {
     @Id
     @GeneratedValue
     private Long id;
 
-    private int level;
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "STATUSDATATASK", direction = Relationship.OUTGOING)
+    private TestTask testTask;
 
-    private int allSolutions;
+    private ZonedDateTime lastSolutionTime;
     private int correctSolutions;
+    private int allSolutions;
+    private int correctSolutionsInRow;
+    private int wrongSolutionsInRow;
 
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @Relationship(type = "TASK", direction = Relationship.OUTGOING)
-    private Task task;
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @Relationship(type = "TESTTASK", direction = Relationship.INCOMING)
-    private Test test;
+    public static class UserTestTaskStatusComparator implements Comparator<UserTestTaskStatus> {
 
-
-    public static class TestTaskComparator implements Comparator<TestTask> {
-
-        @Override public int compare(TestTask tt1, TestTask tt2) {
-            if (tt1.getLevel() > tt2.getLevel()) {
+        @Override public int compare(UserTestTaskStatus utts1, UserTestTaskStatus utts2) {
+            if (utts1.getLastSolutionTime().isAfter(utts2.getLastSolutionTime())) {
                 return 1;
             } else {
                 return -1;
             }
         }
     }
-
 
 }

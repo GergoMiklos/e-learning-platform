@@ -12,6 +12,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTestStatus {
+public class UserTestStatus implements HasId {
     @Id
     @GeneratedValue
     private Long id;
@@ -51,9 +52,9 @@ public class UserTestStatus {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKSTATUSDATA", direction = Relationship.OUTGOING)
-    private Set<UserTestTaskStatus> userTestTaskStatuses;
+    private Set<UserTestTaskStatus> userTestTaskStatuses = new HashSet<>();
 
-    public void addTaskStatusData(UserTestTaskStatus userTestTaskStatus) {
+    public void addUserTestTaskStatus(UserTestTaskStatus userTestTaskStatus) {
         if (this.userTestTaskStatuses == null) {
             this.userTestTaskStatuses = new HashSet<>();
         }
@@ -64,27 +65,21 @@ public class UserTestStatus {
         NOT_STARTED, IN_PROGRESS, PROBLEM
     }
 
-    @NodeEntity
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UserTestTaskStatus {
-        @Id
-        @GeneratedValue
-        private Long id;
+    public static class UserTestStatusComparator implements Comparator<UserTestStatus> {
 
-        @JsonIgnore
-        @EqualsAndHashCode.Exclude
-        @Relationship(type = "STATUSDATATASK", direction = Relationship.OUTGOING)
-        private TestTask testTask;
+        @Override public int compare(UserTestStatus uts1, UserTestStatus uts2) {
+            if (uts1.getTest() == null || uts1.getUser() == null || uts2.getUser() == null || uts2.getTest() == null) {
+                //todo logging throw new IllegalStateException("Relationships needed for comparing UserTestStatuses!");
+                return 0;
+            }
 
-        private ZonedDateTime lastSolutionTime;
-        private int correctSolutions;
-        private int allSolutions;
-        private int correctSolutionsInRow;
-        private int wrongSolutionsInRow;
-
+            int byUserName = uts1.getUser().getName().compareTo(uts2.getUser().getName());
+            if (byUserName != 0) {
+                return byUserName;
+            } else {
+                return uts1.getTest().getName().compareTo(uts2.getTest().getName());
+            }
+        }
     }
 
 }

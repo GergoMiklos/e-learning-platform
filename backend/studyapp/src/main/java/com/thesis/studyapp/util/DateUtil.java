@@ -1,11 +1,12 @@
-package com.thesis.studyapp.configuration;
+package com.thesis.studyapp.util;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+    public static final DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     public static final ZoneOffset zoneOffset = ZoneOffset.UTC;
 
     public ZonedDateTime getCurrentTime() {

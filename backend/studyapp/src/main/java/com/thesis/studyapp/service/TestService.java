@@ -1,8 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.configuration.DateUtil;
 import com.thesis.studyapp.dto.NameDescInput;
-import com.thesis.studyapp.dto.TestDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.Test;
@@ -10,6 +8,7 @@ import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.TestRepository;
+import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,18 +26,18 @@ public class TestService {
 
     private final DateUtil dateUtil;
 
-    public TestDto getTest(Long testId) {
-        return convertToDto(getTestById(testId, 1));
+    public Test getTest(Long testId) {
+        return getTestById(testId, 1);
     }
 
-    public List<TestDto> getTestsByIds(List<Long> ids) {
-        return convertToDto(testRepository.findByIdIn(ids, 0));
+    public List<Test> getTestsByIds(List<Long> ids) {
+        return testRepository.findByIdIn(ids, 1);
     }
 
 
     //TODO first task? Ha valaki később csatlakozik?
     @Transactional
-    public TestDto createTest(Long groupId, NameDescInput input) {
+    public Test createTest(Long groupId, NameDescInput input) {
         input.validate();
         Group group = groupRepository.findById(groupId, 1)
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
@@ -48,20 +47,20 @@ public class TestService {
                 .group(group)
                 .userTestStatuses(createUserTestStatuses(group.getStudents()))
                 .build();
-        return convertToDto(testRepository.save(test, 1));
+        return testRepository.save(test, 1);
     }
 
     @Transactional
-    public TestDto editTest(Long testId, NameDescInput input) {
+    public Test editTest(Long testId, NameDescInput input) {
         input.validate();
-        Test test = getTestById(testId, 0);
+        Test test = getTestById(testId, 1);
         test.setName(input.getName());
         test.setDescription(input.getDescription());
-        return convertToDto(testRepository.save(test, 1));
+        return testRepository.save(test, 1);
     }
 
-    public List<TestDto> getTestsForGroup(Long groupId) {
-        return convertToDto(testRepository.findByGroupIdOrderByName(groupId, 1));
+    public List<Test> getTestsForGroup(Long groupId) {
+        return testRepository.findByGroupIdOrderByName(groupId, 1);
     }
 
     //todo ez csak akkor működik ha vizsgálod !!! :(
@@ -83,14 +82,5 @@ public class TestService {
                 .orElseThrow(() -> new CustomGraphQLException("No test with id: " + testId));
     }
 
-    private TestDto convertToDto(Test test) {
-        return TestDto.build(test);
-    }
-
-    private List<TestDto> convertToDto(List<Test> tests) {
-        return tests.stream()
-                .map(TestDto::build)
-                .collect(Collectors.toList());
-    }
 
 }

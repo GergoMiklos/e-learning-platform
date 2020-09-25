@@ -1,5 +1,6 @@
 package com.thesis.studyapp.configuration;
 
+import com.thesis.studyapp.util.DateUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -1,24 +1,22 @@
 package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.dto.TaskDto;
-import com.thesis.studyapp.dto.TestTaskDto;
+import com.thesis.studyapp.model.Task;
+import com.thesis.studyapp.model.TestTask;
+import com.thesis.studyapp.util.DataLoaderUtil;
 import lombok.RequiredArgsConstructor;
-import org.dataloader.DataLoader;
-import org.dataloader.DataLoaderRegistry;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class TestTaskResolver implements GraphQLResolver<TestTaskDto> {
+public class TestTaskResolver implements GraphQLResolver<TestTask> {
 
-    private final DataLoaderRegistry dataLoaderRegistry;
+    private final DataLoaderUtil dataLoaderUtil;
 
-    public CompletableFuture<TaskDto> task(TestTaskDto testTaskDto) {
-        DataLoader<Long, TaskDto> taskLoader = dataLoaderRegistry.getDataLoader("taskLoader");
-        return taskLoader.load(testTaskDto.getTaskId());
+    public CompletableFuture<Task> task(TestTask testTask) {
+        return dataLoaderUtil.loadData(testTask.getTask(), DataLoaderUtil.TASK_LOADER);
     }
 
 

@@ -7,6 +7,7 @@ import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.model.UserTestStatus;
+import com.thesis.studyapp.model.UserTestTaskStatus;
 import com.thesis.studyapp.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -87,13 +88,13 @@ public class StudyappApplication {
                     .question("Task1, the soltuion is the number 1")
                     .solutionNumber(1)
                     .answers(answers)
-                    .usage(1L)
+                    .usage(0)
                     .build();
             Task task2 = Task.builder()
                     .question("Task2 is a little bit longer for making the development testing easier for me. Solution is number 2!")
                     .solutionNumber(2)
                     .answers(answers)
-                    .usage(2L)
+                    .usage(0)
                     .build();
 
             Test test = Test.builder()
@@ -116,6 +117,23 @@ public class StudyappApplication {
             test.addTask(testTask2);
             group.addTest(test);
 
+            UserTestTaskStatus userTestTaskStatus = UserTestTaskStatus.builder()
+                    .allSolutions(2)
+                    .correctSolutions(1)
+                    .correctSolutionsInRow(0)
+                    .wrongSolutionsInRow(1)
+                    .lastSolutionTime(ZonedDateTime.now())
+                    .testTask(testTask)
+                    .build();
+            UserTestTaskStatus userTestTaskStatus2 = UserTestTaskStatus.builder()
+                    .allSolutions(87)
+                    .correctSolutions(71)
+                    .correctSolutionsInRow(16)
+                    .wrongSolutionsInRow(0)
+                    .lastSolutionTime(ZonedDateTime.now())
+                    .testTask(testTask2)
+                    .build();
+
             UserTestStatus userTestStatus = UserTestStatus.builder()
                     .status(UserTestStatus.Status.IN_PROGRESS)
                     .statusChangedDate(ZonedDateTime.now(ZoneOffset.UTC))
@@ -128,6 +146,8 @@ public class StudyappApplication {
                     .correctSolutionsInRow(2)
                     .build();
 
+            userTestStatus.addUserTestTaskStatus(userTestTaskStatus);
+            userTestStatus.addUserTestTaskStatus(userTestTaskStatus2);
             test.addUserTestStatus(userTestStatus);
             user.addUserTestStatus(userTestStatus);
 

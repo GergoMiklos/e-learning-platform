@@ -1,13 +1,17 @@
 package com.thesis.studyapp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,24 +20,26 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Task {
+public class Task implements HasId {
     @Id
     @GeneratedValue
     private Long id;
 
     private String question;
-    //    @Properties
-//    @Convert(IntegerMapConverter.class)
-//    private Map<Integer, String> answers;
     private int solutionNumber;
+    private int usage;
 
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "TASKANSWER", direction = Relationship.OUTGOING)
     private Set<TaskAnswer> answers = new HashSet<>();
-    private Long usage;
 
-    //todo @JsonIgnoreProperties("createdTasks")?
-//    @JsonIgnore
-//    @EqualsAndHashCode.Exclude
-//    @Relationship(type = "TASKOWNER", direction = Relationship.OUTGOING)
-//    private User owner;
+
+    public static class TaskComparator implements Comparator<Task> {
+
+        @Override public int compare(Task t1, Task t2) {
+            return t1.getQuestion().compareTo(t2.getQuestion());
+        }
+    }
 
 }

@@ -1,8 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.TaskDto;
 import com.thesis.studyapp.dto.TaskInput;
-import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.TaskAnswer;
@@ -25,26 +23,26 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
-    public TaskDto getTask(Long taskId) {
-        return convertToDto(getTaskById(taskId, 1));
+    public Task getTask(Long taskId) {
+        return getTaskById(taskId, 1);
     }
 
-    public List<TaskDto> getTasksByIds(List<Long> ids) {
-        return convertToDto(taskRepository.findByIdIn(ids, 1));
+    public List<Task> getTasksByIds(List<Long> ids) {
+        return taskRepository.findByIdIn(ids, 1);
     }
 
-    public TaskSearchResultDto searchTasks(@Nullable String searchText, int page) {
+    public Page<Task> searchTasks(@Nullable String searchText, int page) {
         Pageable pageable = PageRequest.of(page, 25, Sort.Direction.DESC, "usage");
         if (searchText != null && !searchText.trim().isEmpty()) {
             //List<String> searchWords = searchText.trim().split("\\s+").;
-            return convertToDto(taskRepository.findByQuestionContainingIgnoreCase(searchText, pageable, 1));
+            return taskRepository.findByQuestionContainingIgnoreCase(searchText, pageable, 1);
         } else {
-            return convertToDto(taskRepository.findAll(pageable, 1));
+            return taskRepository.findAll(pageable, 1);
         }
     }
 
     //todo convertInputToTask...
-    public TaskDto createTask(TaskInput taskInput) {
+    public Task createTask(TaskInput taskInput) {
         int solutionNumber = taskInput.getIncorrectAnswers().size();
         Stream<TaskAnswer> allAnswer = Stream.concat(
                 Stream.of(taskInput.getCorrectAnswer())
@@ -62,9 +60,9 @@ public class TaskService {
                 .question(taskInput.getQuestion())
                 .answers(allAnswer.collect(Collectors.toSet()))
                 .solutionNumber(solutionNumber)
-                .usage(0L)
+                .usage(0)
                 .build();
-        return convertToDto(taskRepository.save(task));
+        return taskRepository.save(task, 1);
     }
 
     private Task getTaskById(Long taskId, int depth) {
@@ -72,22 +70,5 @@ public class TaskService {
                 .orElseThrow(() -> new CustomGraphQLException("No task with id: " + taskId));
     }
 
-    private TaskDto convertToDto(Task task) {
-        return TaskDto.build(task);
-    }
-
-    private List<TaskDto> convertToDto(List<Task> tasks) {
-        return tasks.stream()
-                .map(TaskDto::build)
-                .collect(Collectors.toList());
-    }
-
-    private TaskSearchResultDto convertToDto(Page<Task> tasks) {
-        return TaskSearchResultDto.builder()
-                .totalPages(tasks.getTotalPages())
-                .totalElements(tasks.getTotalElements())
-                .tasks(convertToDto(tasks.getContent()))
-                .build();
-    }
 }
 

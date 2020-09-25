@@ -12,6 +12,7 @@ import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements HasId {
     @Id
     @GeneratedValue
     private Long id;
@@ -39,10 +40,6 @@ public class User {
     @EqualsAndHashCode.Exclude
     @Relationship(type = "GROUPTEACHER", direction = Relationship.OUTGOING)
     private Set<Group> teacherGroups = new HashSet<>();
-    @JsonIgnore
-    @EqualsAndHashCode.Exclude
-    @Relationship(type = "TASKOWNER", direction = Relationship.INCOMING)
-    private Set<Task> createdTasks = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "USERSTATUS", direction = Relationship.INCOMING)
@@ -91,11 +88,11 @@ public class User {
         followedStudents.add(user);
     }
 
-    public void addCreatedTask(Task task) {
-        if (createdTasks == null) {
-            createdTasks = new HashSet<>();
+    public static class UserComparator implements Comparator<User> {
+
+        @Override public int compare(User u1, User u2) {
+            return u1.getName().compareTo(u2.getName());
         }
-        createdTasks.add(task);
     }
 
 

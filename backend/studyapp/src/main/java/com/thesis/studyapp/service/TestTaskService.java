@@ -1,6 +1,5 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.TestTaskDto;
 import com.thesis.studyapp.dto.TestTaskInput;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
@@ -27,17 +26,17 @@ public class TestTaskService {
     private final TaskRepository taskRepository;
 
 
-    public TestTaskDto getTestTask(Long testTaskId) {
-        return convertToDto(getTestTaskById(testTaskId, 1));
+    public TestTask getTestTask(Long testTaskId) {
+        return getTestTaskById(testTaskId, 1);
     }
 
-    public List<TestTaskDto> getTestTasksByIds(List<Long> ids) {
-        return convertToDto(testTaskRepository.findByIdIn(ids, 1));
+    public List<TestTask> getTestTasksByIds(List<Long> ids) {
+        return testTaskRepository.findByIdIn(ids, 1);
     }
 
     //todo ezeknek az isolation leveleknek nézz utána (DE errort dobott a neo4j amikor itt repeatable volt)
     @Transactional
-    public List<TestTaskDto> changeTestTaskLevel(List<TestTaskInput> testTaskInputs) {
+    public List<TestTask> changeTestTaskLevel(List<TestTaskInput> testTaskInputs) {
         testTaskInputs.forEach(TestTaskInput::validate);
 
         Map<Long, Integer> inputMap = testTaskInputs.stream()
@@ -48,11 +47,11 @@ public class TestTaskService {
             testTask.setLevel(inputMap.get(testTask.getId()));
         });
 
-        return convertToDto(testTaskRepository.save(testTasks, 1));
+        return testTaskRepository.save(testTasks, 1);
     }
 
     @Transactional
-    public TestTaskDto addTaskToTest(Long testId, Long taskId, int level) {
+    public TestTask addTaskToTest(Long testId, Long taskId, int level) {
         Test test = testRepository.findById(testId, 0)
                 .orElseThrow(() -> new CustomGraphQLException("No test with id: " + testId));
         Task task = taskRepository.findById(taskId, 0)
@@ -65,11 +64,11 @@ public class TestTaskService {
                 .test(test)
                 .build();
 
-        return convertToDto(testTaskRepository.save(testTask, 1));
+        return testTaskRepository.save(testTask, 1);
     }
 
-    public List<TestTaskDto> getTestTasksForTest(Long testId) {
-        return convertToDto(testTaskRepository.findByTestIdOrderByLevel(testId, 1));
+    public List<TestTask> getTestTasksForTest(Long testId) {
+        return testTaskRepository.findByTestIdOrderByLevel(testId, 1);
     }
 
     public void deleteTaskFromTest(Long testTaskId) {
@@ -82,16 +81,6 @@ public class TestTaskService {
     private TestTask getTestTaskById(Long testTaskId, int depth) {
         return testTaskRepository.findById(testTaskId, Math.max(depth, 1))
                 .orElseThrow(() -> new CustomGraphQLException("No testTask with id: " + testTaskId));
-    }
-
-    private TestTaskDto convertToDto(TestTask testTask) {
-        return TestTaskDto.build(testTask);
-    }
-
-    private List<TestTaskDto> convertToDto(List<TestTask> testTasks) {
-        return testTasks.stream()
-                .map(TestTaskDto::build)
-                .collect(Collectors.toList());
     }
 
 

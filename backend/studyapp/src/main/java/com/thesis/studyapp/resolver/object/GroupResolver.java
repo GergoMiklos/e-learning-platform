@@ -1,46 +1,49 @@
 package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
-import com.thesis.studyapp.configuration.DateUtil;
-import com.thesis.studyapp.dto.GroupDto;
-import com.thesis.studyapp.dto.TestDto;
-import com.thesis.studyapp.dto.UserDto;
-import com.thesis.studyapp.service.TestService;
-import com.thesis.studyapp.service.UserService;
+import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.Test;
+import com.thesis.studyapp.model.User;
+import com.thesis.studyapp.util.DataLoaderUtil;
+import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Component
 @RequiredArgsConstructor
-public class GroupResolver implements GraphQLResolver<GroupDto> {
+public class GroupResolver implements GraphQLResolver<Group> {
 
-    private final UserService userService;
-    private final TestService testService;
+    private final DataLoaderUtil dataLoaderUtil;
 
-    public CompletableFuture<List<UserDto>> students(GroupDto groupDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                userService.getStudentsForGroup(groupDTO.getId())
-        );
+    public CompletableFuture<List<User>> students(Group group) {
+        return dataLoaderUtil.loadData(group.getStudents(), DataLoaderUtil.USER_LOADER)
+                .thenApplyAsync((students) -> {
+                    students.sort(new User.UserComparator());
+                    return students;
+                });
     }
 
-    public CompletableFuture<List<UserDto>> teachers(GroupDto groupDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                userService.getTeachersForGroup(groupDTO.getId())
-        );
+    public CompletableFuture<List<User>> teachers(Group group) {
+        return dataLoaderUtil.loadData(group.getTeachers(), DataLoaderUtil.USER_LOADER)
+                .thenApplyAsync((teachers) -> {
+                    teachers.sort(new User.UserComparator());
+                    return teachers;
+                });
     }
 
-    public CompletableFuture<List<TestDto>> tests(GroupDto groupDTO) {
-        return CompletableFuture.supplyAsync(() ->
-                testService.getTestsForGroup(groupDTO.getId())
-        );
+    public CompletableFuture<List<Test>> tests(Group group) {
+        return dataLoaderUtil.loadData(group.getTests(), DataLoaderUtil.TEST_LOADER)
+                .thenApplyAsync((tests) -> {
+                    tests.sort(new Test.TestComparator());
+                    return tests;
+                });
     }
 
-    public CompletableFuture<String> newsChangedDate(GroupDto groupDTO) {
-        return CompletableFuture.completedFuture(DateUtil.convertToIsoString(groupDTO.getNewsChangedDate()));
+    public CompletableFuture<String> newsChangedDate(Group group) {
+        return CompletableFuture.completedFuture(DateUtil.convertToIsoString(group.getNewsChangedDate()));
     }
 
 }

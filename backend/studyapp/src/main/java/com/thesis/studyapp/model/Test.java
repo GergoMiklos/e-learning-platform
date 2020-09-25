@@ -11,9 +11,8 @@ import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @NodeEntity
@@ -21,7 +20,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Test {
+public class Test implements HasId {
     @Id
     @GeneratedValue
     private Long id;
@@ -54,6 +53,14 @@ public class Test {
             testTasks = new HashSet<>();
         }
         testTasks.add(task);
+    }
+
+
+    public static class TestComparator implements Comparator<Test> {
+
+        @Override public int compare(Test t1, Test t2) {
+            return t1.getName().compareTo(t2.getName());
+        }
     }
 
 }

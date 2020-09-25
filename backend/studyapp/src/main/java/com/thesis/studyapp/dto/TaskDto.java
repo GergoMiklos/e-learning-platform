@@ -1,5 +1,6 @@
 package com.thesis.studyapp.dto;
 
+import com.thesis.studyapp.model.HasId;
 import com.thesis.studyapp.model.Task;
 import lombok.Builder;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class TaskDto implements HasId {
     private String question;
     private List<TaskAnswerDto> answers;
     private int solutionNumber;
-    private Long usage;
+    private int usage;
 
     public static TaskDto build(Task task) {
         if (task.getAnswers() == null) {
@@ -39,5 +40,12 @@ public class TaskDto implements HasId {
                 .usage(task.getUsage())
                 .build();
     }
+
+    public static List<TaskDto> build(List<Task> tasks) {
+        return tasks.stream()
+                .map(TaskDto::build)
+                .collect(Collectors.toList());
+    }
+
 
 }

@@ -1,6 +1,5 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.UserDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,39 +18,37 @@ public class UserService {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
 
-    public UserDto getUser(Long userId) {
-        return UserDto.build(getUserById(userId, 0));
+    public User getUser(Long userId) {
+        return getUserById(userId, 1);
     }
 
-    public List<UserDto> getUsersByIds(List<Long> ids) {
-        return userRepository.findByIdIn(ids, 0).stream()
-                .map(UserDto::build)
-                .collect(Collectors.toList());
+    public List<User> getUsersByIds(List<Long> ids) {
+        return userRepository.findByIdIn(ids, 1);
     }
 
     //todo userteststatus minden teszthez a groupban
     @Transactional
-    public UserDto addStudentFromCodeToGroup(Long groupId, String studentCode) {
+    public User addStudentFromCodeToGroup(Long groupId, String studentCode) {
         User user = getUserByCode(studentCode, 1);
         Group group = getGroupById(groupId, 0);
         user.addStudentGroup(group);
-        return UserDto.build(userRepository.save(user));
+        return userRepository.save(user, 1);
     }
 
     @Transactional
-    public UserDto addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
+    public User addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
         User user = getUserByCode(teacherCode, 1);
         Group group = getGroupById(groupId, 0);
         user.addTeacherGroup(group);
-        return UserDto.build(userRepository.save(user));
+        return userRepository.save(user, 1);
     }
 
     @Transactional
-    public UserDto addStudentFromCodeToParent(Long parentId, String studentCode) {
-        User student = getUserByCode(studentCode, 0);
-        User parent = getUserById(parentId, 1);
+    public User addStudentFromCodeToParent(Long parentId, String studentCode) {
+        User student = getUserByCode(studentCode, 1);
+        User parent = getUserById(parentId, 0);
         student.addParent(parent);
-        return UserDto.build(userRepository.save(student));
+        return userRepository.save(student, 1);
     }
 
     @Transactional
@@ -64,22 +60,22 @@ public class UserService {
         }
     }
 
-    public List<UserDto> getStudentsForGroup(Long groupId) {
+    public List<User> getStudentsForGroup(Long groupId) {
         //todo check group? NE, ez query (BONTSUK SZÉT ESZERINT? KÜLÖNÁLLÓ QUERY SERVICEK, MUTATIONOK PEDIG EZEKET HASZNÁLJÁK)
         // HISZEN VANNAK KÜLÖNBSÉGEK, ILYENKOR PL NINCS EXCEPTION DOBÁS
         // egy GRAPHQL ALKALMAZÁSBAN SOKK AZ ÖSSZEFÜGGÉS, DE MEGKELL PRÓBÁLNI CSÖKKENTENI AZOKAT7
         // BEVÁLLT MÓDSZER NINCS :(
-        return convertToDto(userRepository.findByStudentGroupsIdOrderByName(groupId, 0));
+        return userRepository.findByStudentGroupsIdOrderByName(groupId, 1);
     }
 
-    public List<UserDto> getTeachersForGroup(Long groupId) {
+    public List<User> getTeachersForGroup(Long groupId) {
         //todo check group?
-        return convertToDto(userRepository.findByTeacherGroupsIdOrderByName(groupId, 0));
+        return userRepository.findByTeacherGroupsIdOrderByName(groupId, 1);
     }
 
-    public List<UserDto> getStudentsForParent(Long parentId) {
+    public List<User> getStudentsForParent(Long parentId) {
         //todo check user?
-        return convertToDto(userRepository.findByParentsIdOrderByName(parentId, 0));
+        return userRepository.findByParentsIdOrderByName(parentId, 1);
     }
 
     private User getUserById(Long userId, int depth) {
@@ -95,16 +91,6 @@ public class UserService {
     private Group getGroupById(Long groupId, int depth) {
         return groupRepository.findById(groupId, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
-    }
-
-    private UserDto convertToDto(User user) {
-        return UserDto.build(user);
-    }
-
-    private List<UserDto> convertToDto(List<User> users) {
-        return users.stream()
-                .map(UserDto::build)
-                .collect(Collectors.toList());
     }
 
 
