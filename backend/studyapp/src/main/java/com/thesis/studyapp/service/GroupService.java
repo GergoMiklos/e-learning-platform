@@ -1,6 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.NameDescInput;
+import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
@@ -12,6 +12,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,22 +34,23 @@ public class GroupService {
     }
 
     @Transactional
-    public Group createGroup(Long userId, NameDescInput input) {
+    public Group createGroup(Long userId, NameDescInputDto input) {
         input.validate();
+        ZonedDateTime creationTime = dateUtil.getCurrentTime();
         User user = getUserById(userId, 1);
         Group group = Group.builder()
                 .name(input.getName())
                 .description(input.getDescription())
-                .code(RandomStringUtils.randomAlphanumeric(8).toUpperCase())
+                .code(createGroupCode())
                 .teachers(Collections.singleton(user))
-                .news(user.getName() + " created the group")
-                .newsChangedDate(dateUtil.getCurrentTime())
+                .news(user.getName() + ": " + DateUtil.convertToIsoString(creationTime))
+                .newsChangedDate(creationTime)
                 .build();
         return groupRepository.save(group, 1);
     }
 
     @Transactional
-    public Group editGroup(Long groupId, NameDescInput input) {
+    public Group editGroup(Long groupId, NameDescInputDto input) {
         input.validate();
         Group group = getGroupById(groupId, 1);
         group.setName(input.getName());
@@ -73,6 +75,7 @@ public class GroupService {
         return groupRepository.save(group, 1);
     }
 
+    //todo delete userTestStatus?
     public void deleteStudentFromGroup(Long studentId, Long groupId) {
         if (userRepository.existsById(studentId) && groupRepository.existsById(groupId)) {
             groupRepository.deleteStudent(groupId, studentId);
@@ -111,6 +114,19 @@ public class GroupService {
     private User getUserById(Long userId, int depth) {
         return userRepository.findById(userId, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No user with id: " + userId));
+    }
+
+    private String createGroupCode() {
+        String code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+        boolean alreadyExists = true;
+        while (alreadyExists) {
+            if (groupRepository.existsByCode(code)) {
+                code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+            } else {
+                alreadyExists = false;
+            }
+        }
+        return code;
     }
 
 

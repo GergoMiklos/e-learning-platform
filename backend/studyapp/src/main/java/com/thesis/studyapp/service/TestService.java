@@ -1,6 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.NameDescInput;
+import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.Test;
@@ -37,7 +37,7 @@ public class TestService {
 
     //TODO first task? Ha valaki később csatlakozik?
     @Transactional
-    public Test createTest(Long groupId, NameDescInput input) {
+    public Test createTest(Long groupId, NameDescInputDto input) {
         input.validate();
         Group group = groupRepository.findById(groupId, 1)
                 .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
@@ -51,7 +51,7 @@ public class TestService {
     }
 
     @Transactional
-    public Test editTest(Long testId, NameDescInput input) {
+    public Test editTest(Long testId, NameDescInputDto input) {
         input.validate();
         Test test = getTestById(testId, 1);
         test.setName(input.getName());
@@ -64,7 +64,8 @@ public class TestService {
     }
 
     //todo ez csak akkor működik ha vizsgálod !!! :(
-    private Set<UserTestStatus> createUserTestStatuses(Set<User> users) {
+    //todo saveljen is, ezt lehet használni group serviceből is
+    public Set<UserTestStatus> createUserTestStatuses(Set<User> users) {
         return users.stream()
                 .map(user -> UserTestStatus.builder()
                         .user(user)

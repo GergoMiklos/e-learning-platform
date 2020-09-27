@@ -15,10 +15,10 @@ type Mutation {
     createTest(groupId: ID!, input: NameDescInput!): Test!
     editTest(testId: ID!, input: NameDescInput!): Test!
 
-    createTask(taskInput: TaskInput!): Task
+    createTask(taskInputDto: TaskInput!): Task
     addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask!
     deleteTaskFromTest(testTaskId: ID!): Boolean
-    changeTestTaskLevel(testTaskInputs: [TestTaskInput!]): [TestTask!]
+    changeTestTaskLevel(testTaskInputDtos: [TestTaskInput!]): [TestTask!]
 
     checkSolution(userId: ID!, testId: ID!, solutionNumber: Int!): Int!
 

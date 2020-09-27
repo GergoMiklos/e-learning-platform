@@ -18,19 +18,35 @@ public class UserResolver implements GraphQLResolver<User> {
     private final DataLoaderUtil dataLoaderUtil;
 
     public CompletableFuture<List<Group>> studentGroups(User user) {
-        return dataLoaderUtil.loadData(user.getStudentGroups(), DataLoaderUtil.GROUP_LOADER);
+        return dataLoaderUtil.loadData(user.getStudentGroups(), DataLoaderUtil.GROUP_LOADER)
+                .thenApplyAsync((groups) -> {
+                    groups.sort(new Group.GroupComparator());
+                    return groups;
+                });
     }
 
     public CompletableFuture<List<Group>> teacherGroups(User user) {
-        return dataLoaderUtil.loadData(user.getTeacherGroups(), DataLoaderUtil.GROUP_LOADER);
+        return dataLoaderUtil.loadData(user.getTeacherGroups(), DataLoaderUtil.GROUP_LOADER)
+                .thenApplyAsync((groups) -> {
+                    groups.sort(new Group.GroupComparator());
+                    return groups;
+                });
     }
 
     public CompletableFuture<List<User>> followedStudents(User user) {
-        return dataLoaderUtil.loadData(user.getFollowedStudents(), DataLoaderUtil.USER_LOADER);
+        return dataLoaderUtil.loadData(user.getFollowedStudents(), DataLoaderUtil.USER_LOADER)
+                .thenApplyAsync((students) -> {
+                    students.sort(new User.UserComparator());
+                    return students;
+                });
     }
 
     public CompletableFuture<List<UserTestStatus>> userTestStatuses(User user) {
-        return dataLoaderUtil.loadData(user.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER);
+        return dataLoaderUtil.loadData(user.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
+                .thenApplyAsync((userTestStatuses) -> {
+                    userTestStatuses.sort(new UserTestStatus.UserTestStatusComparator());
+                    return userTestStatuses;
+                });
     }
 
 }

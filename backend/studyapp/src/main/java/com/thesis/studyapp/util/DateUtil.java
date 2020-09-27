@@ -1,9 +1,12 @@
 package com.thesis.studyapp.util;
 
+import org.springframework.stereotype.Component;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Component
 public class DateUtil {
 
     public static final DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;

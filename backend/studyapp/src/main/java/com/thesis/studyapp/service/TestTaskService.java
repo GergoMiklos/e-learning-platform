@@ -1,6 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.TestTaskInput;
+import com.thesis.studyapp.dto.TestTaskInputDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.Test;
@@ -36,11 +36,11 @@ public class TestTaskService {
 
     //todo ezeknek az isolation leveleknek nézz utána (DE errort dobott a neo4j amikor itt repeatable volt)
     @Transactional
-    public List<TestTask> changeTestTaskLevel(List<TestTaskInput> testTaskInputs) {
-        testTaskInputs.forEach(TestTaskInput::validate);
+    public List<TestTask> changeTestTaskLevel(List<TestTaskInputDto> testTaskInputDtos) {
+        testTaskInputDtos.forEach(TestTaskInputDto::validate);
 
-        Map<Long, Integer> inputMap = testTaskInputs.stream()
-                .collect(Collectors.toMap(TestTaskInput::getId, TestTaskInput::getLevel));
+        Map<Long, Integer> inputMap = testTaskInputDtos.stream()
+                .collect(Collectors.toMap(TestTaskInputDto::getId, TestTaskInputDto::getLevel));
 
         List<TestTask> testTasks = testTaskRepository.findByIdIn(new ArrayList<>(inputMap.keySet()), 1);
         testTasks.forEach(testTask -> {
@@ -71,8 +71,17 @@ public class TestTaskService {
         return testTaskRepository.findByTestIdOrderByLevel(testId, 1);
     }
 
+    //todo usage -1
+    //TODO usage lehetne dinamikus pl tetTasks.size()? NE!
+    //TODO taskService increase/descrease usage fgv(id) !!!
+    @Transactional
     public void deleteTaskFromTest(Long testTaskId) {
+        TestTask testTask = testTaskRepository.findById(testTaskId, 1)
+                .orElseThrow(() -> new CustomGraphQLException("No TestTask with id: " + testTaskId));
         testTaskRepository.deleteById(testTaskId);
+        Task task = testTask.getTask();
+        task.setUsage(task.getUsage() - 1);
+        taskRepository.save(task, 0);
     }
 
     //Todo, minden Query típusú függvény Optional-lal térjen vissza (GraphQL kezeli),

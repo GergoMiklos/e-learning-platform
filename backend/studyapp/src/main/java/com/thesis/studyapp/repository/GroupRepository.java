@@ -18,6 +18,8 @@ public interface GroupRepository extends Neo4jRepository<Group, Long> {
 
     Optional<Group> findByCode(String name, @Depth int depth);
 
+    boolean existsByCode(String code);
+
     List<Group> findByIdIn(List<Long> groupIds, @Depth int depth);
 
     List<Group> findByStudentsIdOrderByName(Long studentId, @Depth int depth);

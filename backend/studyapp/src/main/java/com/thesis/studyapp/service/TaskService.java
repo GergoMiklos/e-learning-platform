@@ -1,6 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.dto.TaskInput;
+import com.thesis.studyapp.dto.TaskInputDto;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.TaskAnswer;
@@ -13,9 +13,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -42,32 +43,39 @@ public class TaskService {
     }
 
     //todo convertInputToTask...
-    public Task createTask(TaskInput taskInput) {
-        int solutionNumber = taskInput.getIncorrectAnswers().size();
-        Stream<TaskAnswer> allAnswer = Stream.concat(
-                Stream.of(taskInput.getCorrectAnswer())
-                        .map(answer -> TaskAnswer.builder()
-                                .answer(answer)
-                                .number(solutionNumber)
-                                .build()),
-                taskInput.getIncorrectAnswers().stream()
-                        .map(answer -> TaskAnswer.builder()
-                                .answer(answer)
-                                .number(taskInput.getIncorrectAnswers().indexOf(answer))
-                                .build())
-        );
-        Task task = Task.builder()
-                .question(taskInput.getQuestion())
-                .answers(allAnswer.collect(Collectors.toSet()))
-                .solutionNumber(solutionNumber)
-                .usage(0)
-                .build();
-        return taskRepository.save(task, 1);
+    public Task createTask(TaskInputDto taskInputDto) {
+        return taskRepository.save(convertInputToTask(taskInputDto), 1);
     }
 
     private Task getTaskById(Long taskId, int depth) {
         return taskRepository.findById(taskId, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No task with id: " + taskId));
+    }
+
+    private Task convertInputToTask(TaskInputDto taskInputDto) {
+        int solutionNumber = 1;
+        Set<TaskAnswer> answers = new HashSet<>();
+
+        TaskAnswer correct = TaskAnswer.builder()
+                .answer(taskInputDto.getCorrectAnswer())
+                .number(solutionNumber)
+                .build();
+        answers.add(correct);
+
+        Set<TaskAnswer> wrongs = taskInputDto.getIncorrectAnswers().stream()
+                .map(answer -> TaskAnswer.builder()
+                        .answer(answer)
+                        .number(taskInputDto.getIncorrectAnswers().indexOf(answer) + 2)
+                        .build())
+                .collect(Collectors.toSet());
+        answers.addAll(wrongs);
+
+        return Task.builder()
+                .question(taskInputDto.getQuestion())
+                .answers(answers)
+                .solutionNumber(solutionNumber)
+                .usage(0)
+                .build();
     }
 
 }

@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+
+//Todo külön get minden osztályra?
 @Component
 @RequiredArgsConstructor
 public class DataLoaderUtil {

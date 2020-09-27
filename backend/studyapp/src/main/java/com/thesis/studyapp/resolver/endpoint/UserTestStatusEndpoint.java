@@ -22,4 +22,5 @@ public class UserTestStatusEndpoint implements GraphQLQueryResolver, GraphQLMuta
         return userTestStatusService.getNextTask(userId, testId);
     }
 
+
 }

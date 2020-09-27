@@ -27,7 +27,7 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
 
     List<User> findByParentsIdOrderByName(Long parentId, @Depth int depth);
 
-    @Query("MATCH (parent:User)-[sp:STUDENTPARENT]->(student:Student)" +
+    @Query("MATCH (parent:User)-[sp:STUDENTPARENT]->(student:User)" +
             " WHERE id(parent) = $parentId AND id(student) = $studentId" +
             " DELETE sp")
     void deleteFollowedStudent(@Param("parentId") Long parentId, @Param("studentId") Long studentId);

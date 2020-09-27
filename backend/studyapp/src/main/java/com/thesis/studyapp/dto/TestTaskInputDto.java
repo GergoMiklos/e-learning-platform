@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TestTaskInput {
+public class TestTaskInputDto {
     Long id;
     int level;
 

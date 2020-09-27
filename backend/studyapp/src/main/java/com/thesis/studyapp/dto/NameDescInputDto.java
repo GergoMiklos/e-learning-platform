@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NameDescInput {
+public class NameDescInputDto {
     String name;
     String description;
 

@@ -2,7 +2,7 @@ package com.thesis.studyapp.resolver.endpoint;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.thesis.studyapp.dto.NameDescInput;
+import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.service.TestService;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,11 @@ public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
         return testService.getTest(testId);
     }
 
-    public Test createTest(Long groupId, NameDescInput input) {
+    public Test createTest(Long groupId, NameDescInputDto input) {
         return testService.createTest(groupId, input);
     }
 
-    public Test editTest(Long testId, NameDescInput input) {
+    public Test editTest(Long testId, NameDescInputDto input) {
         return testService.editTest(testId, input);
     }
 

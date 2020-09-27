@@ -65,6 +65,7 @@ public class UserTestStatus implements HasId {
         NOT_STARTED, IN_PROGRESS, PROBLEM
     }
 
+    //todo lehetne egy comparator util, ahol loggolunk? Domain object ne tartalmazzon logikát?
     public static class UserTestStatusComparator implements Comparator<UserTestStatus> {
 
         @Override public int compare(UserTestStatus uts1, UserTestStatus uts2) {
