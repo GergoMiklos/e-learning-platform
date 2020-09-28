@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.thesis.studyapp.util.ComparatorUtil.getTestComparator;
+import static com.thesis.studyapp.util.ComparatorUtil.getUserComparator;
+
 @Component
 @RequiredArgsConstructor
 public class GroupResolver implements GraphQLResolver<Group> {
@@ -21,7 +24,7 @@ public class GroupResolver implements GraphQLResolver<Group> {
     public CompletableFuture<List<User>> students(Group group) {
         return dataLoaderUtil.loadData(group.getStudents(), DataLoaderUtil.USER_LOADER)
                 .thenApplyAsync((students) -> {
-                    students.sort(new User.UserComparator());
+                    students.sort(getUserComparator());
                     return students;
                 });
     }
@@ -29,7 +32,7 @@ public class GroupResolver implements GraphQLResolver<Group> {
     public CompletableFuture<List<User>> teachers(Group group) {
         return dataLoaderUtil.loadData(group.getTeachers(), DataLoaderUtil.USER_LOADER)
                 .thenApplyAsync((teachers) -> {
-                    teachers.sort(new User.UserComparator());
+                    teachers.sort(getUserComparator());
                     return teachers;
                 });
     }
@@ -37,7 +40,7 @@ public class GroupResolver implements GraphQLResolver<Group> {
     public CompletableFuture<List<Test>> tests(Group group) {
         return dataLoaderUtil.loadData(group.getTests(), DataLoaderUtil.TEST_LOADER)
                 .thenApplyAsync((tests) -> {
-                    tests.sort(new Test.TestComparator());
+                    tests.sort(getTestComparator());
                     return tests;
                 });
     }

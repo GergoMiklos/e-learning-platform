@@ -69,12 +69,10 @@ public class UserService {
     }
 
     public List<User> getTeachersForGroup(Long groupId) {
-        //todo check group?
         return userRepository.findByTeacherGroupsIdOrderByName(groupId, 1);
     }
 
     public List<User> getStudentsForParent(Long parentId) {
-        //todo check user?
         return userRepository.findByParentsIdOrderByName(parentId, 1);
     }
 

@@ -2,6 +2,7 @@ package com.thesis.studyapp.service;
 
 
 import com.thesis.studyapp.dto.TaskSolutionDto;
+import com.thesis.studyapp.event.UpdatedTestStatusEvent;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
@@ -11,6 +12,7 @@ import com.thesis.studyapp.repository.UserTestStatusRepository;
 import com.thesis.studyapp.repository.UserTestTaskStatusRepository;
 import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -30,6 +32,7 @@ public class UserTestStatusService {
     private final UserTestTaskStatusRepository userTestTaskStatusRepository;
 
     private final DateUtil dateUtil;
+    private final ApplicationEventPublisher eventPublisher;
 
     public UserTestStatus getUserTestStatus(Long userTestStatusId) {
         return getUserTestStatusById(userTestStatusId, 1);
@@ -47,12 +50,10 @@ public class UserTestStatusService {
     // vagy ez ne is legyen itt mert csak objectresolverből hívjuk?
     // (FONTOS: objectresolvernél ha errort dobunk egy filednél, attól még a többi meglehet (külön folyamat))
     public List<UserTestStatus> getUserTestStatusesForTest(Long testId) {
-        //todo check test?
         return userTestStatusRepository.findByTestIdOrderByUserName(testId, 1);
     }
 
     public List<UserTestStatus> getUserTestStatusesForUser(Long userId) {
-        //todo check user?
         return userTestStatusRepository.findByUserIdOrderByTestName(userId, 1);
     }
 
@@ -75,9 +76,10 @@ public class UserTestStatusService {
         } else {
             setWrongSolution(userTestStatus);
         }
-        setStatus(userTestStatus);
+        boolean statusChanged = setStatus(userTestStatus);
         userTestStatus.setCurrentTestTask(null);
         userTestStatus = userTestStatusRepository.save(userTestStatus, 2);
+        eventPublisher.publishEvent(new UpdatedTestStatusEvent(this, userTestStatus.getTest().getId()));
         return TaskSolutionDto.builder()
                 .chosenAnswerNumber(chosenAnswerNumber)
                 .solutionNumber(correctSolutionNumber)
@@ -141,23 +143,28 @@ public class UserTestStatusService {
         }
     }
 
-    private void setStatus(UserTestStatus uts) {
-        double ratio = calculateRatio(uts.getCorrectSolutions(), uts.getAllSolutions());
+    private boolean setStatus(UserTestStatus uts) {
+        double ratio = uts.getRatio();
+        boolean statusChanged = false;
         switch (uts.getStatus()) {
             case NOT_STARTED:
                 uts.setStatus(UserTestStatus.Status.IN_PROGRESS);
+                statusChanged = true;
                 break;
             case IN_PROGRESS:
                 if (ratio < 0.5 || uts.getWrongSolutionsInRow() >= 2) {
                     uts.setStatus(UserTestStatus.Status.PROBLEM);
+                    statusChanged = true;
                 }
                 break;
             case PROBLEM:
                 if (ratio > 0.5 && uts.getCorrectSolutionsInRow() >= 2) {
                     uts.setStatus(UserTestStatus.Status.IN_PROGRESS);
+                    statusChanged = true;
                 }
                 break;
         }
+        return statusChanged;
     }
 
 
@@ -181,6 +188,9 @@ public class UserTestStatusService {
         Set<TestTask> allTestTasks = uts.getTest().getTestTasks().stream()
                 .filter(testTask -> testTask.getLevel() == currentLevel)
                 .collect(Collectors.toSet());
+        if (allTestTasks.isEmpty()) {
+            return;
+        }
         Set<UserTestTaskStatus> solvedUserTestTaskStatuses = uts.getUserTestTaskStatuses().stream()
                 .filter(status -> status.getTestTask().getLevel() == currentLevel && allTestTasks.contains(status.getTestTask()))
                 .collect(Collectors.toSet());
@@ -190,32 +200,32 @@ public class UserTestStatusService {
         Set<TestTask> newTestTasks = allTestTasks.stream()
                 .filter(testTask -> !solvedTestTasks.contains(testTask))
                 .collect(Collectors.toSet());
-        if (!allTestTasks.isEmpty()) {
-            if (!newTestTasks.isEmpty()) {
-                TestTask nextTask = Collections.max(newTestTasks, new BestRatioComparator());
-                uts.setCurrentTestTask(nextTask);
-                return;
-            }
 
-            double weight = max(1, 0.75 + 0.05 * currentCycle);
-            if (solvedUserTestTaskStatuses.stream().anyMatch(status -> status.getCorrectSolutions() < currentCycle)
-                    || weight * calculateAverageRatio(solvedUserTestTaskStatuses) + (1 - weight) * calculatePreviousAverageRatio(uts.getUser()) < (weight - 0.05)) {
-                //Todo ez biztos nem mindig ugyanazt adja?
-                TestTask nextTask = Collections.min(solvedTestTasks, new BestRatioComparator());
-                uts.setCurrentTestTask(nextTask);
-                return;
-            }
-
-            Set<TestTask> wrongTestTasks = solvedUserTestTaskStatuses.stream()
-                    .filter(status -> status.getWrongSolutionsInRow() > 0)
-                    .map(UserTestTaskStatus::getTestTask)
-                    .collect(Collectors.toSet());
-            if (!wrongTestTasks.isEmpty()) {
-                TestTask nextTask = Collections.max(wrongTestTasks, new BestRatioComparator());
-                uts.setCurrentTestTask(nextTask);
-                return;
-            }
+        if (!newTestTasks.isEmpty()) {
+            TestTask nextTask = Collections.max(newTestTasks, Comparator.comparing(TestTask::getRatio));
+            uts.setCurrentTestTask(nextTask);
+            return;
         }
+
+        double weight = max(1, 0.75 + 0.05 * currentCycle);
+        if (solvedUserTestTaskStatuses.stream().anyMatch(status -> status.getCorrectSolutions() < currentCycle)
+                || weight * calculateAverageRatio(solvedUserTestTaskStatuses) + (1 - weight) * calculatePreviousAverageRatio(uts.getUser()) < (weight - 0.05)) {
+            //Todo ez biztos nem mindig ugyanazt adja?
+            TestTask nextTask = Collections.max(solvedUserTestTaskStatuses, Comparator.comparing(UserTestTaskStatus::getRatio)).getTestTask();
+            uts.setCurrentTestTask(nextTask);
+            return;
+        }
+
+        Set<TestTask> wrongTestTasks = solvedUserTestTaskStatuses.stream()
+                .filter(status -> status.getWrongSolutionsInRow() > 0)
+                .map(UserTestTaskStatus::getTestTask)
+                .collect(Collectors.toSet());
+        if (!wrongTestTasks.isEmpty()) {
+            TestTask nextTask = Collections.max(wrongTestTasks, Comparator.comparing(TestTask::getRatio));
+            uts.setCurrentTestTask(nextTask);
+            return;
+        }
+
         if (currentLevel < 10) {
             uts.setCurrentLevel(currentLevel + 1);
         } else {
@@ -227,37 +237,49 @@ public class UserTestStatusService {
 
     public static double calculatePreviousAverageRatio(User user) {
         return user.getUserTestStatuses().stream()
-                .mapToDouble(uts -> calculateRatio(uts.getCorrectSolutions(), uts.getAllSolutions()))
+                .mapToDouble(UserTestStatus::getRatio)
                 .average()
-                .orElse(1);
+                .orElse(0);
     }
 
     public static double calculateAverageRatio(Set<UserTestTaskStatus> userTestTaskStatuses) {
         return userTestTaskStatuses.stream()
-                .mapToDouble(status -> calculateRatio(status.getCorrectSolutions(), status.getAllSolutions()))
+                .mapToDouble(UserTestTaskStatus::getRatio)
                 .average()
-                .orElse(1);
+                .orElse(0);
     }
 
-    public static double calculateRatio(int correct, int all) {
-        if (all != 0) {
-            return (double) correct / (double) all;
-        } else {
-            return 1;
-        }
-    }
-
-    public static class BestRatioComparator implements Comparator<TestTask> {
-
-        @Override public int compare(TestTask tt1, TestTask tt2) {
-            double ratio1 = calculateRatio(tt1.getCorrectSolutions(), tt1.getAllSolutions());
-            double ratio2 = calculateRatio(tt2.getCorrectSolutions(), tt2.getAllSolutions());
-            if (ratio1 > ratio2) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    }
+//    @Data
+//    @Builder
+//    private static class SolvingData {
+//        private int currentLevel;
+//        private int currentCycle;
+//        private UserTestStatus userTestStatus;
+//        private Set<TestTask> allTestTasks;
+//        private Set<UserTestTaskStatus> solvedUserTestTaskStatuses;
+//        private Set<TestTask> newTestTasks;
+//
+//        public SolvingData build(UserTestStatus uts) {
+//            Set<TestTask> allTestTasks = uts.getTest().getTestTasks().stream()
+//                    .filter(testTask -> testTask.getLevel() == uts.getCurrentLevel())
+//                    .collect(Collectors.toSet());
+//            Set<UserTestTaskStatus> solvedUserTestTaskStatuses = uts.getUserTestTaskStatuses().stream()
+//                    .filter(status -> status.getTestTask().getLevel() == uts.getCurrentLevel() && allTestTasks.contains(status.getTestTask()))
+//                    .collect(Collectors.toSet());
+//            Set<TestTask> solvedTestTasks = solvedUserTestTaskStatuses.stream()
+//                    .map(UserTestTaskStatus::getTestTask)
+//                    .collect(Collectors.toSet());
+//            Set<TestTask> newTestTasks = allTestTasks.stream()
+//                    .filter(testTask -> !solvedTestTasks.contains(testTask))
+//                    .collect(Collectors.toSet());
+//            SolvingData.builder()
+//                    .currentLevel
+//                    .allTestTasks()
+//                    .solvedUserTestTaskStatuses()
+//                    .solvedTestTasks()
+//                    .newTestTasks();
+//        }
+//
+//    }
 
 }

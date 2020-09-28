@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.thesis.studyapp.util.ComparatorUtil.getTestTaskComparator;
+import static com.thesis.studyapp.util.ComparatorUtil.getUserTestStatusComparator;
+
 @Component
 @RequiredArgsConstructor
 public class TestResolver implements GraphQLResolver<Test> {
@@ -21,7 +24,7 @@ public class TestResolver implements GraphQLResolver<Test> {
     public CompletableFuture<List<TestTask>> testTasks(Test test) {
         return dataLoaderUtil.loadData(test.getTestTasks(), DataLoaderUtil.TESTTASK_LOADER)
                 .thenApplyAsync((testTasks) -> {
-                    testTasks.sort(new TestTask.TestTaskComparator());
+                    testTasks.sort(getTestTaskComparator());
                     return testTasks;
                 });
     }
@@ -29,7 +32,7 @@ public class TestResolver implements GraphQLResolver<Test> {
     public CompletableFuture<List<UserTestStatus>> userTestStatuses(Test test) {
         return dataLoaderUtil.loadData(test.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
                 .thenApplyAsync((userTestStatuses) -> {
-                    userTestStatuses.sort(new UserTestStatus.UserTestStatusComparator());
+                    userTestStatuses.sort(getUserTestStatusComparator());
                     return userTestStatuses;
                 });
     }

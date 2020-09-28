@@ -12,7 +12,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTestStatus implements HasId {
+public class UserTestStatus implements HasId, HasRatio {
     @Id
     @GeneratedValue
     private Long id;
@@ -61,26 +60,17 @@ public class UserTestStatus implements HasId {
         this.userTestTaskStatuses.add(userTestTaskStatus);
     }
 
+    public double getRatio() {
+        if (allSolutions != 0) {
+            return (double) correctSolutions / (double) allSolutions;
+        } else {
+            return 0;
+        }
+    }
+
     public enum Status {
         NOT_STARTED, IN_PROGRESS, PROBLEM
     }
 
-    //todo lehetne egy comparator util, ahol loggolunk? Domain object ne tartalmazzon logikát?
-    public static class UserTestStatusComparator implements Comparator<UserTestStatus> {
-
-        @Override public int compare(UserTestStatus uts1, UserTestStatus uts2) {
-            if (uts1.getTest() == null || uts1.getUser() == null || uts2.getUser() == null || uts2.getTest() == null) {
-                //todo logging throw new IllegalStateException("Relationships needed for comparing UserTestStatuses!");
-                return 0;
-            }
-
-            int byUserName = uts1.getUser().getName().compareTo(uts2.getUser().getName());
-            if (byUserName != 0) {
-                return byUserName;
-            } else {
-                return uts1.getTest().getName().compareTo(uts2.getTest().getName());
-            }
-        }
-    }
 
 }

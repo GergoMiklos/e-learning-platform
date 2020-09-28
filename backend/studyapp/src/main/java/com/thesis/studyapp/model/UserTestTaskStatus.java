@@ -19,7 +19,7 @@ import java.util.Comparator;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTestTaskStatus implements HasId {
+public class UserTestTaskStatus implements HasId, HasRatio {
     @Id
     @GeneratedValue
     private Long id;
@@ -43,6 +43,14 @@ public class UserTestTaskStatus implements HasId {
             } else {
                 return -1;
             }
+        }
+    }
+
+    public double getRatio() {
+        if (allSolutions != 0) {
+            return (double) correctSolutions / (double) allSolutions;
+        } else {
+            return 0;
         }
     }
 
