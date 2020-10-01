@@ -29,7 +29,7 @@ const TEST = gql`
 
 //TODO
 const CHANGE_TESTTASK_LEVEL = gql`
-    mutation DeleteTaskFromTest($testTaskInputs: [TestTaskInput!]) {
+    mutation ChangeTestTaskLevel($testTaskInputs: [TestTaskInput!]) {
         changeTestTaskLevel(testTaskInputs: $testTaskInputs) {
             id
         }
@@ -111,6 +111,7 @@ class EditTestPageComp extends Component {
             .then(() => {
                 this.showNotification({text: 'Levels changed successfully', type: 'success'});
                 this.setState({unsavedTestTaskLevels: new Map(),});
+                this.loadData();
             })
             .catch(errors => {
                 console.log(errors);

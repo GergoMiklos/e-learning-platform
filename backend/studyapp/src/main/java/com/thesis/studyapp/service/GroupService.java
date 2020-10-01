@@ -106,7 +106,7 @@ public class GroupService {
     }
 
     private Group getGroupByCode(String groupCode, int depth) {
-        return groupRepository.findByCode(groupCode.toUpperCase(), depth)
+        return groupRepository.findByCodeIgnoreCase(groupCode.toUpperCase(), depth)
                 .orElseThrow(() -> new CustomGraphQLException("No group with code: " + groupCode));
     }
 
@@ -120,7 +120,7 @@ public class GroupService {
         String code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
         boolean alreadyExists = true;
         while (alreadyExists) {
-            if (groupRepository.existsByCode(code)) {
+            if (groupRepository.existsByCodeIgnoreCase(code)) {
                 code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
             } else {
                 alreadyExists = false;

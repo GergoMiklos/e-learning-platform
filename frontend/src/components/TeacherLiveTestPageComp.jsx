@@ -17,11 +17,13 @@ const USERTESTSTATUSES = gql`
             id
             name
             description
+            allTasks
             userTestStatuses {
                 status
                 statusChangedTime
-                correctAnswers
-                allAnswers
+                correctSolutions
+                allSolutions
+                solvedTasks
                 user {
                     name
                     code
@@ -119,20 +121,21 @@ class TeacherLiveTestPageComp extends Component {
                     <h1 className="col-10">{this.state.test.name}</h1>
                 </div>
 
-                <div className="btn-group btn-block">
-                    <div className="btn btn-info disabled">Not Started</div>
-                    <div className="btn btn-success disabled">In Progress</div>
-                    <div className="btn btn-warning disabled">Inactive</div>
-                    <div className="btn btn-danger disabled">Problem</div>
+                <div className="row btn-group btn-block m-1">
+                    <div className="col-3 btn btn-info disabled">Not Started</div>
+                    <div className="col-3 btn btn-success disabled">In Progress</div>
+                    <div className="col-3 btn btn-warning disabled">Inactive</div>
+                    <div className="col-3 btn btn-danger disabled">Problem</div>
                 </div>
 
-                <div className="row my-3">
-                    <table className="col-12 table table-striped rounded shadow">
+                <div className="my-3 table-responsive-sm">
+                    <table className="table table-striped">
                         <thead>
                         <tr>
                             <th>Name</th>
                             <th className="text-center">Code</th>
-                            <th className="text-center">Correct / All</th>
+                            <th className="text-center">Tasks (Solved/All):</th>
+                            <th className="text-center">Answers (Correct/All):</th>
                             <th className="text-center">Status</th>
                         </tr>
                         </thead>
@@ -146,7 +149,10 @@ class TeacherLiveTestPageComp extends Component {
                                     {uts.user.code}
                                 </td>
                                 <td className="text-center">
-                                    {uts.correctAnswers} / {uts.allAnswers}
+                                    {uts.solvedTasks}/{this.state.test.allTasks}
+                                </td>
+                                <td className="text-center">
+                                    {uts.correctSolutions}/{uts.allSolutions}
                                 </td>
                                 <td className='text-center'>
                                     <strong

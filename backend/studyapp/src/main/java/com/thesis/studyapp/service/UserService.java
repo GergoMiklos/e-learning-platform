@@ -45,7 +45,7 @@ public class UserService {
 
     @Transactional
     public User addStudentFromCodeToParent(Long parentId, String studentCode) {
-        User student = getUserByCode(studentCode, 1);
+        User student = getUserByCode(studentCode.trim(), 1);
         User parent = getUserById(parentId, 0);
         student.addParent(parent);
         return userRepository.save(student, 1);
@@ -82,7 +82,7 @@ public class UserService {
     }
 
     private User getUserByCode(String userCode, int depth) {
-        return userRepository.findByCode(userCode.toUpperCase(), depth)
+        return userRepository.findByCodeIgnoreCase(userCode, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No user with code: " + userCode));
     }
 

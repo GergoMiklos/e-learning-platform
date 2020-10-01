@@ -3,11 +3,8 @@ import React, { Component } from 'react';
 class NavBarComp extends Component {
     constructor(props){
         super(props)
-        this.state = {
-            active: 'Learn'
-        }
-        console.log("NavBarComp conts");
     }
+
     render() {
         return (
             <div>

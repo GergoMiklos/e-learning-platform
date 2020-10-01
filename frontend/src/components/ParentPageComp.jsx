@@ -25,11 +25,13 @@ const PARENT_FOLLOWED_STATUSES = gql`
                 userTestStatuses {
                     status
                     statusChangedTime
-                    correctAnswers
-                    allAnswers
+                    correctSolutions
+                    allSolutions
+                    solvedTasks
                     test {
                         name
                         description
+                        allTasks
                     }
 
                 }
@@ -89,7 +91,7 @@ class ParentPageComp extends Component {
             })
             .catch(errors => {
                 console.log(errors);
-                this.showNotification({text: `No group with code: ${this.state.addStudentCode}`, type: 'danger'})
+                this.showNotification({text: `No student with code: ${this.state.addStudentCode}`, type: 'danger'})
             })
     }
 
@@ -189,51 +191,58 @@ class ParentPageComp extends Component {
                     </div>
                 </div>
 
-                <div className="btn-group btn-block">
-                    <div className="btn btn-info disabled">Not Started</div>
-                    <div className="btn btn-success disabled">In Progress</div>
-                    <div className="btn btn-warning disabled">Inactive</div>
-                    <div className="btn btn-danger disabled">Problem</div>
+                <div className="row btn-group btn-block m-1">
+                    <div className="col-3 btn btn-info disabled">Not Started</div>
+                    <div className="col-3 btn btn-success disabled">In Progress</div>
+                    <div className="col-3 btn btn-warning disabled">Inactive</div>
+                    <div className="col-3 btn btn-danger disabled">Problem</div>
                 </div>
 
                 {this.state.user.followedStudents.map(student =>
-                    <div key={student.id} className="row my-3">
-                        <div className="col-12 rounded shadow my-3 p-3 d-flex justify-content-between">
+                    <div key={student.id}>
+                        <div className="row rounded shadow my-3 p-3 d-flex justify-content-between">
                             <h1>{student.name}</h1>
+
                             <button className="btn btn-danger" onClick={() => this.deleteFollowed(student.id)}>
                                 Delete
                             </button>
                         </div>
 
                         {(student.userTestStatuses.length !== 0) &&
-                        <table className="col-12 table table-striped rounded shadow">
-                            <thead>
-                            <tr>
-                                <th>Test</th>
-                                <th className="text-center">Correct / All</th>
-                                <th className="text-center">Status</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {student.userTestStatuses.map(uts =>
-                                <tr key={uts.id}>
-                                    <td className="font-weight-bold">
-                                        {uts.test.name}
-                                    </td>
-                                    <td className="text-center">
-                                        {uts.correctAnswers} / {uts.allAnswers}
-                                    </td>
-                                    <td className='text-center'>
-                                        <strong
-                                            className={`btn-${this.calculateStatusColor(uts)} btn rounded-pill disabled w-100`}>
-                                            {uts.status === 'NOT_STARTED' ? 'NOT STARTED' : this.calculateStatusTime(uts.statusChangedTime)}
-                                        </strong>
-                                    </td>
+                        <div className="table-responsive-sm">
+                            <table className="col-12 table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Test</th>
+                                    <th className="text-center">Tasks (Solved/All):</th>
+                                    <th className="text-center">Answers (Correct/All):</th>
+                                    <th className="text-center">Status</th>
                                 </tr>
-                            )}
-                            </tbody>
-                        </table>
+                                </thead>
+
+                                <tbody>
+                                {student.userTestStatuses.map(uts =>
+                                    <tr key={uts.id}>
+                                        <td className="font-weight-bold">
+                                            {uts.test.name}
+                                        </td>
+                                        <td className="text-center">
+                                            {uts.solvedTasks}/{uts.test.allTasks}
+                                        </td>
+                                        <td className="text-center">
+                                            {uts.correctSolutions}/{uts.allSolutions}
+                                        </td>
+                                        <td className='text-center'>
+                                            <strong
+                                                className={`btn-${this.calculateStatusColor(uts)} btn rounded-pill disabled w-100`}>
+                                                {uts.status === 'NOT_STARTED' ? 'NOT STARTED' : this.calculateStatusTime(uts.statusChangedTime)}
+                                            </strong>
+                                        </td>
+                                    </tr>
+                                )}
+                                </tbody>
+                            </table>
+                        </div>
                         }
                     </div>
                 )}

@@ -14,17 +14,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolver, GraphQLSubscriptionResolver {
+public class TestEndpoint implements GraphQLQueryResolver, GraphQLMutationResolver {
 
     private final TestService testService;
-    private final SubscriptionUtil<Long, Test> testSubscriptionUtil;
 
     public Test test(Long testId) {
         return testService.getTest(testId);
-    }
-
-    public Publisher<Test> testStatusChanges(Long testId) {
-        return testSubscriptionUtil.getPublisher(testId);
     }
 
     public Test createTest(Long groupId, NameDescInputDto input) {

@@ -38,7 +38,8 @@ type UserTestStatus {
     statusChangedTime: String!
     correctSolutions: Int!
     allSolutions: Int!
-    userTestTaskStatuses: [UserTestTaskStatuses!]
+    solvedTasks: Int!
+    userTestTaskStatuses: [UserTestTaskStatus!]
 }
 
 type Task {
@@ -77,7 +78,7 @@ type TestTask {
     task: Task!
 }
 
-type UserTestTaskStatuses {
+type UserTestTaskStatus {
     testTask: TestTask!
     lastSolutionTime: String!
     correctSolutions: Int!

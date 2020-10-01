@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React, {Component, useState} from 'react'
 import client from "../ApolloClient";
 import gql from 'graphql-tag';
 import AuthenticationService from "../AuthenticationService";
@@ -6,21 +6,25 @@ import toaster from 'toasted-notes';
 import NofitcationComp from './NotificationComp'
 import NotificationComp from "./NotificationComp";
 import {Spinner} from "react-bootstrap";
+import {useQuery} from "@apollo/client";
 
-const STUDENT_GROUPS = gql`
-    query getUser($userId: ID!) {
-        user(userId: $userId) {
-            id
-            name
-            code
-            studentGroups {
+//todo itt lehtne loadolni egy fájlból is
+const studentPageGql = {
+    STUDENT_GROUPS: gql`
+        query getUser($userId: ID!) {
+            user(userId: $userId) {
                 id
                 name
-                news
-                newsChangedDate
+                code
+                studentGroups {
+                    id
+                    name
+                    news
+                    newsChangedDate
+                }
             }
-        }
-    }`;
+        }`,
+}
 
 const JOIN_GROUP = gql`
     mutation AddStudentToGroupFromCode($userId: ID!, $groupCode: String!) {
@@ -119,6 +123,11 @@ class StudentPage extends Component {
     }
 
     render() {
+        const [joinGroupCode, setJoinGroupCode] = useState('');
+        const {loading, error, data} = useQuery(studentPageGql.STUDENT_GROUPS, {
+            variables: {userId: AuthenticationService.getUserId(), groupCode: this.state.joinGroupCode}
+        });
+
         if (!this.state.user) {
             return (<div/>);
         }
@@ -130,7 +139,7 @@ class StudentPage extends Component {
                     <h1 className="col-auto rounded-pill bg-warning px-3">{this.state.user.code}</h1>
                 </div>
 
-                <div className="row rounded shadow my-3 p-3">
+                <div className="row rounded shadow bg-light my-3 p-3">
                     <h1 className="col-12">Student Groups</h1>
                 </div>
 
@@ -159,7 +168,7 @@ class StudentPage extends Component {
                                 <strong className="mx-2"> {group.name}</strong>
 
                                 {group.news && this.isFresh(new Date(group.newsChangedDate)) &&
-                                <span className="badge badge-pill bg-warning mx-2 px-2 py-1">
+                                <span className="badge badge-pill bg-warning text-light mx-2 px-2 py-1">
                                     {this.formatDate(new Date(group.newsChangedDate))}
                                 </span>}
                             </li>

@@ -11,12 +11,22 @@ import NewTaskPageComp from "./NewTaskPageComp"
 import EditTestPageComp from "./EditTestPageComp";
 import TeacherLiveTestPageComp from "./TeacherLiveTestPageComp";
 import ParentPageComp from "./ParentPageComp";
+import LoginPageComp from "./LoginPageComp";
+import RegisterPageComp from "./RegisterPageComp";
+
+const style = {
+    backgroundImage: 'url(https://i.pinimg.com/originals/06/47/7e/06477ea4fbec33a0ad356f6095460775.gif)',
+    height: '100%',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+}
 
 class AppComp extends Component {
+
     render() {
-        //todo store-ból hívjuk majd?
         return (
-            <div>
+            <div className="bg-secondary min-vh-100" style={style}>
                 <NavBarComp></NavBarComp>
                 <Router>
                     <Switch>
@@ -31,6 +41,8 @@ class AppComp extends Component {
                         <Route path="/teach/group/:groupid" component={TeacherGroupPageComp}/>
                         <Route path="/teach/test/:testid/tasks" component={NewTaskPageComp}/>
                         <Route path="/parent" component={ParentPageComp}/>
+                        <Route path="/login" component={LoginPageComp}/>
+                        <Route path="/register" component={RegisterPageComp}/>
                         <Route component={ErrorComp}/>
                     </Switch>
                 </Router>

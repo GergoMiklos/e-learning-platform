@@ -15,11 +15,9 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
     String RETURN_USERDTO = " RETURN id(u) AS id, u.name AS name, u.code AS code";
     String ORDER_BY_NAME = " ORDER BY u.name";
 
-    Optional<User> findByCode(String code, @Depth int depth);
+    Optional<User> findByCodeIgnoreCase(String code, @Depth int depth);
 
-    List<User> findByIdIn(List<Long> ids,
-                          @Depth
-                                  int depth);
+    List<User> findByIdIn(List<Long> ids, @Depth int depth);
 
     List<User> findByStudentGroupsIdOrderByName(Long studentGroupId, @Depth int depth);
 

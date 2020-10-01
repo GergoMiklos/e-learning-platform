@@ -2,7 +2,7 @@ package com.thesis.studyapp.service;
 
 
 import com.thesis.studyapp.dto.TaskSolutionDto;
-import com.thesis.studyapp.event.UpdatedTestStatusEvent;
+import com.thesis.studyapp.event.UpdatedStatusEvent;
 import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
@@ -79,7 +79,7 @@ public class UserTestStatusService {
         boolean statusChanged = setStatus(userTestStatus);
         userTestStatus.setCurrentTestTask(null);
         userTestStatus = userTestStatusRepository.save(userTestStatus, 2);
-        eventPublisher.publishEvent(new UpdatedTestStatusEvent(this, userTestStatus.getTest().getId()));
+        eventPublisher.publishEvent(new UpdatedStatusEvent(this, userTestStatus.getId()));
         return TaskSolutionDto.builder()
                 .chosenAnswerNumber(chosenAnswerNumber)
                 .solutionNumber(correctSolutionNumber)
@@ -163,6 +163,9 @@ public class UserTestStatusService {
                     statusChanged = true;
                 }
                 break;
+        }
+        if(statusChanged) {
+            uts.setStatusChangedDate(dateUtil.getCurrentTime());
         }
         return statusChanged;
     }

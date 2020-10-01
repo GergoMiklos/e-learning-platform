@@ -38,11 +38,16 @@ public class UserTestStatusResolver implements GraphQLResolver<UserTestStatus> {
     }
 
     public CompletableFuture<String> statusChangedTime(UserTestStatus userTestStatus) {
-        return CompletableFuture.supplyAsync(() -> DateUtil.convertToIsoString(userTestStatus.getStatusChangedDate()));
+        return CompletableFuture.completedFuture(DateUtil.convertToIsoString(userTestStatus.getStatusChangedDate()));
     }
 
     public CompletableFuture<String> status(UserTestStatus userTestStatus) {
-        return CompletableFuture.supplyAsync(() -> userTestStatus.getStatus().name());
+        return CompletableFuture.completedFuture(userTestStatus.getStatus().name());
+    }
+
+    public CompletableFuture<Integer> solvedTasks(UserTestStatus userTestStatus) {
+        return CompletableFuture.completedFuture(userTestStatus.getUserTestTaskStatuses() == null ?
+                0 : userTestStatus.getUserTestTaskStatuses().size());
     }
 
 

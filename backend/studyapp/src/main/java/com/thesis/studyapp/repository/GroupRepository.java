@@ -16,9 +16,9 @@ public interface GroupRepository extends Neo4jRepository<Group, Long> {
     String RETURN_GROUPDTO = " RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, g.news AS news, g.newsChangedDate";
     String ORDER_BY_NAME = " ORDER BY g.name";
 
-    Optional<Group> findByCode(String name, @Depth int depth);
+    Optional<Group> findByCodeIgnoreCase(String name, @Depth int depth);
 
-    boolean existsByCode(String code);
+    boolean existsByCodeIgnoreCase(String code);
 
     List<Group> findByIdIn(List<Long> groupIds, @Depth int depth);
 

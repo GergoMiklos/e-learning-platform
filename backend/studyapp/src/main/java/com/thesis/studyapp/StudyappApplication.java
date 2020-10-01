@@ -36,20 +36,20 @@ public class StudyappApplication {
                 return;
 
             User user = User.builder()
-                    .code("User")
-                    .name("UUUU0001")
+                    .name("User")
+                    .code("UUUU0001")
                     .build();
             User user2 = User.builder()
-                    .code("User2")
-                    .name("UUUU0002")
+                    .name("User2")
+                    .code("UUUU0002")
                     .build();
             User user3 = User.builder()
-                    .code("User3")
-                    .name("UUUU0003")
+                    .name("User3")
+                    .code("UUUU0003")
                     .build();
             User user4 = User.builder()
-                    .code("User4")
-                    .name("UUUU0004")
+                    .name("User4")
+                    .code("UUUU0004")
                     .build();
             user.addParent(user4);
 
