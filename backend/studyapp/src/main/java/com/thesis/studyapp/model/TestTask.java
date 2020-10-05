@@ -38,18 +38,6 @@ public class TestTask implements HasId, HasRatio {
     @Relationship(type = "TESTTASK", direction = Relationship.INCOMING)
     private Test test;
 
-
-    public static class TestTaskComparator implements Comparator<TestTask> {
-
-        @Override public int compare(TestTask tt1, TestTask tt2) {
-            if (tt1.getLevel() > tt2.getLevel()) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    }
-
     public double getRatio() {
         if (allSolutions != 0) {
             return (double) correctSolutions / (double) allSolutions;

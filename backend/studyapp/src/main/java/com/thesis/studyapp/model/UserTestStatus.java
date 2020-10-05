@@ -72,5 +72,4 @@ public class UserTestStatus implements HasId, HasRatio {
         NOT_STARTED, IN_PROGRESS, PROBLEM
     }
 
-
 }

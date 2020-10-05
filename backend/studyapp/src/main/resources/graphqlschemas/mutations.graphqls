@@ -3,13 +3,13 @@ type Mutation {
     editGroup(groupId: ID!, input: NameDescInput!): Group!
     changeGroupNews(groupId: ID!, text: String!): Group!
 
-    addStudentFromCodeToGroup(groupId: ID!, userCode: String!): User!
-    addTeacherFromCodeToGroup(groupId: ID!, userCode: String!): User!
-    addStudentToGroupFromCode(userId: ID!, groupCode: String!): Group!
+    addStudentFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addTeacherFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addStudentToGroupFromCode(userId: ID!, groupCode: String!): Group
     deleteTeacherFromGroup(userId: ID!, groupId: ID!): Boolean
     deleteStudentFromGroup(userId: ID!, groupId: ID!): Boolean
 
-    addStudentFromCodeToParent(parentId: ID!, studentCode: String!): User!
+    addStudentFromCodeToParent(parentId: ID!, studentCode: String!): User
     deleteStudentFromParent(parentId: ID!, studentId: ID!): Boolean
 
     createTest(groupId: ID!, input: NameDescInput!): Test!

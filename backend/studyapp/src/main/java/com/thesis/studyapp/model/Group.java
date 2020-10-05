@@ -69,11 +69,4 @@ public class Group implements HasId {
         tests.add(test);
     }
 
-    public static class GroupComparator implements Comparator<Group> {
-
-        @Override public int compare(Group g1, Group g2) {
-            return g1.getName().compareTo(g2.getName());
-        }
-    }
-
 }

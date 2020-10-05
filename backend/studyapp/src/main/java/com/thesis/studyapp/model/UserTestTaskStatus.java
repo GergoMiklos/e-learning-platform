@@ -35,17 +35,6 @@ public class UserTestTaskStatus implements HasId, HasRatio {
     private int correctSolutionsInRow;
     private int wrongSolutionsInRow;
 
-    public static class UserTestTaskStatusComparator implements Comparator<UserTestTaskStatus> {
-
-        @Override public int compare(UserTestTaskStatus utts1, UserTestTaskStatus utts2) {
-            if (utts1.getLastSolutionTime().isAfter(utts2.getLastSolutionTime())) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-    }
-
     public double getRatio() {
         if (allSolutions != 0) {
             return (double) correctSolutions / (double) allSolutions;

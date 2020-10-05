@@ -1,102 +1,58 @@
-import React, {Component} from 'react'
-import {ErrorMessage, Field, Form, Formik} from 'formik'
+import React from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
-import toaster from "toasted-notes";
+import toast from "toasted-notes";
+import {useMutation} from "@apollo/client";
+import NameDescFormComp from "./NameDescFormComp";
 
-const EDIT_GROUP = gql`
-    mutation EditGroup($groupId: ID!, $input: NameDescInput!) {
-        editGroup(groupId: $groupId, input: $input) {
-            id
-        }
+//todo itt lehtne loadolni egy fájlból is, és úgy beállítani
+const GROUP_DETAILS_FRAGMENT = gql`
+    fragment GroupDetails on Group {
+        id
+        name
+        description
     }`;
 
-class EditGroupDetailsComp extends Component {
-    constructor(props) {
-        super(props);
-    }
-
-    validate = (values) => {
-        let errors = {};
-        if (!values.name) {
-            errors.name = 'Name is required!';
-        } else if (!values.name || values.name.toString().length > 150 || values.name.toString().length < 5) {
-            errors.name = 'Name should be between min 5 and max 150 characters!';
+const EDIT_GROUP_MUTATION = gql`
+    mutation EditGroup($groupId: ID!, $input: NameDescInput!) {
+        editGroup(groupId: $groupId, input: $input) {
+            ...GroupDetails
         }
-        if (!values.description) {
-            errors.description = 'Description is required!';
-        } else if (values.description.toString().length > 500 || values.description.toString().length < 5) {
-            errors.description = 'Description should be between min 5 and max 500 characters!';
-        }
-        return errors;
     }
+${GROUP_DETAILS_FRAGMENT}`;
 
-    onSubmit = (values, {resetForm}) => {
-        client.mutate({
-            mutation: EDIT_GROUP,
-            variables: {input: {description: values.description, name: values.name}, groupId: this.props.groupId},
-        })
-            .then(() => {
-                this.showNotification({
-                    text: 'Group details edited successfully',
-                    type: 'success',
+export default function EditGroupDetailsComp(props) {
+    //todo error handling (null/error) / useQuery cache-first?
+    const group = client.readFragment({
+        id: `Group:${props.groupId}`,
+        fragment: GROUP_DETAILS_FRAGMENT,
+    });
+
+    const [editTest] = useMutation(EDIT_GROUP_MUTATION, {
+        onCompleted: () => toast.notify(`Group details edited successfully`),
+        onError: () => toast.notify(`Error`),
+    });
+
+    return (
+        <NameDescFormComp
+            initialName={group.name}
+            initialDescription={group.description}
+            onSubmit={values => {
+                editTest({
+                    variables: {
+                        input: {
+                            description: values.description,
+                            name: values.name
+                        },
+                        groupId: group.id,
+                    },
                 })
-            })
-            .catch(errors => {
-                console.log(errors);
-                resetForm({name: this.props.name, description: this.props.description});
-                this.showNotification({text: 'Something went wrong', type: 'danger'});
-            })
-    }
-
-    showNotification = ({text, type}) => {
-        toaster.notify(() => (
-            <div className={`alert alert-${type}`}>
-                {text}
-            </div>
-        ))
-    }
-
-    render() {
-        return (
-            <Formik
-                initialValues={{name: this.props.name, description: this.props.description}}
-                onSubmit={this.onSubmit}
-                validateOnChange={true}
-                validateOnBlur={true}
-                validate={this.validate}
-                enableReinitialize={true}
-            >
-                {({isValid}) => (
-                    <Form>
-                        <fieldset className="from-group m-3">
-                            <label>Name</label>
-                            <Field className="form-control"
-                                   type="text"
-                                   name="name"
-                                   placeholder="Name"
-                            />
-                            <ErrorMessage className="text-danger" name="name" component="div"/>
-                        </fieldset>
-                        <fieldset className="from-group m-3">
-                            <label>Description</label>
-                            <Field className="form-control"
-                                   type="text"
-                                   name="description"
-                                   placeholder="Description"/>
-                            <ErrorMessage className="text-danger" name="description" component="div"/>
-                        </fieldset>
-                        <div className="btn-group my-2">
-                            <button type="submit" className="btn btn-primary" disabled={!isValid}>
-                                Save
-                            </button>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
-        );
-    }
-
+            }}
+        />
+    );
 }
 
-export default EditGroupDetailsComp;
+
+EditGroupDetailsComp.fragments = {
+    GROUP_DETAILS_FRAGMENT: GROUP_DETAILS_FRAGMENT,
+}

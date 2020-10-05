@@ -47,7 +47,7 @@ public class TestService {
                 .group(group)
                 .userTestStatuses(createUserTestStatuses(group.getStudents()))
                 .build();
-        return testRepository.save(test, 1);
+        return testRepository.save(test, 2);
     }
 
     @Transactional
@@ -65,10 +65,10 @@ public class TestService {
 
     //todo ez csak akkor működik ha vizsgálod !!! :(
     //todo saveljen is, ezt lehet használni group serviceből is
-    public Set<UserTestStatus> createUserTestStatuses(Set<User> users) {
-        return users.stream()
-                .map(user -> UserTestStatus.builder()
-                        .user(user)
+    public Set<UserTestStatus> createUserTestStatuses(Set<User> students) {
+        return students.stream()
+                .map(student -> UserTestStatus.builder()
+                        .user(student)
                         .status(UserTestStatus.Status.NOT_STARTED)
                         .statusChangedDate(dateUtil.getCurrentTime())
                         .currentLevel(1)

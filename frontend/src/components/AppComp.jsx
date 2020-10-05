@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import NavBarComp from "./NavBarComp";
-import StudentPage from "./StudentPage";
+import StudentPageComp from "./StudentPageComp";
 import TeacherPageComp from "./TeacherPageComp";
 import StudentGroupPageComp from "./StudentGroupPageComp";
 import TeacherGroupPageComp from "./TeacherGroupPageComp";
@@ -12,7 +12,7 @@ import EditTestPageComp from "./EditTestPageComp";
 import TeacherLiveTestPageComp from "./TeacherLiveTestPageComp";
 import ParentPageComp from "./ParentPageComp";
 import LoginPageComp from "./LoginPageComp";
-import RegisterPageComp from "./RegisterPageComp";
+import SignupPageComp from "./SignupPageComp";
 
 const style = {
     backgroundImage: 'url(https://i.pinimg.com/originals/06/47/7e/06477ea4fbec33a0ad356f6095460775.gif)',
@@ -30,19 +30,19 @@ class AppComp extends Component {
                 <NavBarComp></NavBarComp>
                 <Router>
                     <Switch>
-                        <Route path="/" exact component={StudentPage}/>
-                        <Route path="/learn" exact component={StudentPage}/>
+                        <Route path="/" exact component={StudentPageComp}/>
+                        <Route path="/learn" exact component={StudentPageComp}/>
                         <Route path="/learn/group/:groupid/test/:testid" component={StudentLiveTestPageComp}/>
                         <Route path="/learn/group/:groupid" component={StudentGroupPageComp}/>
                         <Route path="/teach" exact component={TeacherPageComp}/>
+                        <Route path="/teach/group/:groupid/test/:testid/tasks" component={NewTaskPageComp}/>
                         <Route path="/teach/group/:groupid/test/:testid/edit" component={EditTestPageComp}/>
                         <Route path="/teach/group/:groupid/test/:testid" component={TeacherLiveTestPageComp}/>
                         <Route path="/teach/group/:groupid/edit" component={EditGroupPageComp}/>
                         <Route path="/teach/group/:groupid" component={TeacherGroupPageComp}/>
-                        <Route path="/teach/test/:testid/tasks" component={NewTaskPageComp}/>
                         <Route path="/parent" component={ParentPageComp}/>
                         <Route path="/login" component={LoginPageComp}/>
-                        <Route path="/register" component={RegisterPageComp}/>
+                        <Route path="/register" component={SignupPageComp}/>
                         <Route component={ErrorComp}/>
                     </Switch>
                 </Router>

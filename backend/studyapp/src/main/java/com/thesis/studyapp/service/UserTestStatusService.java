@@ -79,7 +79,9 @@ public class UserTestStatusService {
         boolean statusChanged = setStatus(userTestStatus);
         userTestStatus.setCurrentTestTask(null);
         userTestStatus = userTestStatusRepository.save(userTestStatus, 2);
-        eventPublisher.publishEvent(new UpdatedStatusEvent(this, userTestStatus.getId()));
+        if(statusChanged) {
+            eventPublisher.publishEvent(new UpdatedStatusEvent(this, userTestStatus.getId()));
+        }
         return TaskSolutionDto.builder()
                 .chosenAnswerNumber(chosenAnswerNumber)
                 .solutionNumber(correctSolutionNumber)

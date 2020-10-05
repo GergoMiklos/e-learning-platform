@@ -1,7 +1,7 @@
 //import ApolloClient from 'apollo-boost';
-import { split, HttpLink, ApolloClient, InMemoryCache } from '@apollo/client';
-import { getMainDefinition } from '@apollo/client/utilities';
-import { WebSocketLink } from '@apollo/client/link/ws';
+import {ApolloClient, HttpLink, InMemoryCache, split} from '@apollo/client';
+import {getMainDefinition} from '@apollo/client/utilities';
+import {WebSocketLink} from '@apollo/client/link/ws';
 
 const httpLink = new HttpLink({
     uri: 'http://localhost:8080/graphql'
@@ -36,8 +36,12 @@ const client = new ApolloClient({
             errorPolicy: 'all',
         },
         mutate: {
-            errorPolicy: 'all',
+            errorPolicy: 'none',
         },
+        subscription: {
+            fetchPolicy: 'network-only',
+            errorPolicy: 'all'
+        }
     }
 });
 

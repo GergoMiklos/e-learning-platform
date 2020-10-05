@@ -42,7 +42,7 @@ public class User implements HasId {
     private Set<Group> teacherGroups = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
-    @Relationship(type = "USERSTATUS", direction = Relationship.INCOMING)
+    @Relationship(type = "USERSTATUS", direction = Relationship.OUTGOING)
     private Set<UserTestStatus> userTestStatuses = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
@@ -86,13 +86,6 @@ public class User implements HasId {
             followedStudents = new HashSet<>();
         }
         followedStudents.add(user);
-    }
-
-    public static class UserComparator implements Comparator<User> {
-
-        @Override public int compare(User u1, User u2) {
-            return u1.getName().compareTo(u2.getName());
-        }
     }
 
 

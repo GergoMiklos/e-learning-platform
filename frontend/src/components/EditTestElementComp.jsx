@@ -1,103 +1,109 @@
-import React, {Component} from "react";
+import React, {useState} from "react";
 import client from "../ApolloClient";
-import toaster from "toasted-notes";
+import toast from "toasted-notes";
 import gql from "graphql-tag";
+import {useMutation} from "@apollo/client";
 
-const DELETE_TASK = gql`
+const DELETE_TASK_MUTATION = gql`
     mutation DeleteTaskFromTest($testTaskId: ID!) {
         deleteTaskFromTest(testTaskId: $testTaskId)
     }`;
 
-class EditTestElementComp extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            unsavedChange: false,
-            selectedLevel: this.props.testTask.level,
-            deleted: false,
-        };
-    }
-
-    deleteTask = () => {
-        client.mutate({
-            mutation: DELETE_TASK,
-            variables: {testTaskId: this.props.testTask.id}
-        })
-            .then(() => {
-                this.showNotification({text: 'Task deleted successfully', type: 'success'});
-                this.setState({deleted: true});
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'danger'});
-            })
-    }
-
-    selectUnsavedLevel = (level) => {
-        this.setState({unsavedChange: true, selectedLevel: level});
-        this.props.onLevelChange(this.props.testTask.id, level);
-    }
-
-    showNotification = ({text, type}) => {
-        toaster.notify(() => (
-            <div className={`alert alert-${type}`}>
-                {text}
-            </div>
-        ))
-    }
-
-    calculateColor() {
-        if (this.state.deleted) {
-            return 'light';
+//todo itt lehtne loadolni egy fájlból is, és úgy beállítani
+const TESTTASK_DETAILS_FRAGMENT = gql`
+    fragment TestTaskDetails on TestTask {
+        id
+        level
+        task {
+            id
+            question
+            answers {
+                id
+                number
+                answer
+            }
+            solutionNumber
         }
-        if (this.state.unsavedChange) {
-            return 'warning';
-        } else {
-            return 'primary';
+    }`;
+
+export default function EditTestElementComp(props) {
+    //todo error handling (null/error) / useQuery cache-first?
+    const testTask = client.readFragment({
+        id: `TestTask:${props.testTaskId}`,
+        fragment: TESTTASK_DETAILS_FRAGMENT,
+    });
+
+    const [selectedLevel, setUnsavedLevel] = useState({changed: false, level: testTask.level});
+    const [deleteTask] = useMutation(DELETE_TASK_MUTATION, {
+        onCompleted: () => toast.notify(`Task deleted successfully`),
+        onError: () => toast.notify(`Error :(`),
+        //Todo kell a testId, és kikéne törölni a changedből is!!
+        update: cache => {
+            cache.modify({
+                id: `Test:${(props.testId)}`,
+                fields: {
+                    testTasks(existingTestTaskRefs, {readField}) {
+                        return existingTestTaskRefs.filter(
+                            testTaskRef => props.testTaskId !== readField('id', testTaskRef)
+                        );
+                    },
+                },
+            });
         }
-    }
 
-    render() {
-        return (
-            <div className="container">
-                <div className="row justify-content-between">
-                    <strong className="col-10">{this.props.testTask.task.question}</strong>
-                    <span className={`col-auto align-self-start align-items-start" badge badge-${this.calculateColor()} p-2`}>
-                        {this.state.selectedLevel}
-                    </span>
-                </div>
+    });
 
-                {(this.props.selectedTestTaskId === this.props.testTask.id) &&
-                <div className="row"> {this.props.testTask.task.answers.map(
-                    (answer, i) =>
-                        <div key={answer.number}
-                             className={(answer.number === this.props.testTask.task.solutionNumber) ? 'font-weight-bold col-12' : 'font-weight-light col-12'}>
-                            {`${i + 1}. ${answer.answer}`}
-                        </div>
-                )}
-                </div>
-                }
-
-                {(this.props.selectedTestTaskId === this.props.testTask.id) && !this.state.deleted &&
-                <div className="row justify-content-end">
-                    <select value={this.state.selectedLevel}
-                            onChange={(event) => this.selectUnsavedLevel(event.target.value)}>
-                        {this.props.levels.map((level) =>
-                            <option value={level} key={level}>
-                                Level: {level}
-                            </option>
-                        )}
-                    </select>
-                    <button className="btn btn-danger btn-sm" onClick={() => this.deleteTask()}>
-                        Delete
-                    </button>
-                </div>
-                }
+    return (
+        <div className="container">
+            <div className="row justify-content-between">
+                <strong className="col-10">{testTask.task.question}</strong>
+                <span
+                    className={`col-auto align-self-start align-items-start" badge badge-${selectedLevel.changed ? 'warning' : 'primary'} p-2`}
+                >
+                        {selectedLevel.level}
+                </span>
             </div>
 
-        );
-    }
+            {(props.selectedTestTaskId === testTask.id) &&
+            <div className="row rounded bg-secondary m-2 p-1"> {testTask.task.answers.map(
+                (answer, i) =>
+                    <div
+                        key={answer.number}
+                        className={(answer.number === testTask.task.solutionNumber) ? 'font-weight-bold col-12' : 'font-weight-light col-12'}
+                    >
+                        {`${i + 1}. ${answer.answer}`}
+                    </div>
+            )}
+            </div>
+            }
 
+            {(props.selectedTestTaskId === testTask.id) &&
+            <div className="row justify-content-end">
+                <select
+                    value={selectedLevel.level}
+                    onChange={(event) => {
+                        setUnsavedLevel({changed: true, level: event.target.value});
+                        props.onLevelChange(event.target.value);
+                    }}
+                >
+                    {props.levels.map((level) =>
+                        <option value={level} key={level}>
+                            Level: {level}
+                        </option>
+                    )}
+                </select>
+                <button
+                    className="btn btn-outline-warning btn-sm"
+                    onClick={() => deleteTask({variables: {testTaskId: testTask.id}})}
+                >
+                    Delete
+                </button>
+            </div>
+            }
+        </div>
+    );
 }
 
-export default EditTestElementComp;
+EditTestElementComp.fragments = {
+    TESTTASK_DETAILS_FRAGMENT: TESTTASK_DETAILS_FRAGMENT,
+}

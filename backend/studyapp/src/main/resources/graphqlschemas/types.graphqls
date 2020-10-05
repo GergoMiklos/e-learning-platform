@@ -51,6 +51,7 @@ type Task {
 }
 
 type TaskAnswer {
+    id: ID!
     number: Int!
     answer: String!
 }
@@ -79,6 +80,7 @@ type TestTask {
 }
 
 type UserTestTaskStatus {
+    id: ID!
     testTask: TestTask!
     lastSolutionTime: String!
     correctSolutions: Int!

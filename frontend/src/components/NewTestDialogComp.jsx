@@ -1,119 +1,76 @@
-import React, {Component} from 'react'
-import {Formik, Form, Field, ErrorMessage} from 'formik'
+import React from 'react'
 import gql from "graphql-tag";
-import client from "../ApolloClient";
-import AuthenticationService from "../AuthenticationService";
 import {Modal} from "react-bootstrap";
-import toaster from "toasted-notes";
+import toast from "toasted-notes";
+import {useMutation} from "@apollo/client";
+import NameDescFormComp from "./NameDescFormComp";
 
-const CREATE_TEST = gql`
+const CREATE_TEST_MUTATION = gql`
     mutation CreateTest($groupId: ID!, $input: NameDescInput!) {
         createTest(groupId: $groupId, input: $input) {
             name
         }
     }`;
 
-class NewTestDialogComp extends Component {
-    constructor(props) {
-        super(props);
-    }
+export default function NewTestDialogComp(props) {
+    const [createTest] = useMutation(CREATE_TEST_MUTATION, {
+        onCompleted: (data) => toast.notify(`Test created with name: ${data.createTest.name}`),
+        onError: (error) => toast.notify(`Error :(`),
+        update: (cache, {data: {createTest}}) => {
+            cache.modify({
+                id: `Group:${props.groupId}`, //todo ezt honnan?
+                fields: {
+                    //Todo melyik jobb?
+                    tests(existingTestRefs, {INVALIDATE}) {
+                        return INVALIDATE;
+                    },
 
-    validate = (values) => {
-        let errors = {};
-        if (!values.name) {
-            errors.name = 'Name is required!';
-        } else if (!values.name || values.name.toString().length > 150 || values.name.toString().length < 5) {
-            errors.name = 'Name should be between min 5 and max 150 characters!';
-        }
-        if (!values.description) {
-            errors.description = 'Description is required!';
-        } else if (values.description.toString().length > 500 || values.description.toString().length < 5) {
-            errors.description = 'Description should be between min 5 and max 500 characters!';
-        }
-        return errors;
-    }
+                    //     tests(existingTestRefs = [], { readField }) {
+                    //         const newTestRef = cache.writeFragment({
+                    //             data: createTest,
+                    //             fragment: gql`
+                    //                 fragment addTest on Test {
+                    //                     id
+                    //                     name
+                    //                     description
+                    //                 }`
+                    //         });
+                    //
+                    //         if (existingTestRefs.some(ref => readField('id', ref) === newTestRef.id)) {
+                    //             return existingTestRefs;
+                    //         }
+                    //
+                    //         return [...existingTestRefs, newTestRef];
+                    //     },
+                },
+            });
+        },
+    });
 
-    onSubmit = (values) => {
-        client.mutate({
-            mutation: CREATE_TEST,
-            variables: {groupId: this.props.groupId, input: {description: values.description, name: values.name} },
-        })
-            .then(() => {
-                this.showNotification({
-                    text: 'Test created successfully',
-                    type: 'success',
-                })
-                this.props.onHide();
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'danger'});
-            })
-    }
 
-    showNotification = ({text, type}) => {
-        toaster.notify(() => (
-            <div className={`alert alert-${type}`}>
-                {text}
-            </div>
-        ))
-    }
-
-    render() {
-        return (
-            <Modal
-                show={this.props.show}
-                centered
-                onHide = {() => this.props.onHide()}
-            >
-                <div className="container">
-
-                    <div className="row bg-primary text-light shadow p-3">
-                        <h1 className="col-10">New Test</h1>
-                    </div>
-
-                    <Formik
-                        initialValues={{name: '', description: ''}}
-                        onSubmit={this.onSubmit}
-                        validateOnChange={true}
-                        validateOnBlur={true}
-                        validate={this.validate}
-                        enableReinitialize={true}
-                    >
-                        {({isValid}) => (
-                                <Form>
-                                    <fieldset className="from-group m-3">
-                                        <label>Name</label>
-                                        <Field className="form-control"
-                                               type="text"
-                                               name="name"
-                                               placeholder="Name"/>
-                                        <ErrorMessage className="text-danger" name="name" component="div"/>
-                                    </fieldset>
-                                    <fieldset className="from-group m-3">
-                                        <label>Description</label>
-                                        <Field className="form-control"
-                                               type="text"
-                                               name="description"
-                                               placeholder="Description"/>
-                                        <ErrorMessage className="text-danger" name="description" component="div"/>
-                                    </fieldset>
-                                    <div className="btn-group my-2">
-                                        <button type="submit" className="btn btn-primary" disabled={!isValid}>
-                                            Save
-                                        </button>
-                                        <button className="btn btn-light" onClick={() => this.props.onHide()}>
-                                            Back
-                                        </button>
-                                    </div>
-                                </Form>
-                            )}
-                    </Formik>
+    return (
+        <Modal
+            show={props.show}
+            centered
+            onHide={() => props.onHide()}
+        >
+            <div className="container">
+                <div className="row bg-primary text-light shadow p-3">
+                    <h1 className="col-10">New Test</h1>
                 </div>
-            </Modal>
-        );
-    }
-
-}
-
-export default NewTestDialogComp;
+                <NameDescFormComp
+                    initial
+                    onSubmit={values => {
+                        createTest({
+                            variables: {
+                                    groupId: props.groupId,
+                                    input: {description: values.description, name: values.name},
+                                }
+                        });
+                        props.onHide();
+                    }}
+                        />
+                        </div>
+                        </Modal>
+                        );
+                        }

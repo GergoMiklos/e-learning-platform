@@ -55,12 +55,4 @@ public class Test implements HasId {
         testTasks.add(task);
     }
 
-
-    public static class TestComparator implements Comparator<Test> {
-
-        @Override public int compare(Test t1, Test t2) {
-            return t1.getName().compareTo(t2.getName());
-        }
-    }
-
 }

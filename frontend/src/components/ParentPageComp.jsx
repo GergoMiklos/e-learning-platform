@@ -1,255 +1,114 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import gql from "graphql-tag";
-import client from "../ApolloClient";
-import toaster from "toasted-notes";
+import toast from "toasted-notes";
 import AuthenticationService from "../AuthenticationService";
+import StatusElementComp from "./StatusElementComp";
+import {useMutation, useQuery} from "@apollo/client";
+import ParentElementComp from "./ParentElementComp";
 
-// const state = {
-//     NOT_STARTED: "Not started",
-//     IN_PROGRESS: "In Progress",
-//     PROBLEM: "Problem",
-//     WARNING: "Warning",
-//     FINISHED: "Finished"
-// }
-
-const PARENT_FOLLOWED_STATUSES = gql`
+const PARENT_FOLLOWED_STATUSES_QUERY = gql`
     query getUser($userId: ID!) {
         user(userId: $userId) {
             id
-            name
-            code
             followedStudents {
-                id
-                name
-                code
-                userTestStatuses {
-                    status
-                    statusChangedTime
-                    correctSolutions
-                    allSolutions
-                    solvedTasks
-                    test {
-                        name
-                        description
-                        allTasks
-                    }
-
-                }
+                ...FollowedStudentDetails
             }
         }
-    }`
+    }
+${ParentElementComp.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT}`
 
 
-const ADD_FOLLOWED_STUDENT = gql`
+const ADD_FOLLOWED_STUDENT_MUTATION = gql`
     mutation AddStudentFromCodeToParent($parentId: ID!, $studentCode: String!) {
-        addStudentFromCodeToParent(parentId: $parentId, studentCode: $studentCode) {
-            name
-        }
-    }`;
-
-const DELETE_FOLLOWED_STUDENT = gql`
-    mutation DeleteStudentFromParent($parentId: ID!, $studentId: ID!) {
-        deleteStudentFromParent(parentId: $parentId, studentId: $studentId)
-    }`;
-
-
-class ParentPageComp extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            test: null,
-            addStudentCode: '',
-        };
-    }
-
-    componentDidMount() {
-        this.loadData();
-    }
-
-    handleInputChange = (event) => {
-        this.setState({addStudentCode: event.target.value.toUpperCase().slice(0, 8),});
-    }
-
-    addFollowedStudent = () => {
-        if (!this.state.addStudentCode) {
-            return;
-        }
-        let userId = AuthenticationService.getUserId();
-        client.mutate({
-            mutation: ADD_FOLLOWED_STUDENT,
-            variables: {parentId: userId, studentCode: this.state.addStudentCode}
-        })
-            .then(result => {
-                if (result.data.addStudentFromCodeToParent) {
-                    this.setState({addStudentCode: ''});
-                    this.showNotification({
-                        text: `User followed: ${result.data.addStudentFromCodeToParent.name}`,
-                        type: 'success'
-                    })
-                    this.loadData();
-                }
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.showNotification({text: `No student with code: ${this.state.addStudentCode}`, type: 'danger'})
-            })
-    }
-
-    deleteFollowed = (studentId) => {
-        let userId = AuthenticationService.getUserId();
-        client.mutate({
-            mutation: DELETE_FOLLOWED_STUDENT,
-            variables: {parentId: userId, studentId: studentId}
-        })
-            .then(() => {
-                this.showNotification({text: 'Student deleted successfully', type: 'success'});
-                this.loadData();
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'danger'});
-            })
-    }
-
-    loadData = () => {
-        let userId = AuthenticationService.getUserId();
-        client
-            .query({
-                query: PARENT_FOLLOWED_STATUSES,
-                variables: {userId: userId},
-                fetchPolicy: 'no-cache',
-            })
-            .then(result => {
-                if (result.data) {
-                    this.setState({user: result.data.user});
-                }
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'danger'})
-
-            });
-    }
-
-    isStatusInactive = (statusChangedTime) => {
-        const now = new Date();
-        const fiveMins = 1000 * 60 * 5;
-        return (now.getTime() - new Date(statusChangedTime).getTime()) > fiveMins;
-    }
-
-    calculateStatusColor = (userTestStatus) => {
-        if (userTestStatus.status === 'NOT_STARTED') {
-            return 'info';
-        } else if (this.isStatusInactive(userTestStatus.statusChangedTime)) {
-            return 'warning';
-        } else if (userTestStatus.status === 'IN_PROGRESS') {
-            return 'success';
-        } else if (userTestStatus.status === 'PROBLEM') {
-            return 'danger';
-        } else {
-            return 'secondary'
+        addStudentFromCodeToParent(parentId: $parentId, studentCode: $studentCode)  {
+            ...FollowedStudentDetails
         }
     }
+${ParentElementComp.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT}`
 
-    calculateStatusTime = (statusChangedTime) => {
-        const now = new Date();
-        const diff = now.getTime() - new Date(statusChangedTime).getTime();
-        if (diff < 1000 * 60 * 60) {
-            return `${Math.round(diff / (1000 * 60))} mins ago`
-        } else if (diff < 1000 * 60 * 60 * 24) {
-            return `${Math.round(diff / (1000 * 60 * 60))} hours ago`
-        } else {
-            return `${Math.round(diff / (1000 * 60 * 60 * 24))} days ago`
-        }
-    }
+export default function ParentPageComp(props) {
+    const userId = AuthenticationService.getUserId();
+    const [addFollowedCode, setAddFollowedCode] = useState('');
+    const {loading, error, data} = useQuery(PARENT_FOLLOWED_STATUSES_QUERY, {
+        variables: {userId: userId},
+    });
+    const [addFollowed] = useMutation(ADD_FOLLOWED_STUDENT_MUTATION, {
+        onCompleted: (data) => toast.notify(`Student followed: ${data.addStudentFromCodeToParent.name}`),
+        onError: (error) => toast.notify(`No user with code: ${error}`),
+        update: (cache, {data: {addStudentFromCodeToParent}}) => {
+            cache.modify({
+                id: `User:${data.user.id}`,
+                fields: {
+                    //Todo melyik jobb?
+                    // studentGroups(existingGroupRefs, {INVALIDATE}) {
+                    //     return INVALIDATE;
+                    // },
 
-    showNotification = ({text, type}) => {
-        toaster.notify(() => (
-            <div className={`alert alert-${type}`}>
-                {text}
-            </div>
-        ))
-    }
+                    followedStudents(existingUserRefs = [], {readField}) {
+                        const newUserRef = cache.writeFragment({
+                            data: addStudentFromCodeToParent,
+                            fragment: ParentElementComp.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT,
+                            fragmentName: 'FollowedStudentDetails',
+                        });
 
-    render() {
-        if (!this.state.user) {
-            return (<div/>);
-        }
-        return (
-            <div className="container">
-
-                <div className="row input-group mx-0 my-3">
-                    <div className="input-group-prepend">
-                        <span className="input-group-text">Follow student:</span>
-                    </div>
-                    <input type="text" className="form-control" placeholder="USER CODE"
-                           value={this.state.addStudentCode} onChange={this.handleInputChange}/>
-                    <div className="input-group-append">
-                        <button className="btn btn-outline-primary" onClick={() => this.addFollowedStudent()}>
-                            Add
-                        </button>
-                    </div>
-                </div>
-
-                <div className="row btn-group btn-block m-1">
-                    <div className="col-3 btn btn-info disabled">Not Started</div>
-                    <div className="col-3 btn btn-success disabled">In Progress</div>
-                    <div className="col-3 btn btn-warning disabled">Inactive</div>
-                    <div className="col-3 btn btn-danger disabled">Problem</div>
-                </div>
-
-                {this.state.user.followedStudents.map(student =>
-                    <div key={student.id}>
-                        <div className="row rounded shadow my-3 p-3 d-flex justify-content-between">
-                            <h1>{student.name}</h1>
-
-                            <button className="btn btn-danger" onClick={() => this.deleteFollowed(student.id)}>
-                                Delete
-                            </button>
-                        </div>
-
-                        {(student.userTestStatuses.length !== 0) &&
-                        <div className="table-responsive-sm">
-                            <table className="col-12 table table-striped">
-                                <thead>
-                                <tr>
-                                    <th>Test</th>
-                                    <th className="text-center">Tasks (Solved/All):</th>
-                                    <th className="text-center">Answers (Correct/All):</th>
-                                    <th className="text-center">Status</th>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                {student.userTestStatuses.map(uts =>
-                                    <tr key={uts.id}>
-                                        <td className="font-weight-bold">
-                                            {uts.test.name}
-                                        </td>
-                                        <td className="text-center">
-                                            {uts.solvedTasks}/{uts.test.allTasks}
-                                        </td>
-                                        <td className="text-center">
-                                            {uts.correctSolutions}/{uts.allSolutions}
-                                        </td>
-                                        <td className='text-center'>
-                                            <strong
-                                                className={`btn-${this.calculateStatusColor(uts)} btn rounded-pill disabled w-100`}>
-                                                {uts.status === 'NOT_STARTED' ? 'NOT STARTED' : this.calculateStatusTime(uts.statusChangedTime)}
-                                            </strong>
-                                        </td>
-                                    </tr>
-                                )}
-                                </tbody>
-                            </table>
-                        </div>
+                        if (existingUserRefs.some(ref => readField('id', ref) === newUserRef.id)) {
+                            return existingUserRefs;
                         }
-                    </div>
-                )}
-            </div>
-        );
+
+                        return [...existingUserRefs, newUserRef];
+                    },
+                },
+            });
+        },
+    });
+
+    if (!data) {
+        return (<div/>);
     }
 
+    return (
+        <div className="container">
+            <div className="row input-group mx-0 my-3">
+                <div className="input-group-prepend">
+                    <span className="input-group-text">Follow student:</span>
+                </div>
+                <input
+                    type="text" className="form-control"
+                    placeholder="USER CODE"
+                    value={addFollowedCode}
+                    onChange={event => setAddFollowedCode(event.target.value.toUpperCase().slice(0, 8))}
+                />
+                <div className="input-group-append">
+                    <button
+                        className="btn btn-outline-primary"
+                        onClick={() => addFollowed({
+                            variables: {
+                                parentId: data.user.id,
+                                studentCode: addFollowedCode
+                            }
+                        })}
+                        disabled={!addFollowedCode || !addFollowedCode.trim().length}
+                    >
+                        Add
+                    </button>
+                </div>
+            </div>
+
+            <div className="row btn-group btn-block m-1">
+                <div className="col-3 btn btn-info disabled">Not Started</div>
+                <div className="col-3 btn btn-success disabled">In Progress</div>
+                <div className="col-3 btn btn-warning disabled">Inactive</div>
+                <div className="col-3 btn btn-danger disabled">Problem</div>
+            </div>
+
+            {data.user.followedStudents.map(student =>
+                <ParentElementComp
+                    key={student.id}
+                    student={student}
+                    parentId={data.user.id}
+                />
+            )}
+        </div>
+    );
 }
 
-export default ParentPageComp;

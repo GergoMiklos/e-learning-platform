@@ -1,17 +1,24 @@
 import React, {Component} from 'react';
 import gql from "graphql-tag";
-import client from "../ApolloClient";
-import toaster from "toasted-notes";
+import {useQuery} from "@apollo/client";
+import {Link} from "react-router-dom";
+import StatusElementComp from "./StatusElementComp";
 
-// const state = {
-//     NOT_STARTED: "Not started",
-//     IN_PROGRESS: "In Progress",
-//     PROBLEM: "Problem",
-//     WARNING: "Warning",
-//     FINISHED: "Finished"
-// }
+const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
+    fragment UserTestStatusDetials on UserTestStatus {
+        id
+        status
+        statusChangedTime
+        correctSolutions
+        allSolutions
+        solvedTasks
+        user {
+            name
+            code
+        }
+    }`;
 
-const USERTESTSTATUSES = gql`
+const USERTESTSTATUSES_QUERY = gql`
     query getTest($testId: ID!) {
         test(testId: $testId) {
             id
@@ -19,106 +26,36 @@ const USERTESTSTATUSES = gql`
             description
             allTasks
             userTestStatuses {
-                status
-                statusChangedTime
-                correctSolutions
-                allSolutions
-                solvedTasks
-                user {
-                    name
-                    code
-                }
-
+                ...UserTestStatusDetials
             }
         }
-    }`
+    }
+${USERTESTSTATUS_DETAILS_FRAGMENT}`;
+
+const STATUS_CHANGE_SUBSCRIPTION = gql`
+    subscription onStatusChange($testId: ID!) {
+        testStatusChanges(testId: $testId) {
+            ...UserTestStatusDetials
+        }
+    }
+${USERTESTSTATUS_DETAILS_FRAGMENT}`;
 
 class TeacherLiveTestPageComp extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            test: null,
-        };
-    }
-
-    navigateBack = () => {
-        this.props.history.push(`/teach/group/${this.props.match.params.groupid}`);
-    }
 
     componentDidMount() {
-        this.loadData();
-    }
-
-    loadData = () => {
-        client
-            .query({
-                query: USERTESTSTATUSES,
-                variables: {testId: this.props.match.params.testid},
-                fetchPolicy: 'network-only',
-            })
-            .then(result => {
-                if (result.data) {
-                    this.setState({test: result.data.test});
-                }
-            })
-            .catch(errors => {
-                console.log(errors);
-                this.showNotification({text: 'Something went wrong', type: 'danger'});
-            });
-    }
-
-    isStatusInactive = (statusChangedTime) => {
-        const now = new Date();
-        const fiveMins = 1000 * 60 * 5;
-        return (now.getTime() - new Date(statusChangedTime).getTime()) > fiveMins;
-    }
-
-    calculateStatusColor = (userTestStatus) => {
-        if (userTestStatus.status === 'NOT_STARTED') {
-            return 'info';
-        } else if (this.isStatusInactive(userTestStatus.statusChangedTime)) {
-            return 'warning';
-        } else if (userTestStatus.status === 'IN_PROGRESS') {
-            return 'success';
-        } else if (userTestStatus.status === 'PROBLEM') {
-            return 'danger';
-        } else {
-            return 'secondary'
-        }
-    }
-
-    calculateStatusTime = (statusChangedTime) => {
-        const now = new Date();
-        const diff = now.getTime() - new Date(statusChangedTime).getTime();
-        if (diff < 1000 * 60 * 60) {
-            return `${Math.round(diff / (1000 * 60))} mins ago`
-        } else if (diff < 1000 * 60 * 60 * 24) {
-            return `${Math.round(diff / (1000 * 60 * 60))} hours ago`
-        } else {
-            return `${Math.round(diff / (1000 * 60 * 60 * 24))} days ago`
-        }
-    }
-
-    showNotification = ({text, type}) => {
-        toaster.notify(() => (
-            <div className={`alert alert-${type}`}>
-                {text}
-            </div>
-        ))
+        //Todo nem kell class és hoc, ha egy useEffect(..,[])-be rakom!
+        this.props.subscribe()
     }
 
     render() {
-        if (!this.state.test) {
-            return (<div/>);
-        }
         return (
             <div className="container">
-                <button className="row btn btn-secondary mt-1" onClick={() => this.navigateBack()}>
+                <Link to={`/teach/group/${this.props.match.params.groupid}`} className="row btn btn-secondary mt-1">
                     Back
-                </button>
+                </Link>
 
                 <div className="row bg-primary text-light rounded shadow my-3 p-3">
-                    <h1 className="col-10">{this.state.test.name}</h1>
+                    <h1 className="col-10">{this.props.data.test.name}</h1>
                 </div>
 
                 <div className="row btn-group btn-block m-1">
@@ -129,18 +66,18 @@ class TeacherLiveTestPageComp extends Component {
                 </div>
 
                 <div className="my-3 table-responsive-sm">
-                    <table className="table table-striped">
+                    <table className="table table-striped bg-light">
                         <thead>
                         <tr>
                             <th>Name</th>
                             <th className="text-center">Code</th>
-                            <th className="text-center">Tasks (Solved/All):</th>
-                            <th className="text-center">Answers (Correct/All):</th>
+                            <th className="text-center">Tasks (Solved/All)</th>
+                            <th className="text-center">Answers (Correct/All)</th>
                             <th className="text-center">Status</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {this.state.test.userTestStatuses.map(uts =>
+                        {this.props.data.test.userTestStatuses && this.props.data.test.userTestStatuses.map(uts =>
                             <tr key={uts.id}>
                                 <td className="font-weight-bold">
                                     {uts.user.name}
@@ -149,16 +86,13 @@ class TeacherLiveTestPageComp extends Component {
                                     {uts.user.code}
                                 </td>
                                 <td className="text-center">
-                                    {uts.solvedTasks}/{this.state.test.allTasks}
+                                    {uts.solvedTasks}/{this.props.data.test.allTasks}
                                 </td>
                                 <td className="text-center">
                                     {uts.correctSolutions}/{uts.allSolutions}
                                 </td>
-                                <td className='text-center'>
-                                    <strong
-                                        className={`btn-${this.calculateStatusColor(uts)} btn rounded-pill disabled w-100`}>
-                                        {uts.status === 'NOT_STARTED' ? 'NOT STARTED' : this.calculateStatusTime(uts.statusChangedTime)}
-                                    </strong>
+                                <td className="text-center">
+                                    <StatusElementComp userTestStatus={uts} />
                                 </td>
                             </tr>
                         )}
@@ -168,7 +102,46 @@ class TeacherLiveTestPageComp extends Component {
             </div>
         );
     }
-
 }
 
-export default TeacherLiveTestPageComp;
+export default function TeacherLiveTestPageCont(props) {
+    const {loading, error, data, subscribeToMore} = useQuery(
+        USERTESTSTATUSES_QUERY, {
+            variables: {testId: props.match.params.testid},
+            pollInterval: 60 * 1000,
+        });
+
+    if (!data) {
+        return (<div/>);
+    }
+
+    return (
+        <TeacherLiveTestPageComp
+            {...props}
+            data={data}
+            subscribe={() => subscribeToMore({
+                document: STATUS_CHANGE_SUBSCRIPTION,
+                variables: {testId: props.match.params.testid},
+                updateQuery: (prev, {subscriptionData}) => {
+                    if (!subscriptionData.data || !prev) {
+                        return prev;
+                    }
+                    const newUserTestStatus = subscriptionData.data.testStatusChanges;
+                    //TODO immutable?
+                    if (prev.test.userTestStatuses.some(uts => uts.id !== newUserTestStatus.id)) {
+                        return Object.assign({}, prev, {
+                            test: {
+                                userTestStatuses: [newUserTestStatus, ...prev.test.userTestStatuses]
+                            }
+                        });
+                    } //todo else magától megváltoztatja mert csak egy meglévő elem jött be! (lsd mutation)
+                }
+            })}
+        />
+    );
+}
+
+TeacherLiveTestPageCont.fragments = {
+    USERTESTSTATUS_DETAILS_FRAGMENT: USERTESTSTATUS_DETAILS_FRAGMENT,
+};
+

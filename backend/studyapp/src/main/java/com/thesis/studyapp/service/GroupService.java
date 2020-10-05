@@ -36,15 +36,14 @@ public class GroupService {
     @Transactional
     public Group createGroup(Long userId, NameDescInputDto input) {
         input.validate();
-        ZonedDateTime creationTime = dateUtil.getCurrentTime();
         User user = getUserById(userId, 1);
         Group group = Group.builder()
                 .name(input.getName())
                 .description(input.getDescription())
                 .code(createGroupCode())
                 .teachers(Collections.singleton(user))
-                .news(user.getName() + ": " + DateUtil.convertToIsoString(creationTime))
-                .newsChangedDate(creationTime)
+                .news(user.getName())
+                .newsChangedDate(dateUtil.getCurrentTime())
                 .build();
         return groupRepository.save(group, 1);
     }
@@ -128,6 +127,5 @@ public class GroupService {
         }
         return code;
     }
-
 
 }
