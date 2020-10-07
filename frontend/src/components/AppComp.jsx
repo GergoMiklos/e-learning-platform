@@ -26,7 +26,7 @@ class AppComp extends Component {
 
     render() {
         return (
-            <div className="bg-secondary min-vh-100" style={style}>
+            <div className="bg-secondary min-vh-100 pb-3" style={style}>
                 <NavBarComp></NavBarComp>
                 <Router>
                     <Switch>

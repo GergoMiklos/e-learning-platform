@@ -25,12 +25,14 @@ export default function NewTaskPageComp(props) {
     const [searchText, setSearchText] = useState('');
     const [showNewTaskDialog, setShowNewTaskDialog] = useState(false);
 
+    //TODO ez is végtelen hívás kb, olyan mintha a taskot nem bírná :D
     const [call, {data, loading, error, called, fetchMore}] = useLazyQuery(SEARCH_TASKS_QUERY, {
-            fetchPolicy: "network-only",
+            fetchPolicy: "network-only", //todo :( lehetne no cache (ha nem readfragmentből olvasnánk)
+            //fetchPolicy: "cache-first",
         }
     );
 
-    if (!called) {
+    if (!called && !data) {
         call({variables: {searchText: searchText, page: 0}});
     }
 
@@ -97,7 +99,7 @@ export default function NewTaskPageComp(props) {
                 </ul>
             </div>
 
-            {//(currentPage + 1 < data.searchTasks.totalPages) &&
+            {(currentPage + 1 < data.searchTasks.totalPages) &&
             <button
                 className="row btn btn-secondary btn-block"
                 onClick={() => fetchMore({ //TODO ezek rondák

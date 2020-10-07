@@ -9,12 +9,12 @@ const TASK_DETAILS_FRAGMENT = gql`
         id
         usage
         question
+        solutionNumber
         answers {
             id
             number
             answer
         }
-        solutionNumber
     }`;
 
 const ADD_TASK_MUTATION = gql`

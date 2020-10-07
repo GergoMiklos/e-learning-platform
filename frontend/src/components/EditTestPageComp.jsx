@@ -58,9 +58,9 @@ export default function EditTestPageComp(props) {
     const [unsavedTestTaskLevels, setUnsavedTestTaskLevels] = useState(ImmutableMap());
     const {data, loading, error} = useQuery(TEST_QUERY, {
         variables: {testId: props.match.params.testid},
-        fetchPolicy: 'cache-first',
+        //fetchPolicy: 'cache-first',
         //fetchPolicy: 'cache-and-network',
-        //fetchPolicy: 'network-only',
+        fetchPolicy: 'network-only',
     });
     const [changeTestTaskLevels] = useMutation(CHANGE_TESTTASK_LEVEL_MUTATION, {
         onCompleted: () => {
