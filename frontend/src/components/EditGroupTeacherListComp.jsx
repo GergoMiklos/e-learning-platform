@@ -4,6 +4,7 @@ import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
 import EditGroupUserElementComp from "./EditGroupUserElementComp";
 import EditGroupTeacherElementComp from "./EditGroupTeacherElementComp";
+import {useHistory} from "react-router-dom";
 
 const ADD_TEACHER_MUTATION = gql`
     mutation AddTeacherFromCodeToGroup($groupId: ID!, $userCode: String!) {

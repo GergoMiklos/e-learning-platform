@@ -19,6 +19,7 @@ public class SecurityContextUtil {
             if (isAuthenticated()) {
                 return (DefaultUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             } else {
+                logger.error("Unauthorized request prohibited");
                 throw new UnauthorizedException("Not authenticated");
             }
         } catch (Exception e) {

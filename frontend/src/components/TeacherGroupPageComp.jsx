@@ -4,6 +4,7 @@ import NewTestDialogComp from "./NewTestDialogComp";
 import toast from "toasted-notes";
 import {useMutation, useQuery} from "@apollo/client";
 import TeacherGroupElementComp from "./TeacherGroupElementComp";
+import {useHistory, useRouteMatch} from "react-router-dom";
 
 const TEACHER_GROUP_QUERY = gql`
     query getGroup($groupId: ID!) {
@@ -31,6 +32,8 @@ const CHANGE_NEWS_MUTATION = gql`
     }`;
 
 export default function TeacherGroupPageComp(props) {
+    let history = useHistory();
+    let match = useRouteMatch();
     const [showNewTestDialog, setShowNewTestDialog] = useState(false);
     const [selectedTestId, setSelectedTestId] = useState(null);
     const [changeNewsText, setChangeNewsText] = useState(null);
@@ -50,7 +53,7 @@ export default function TeacherGroupPageComp(props) {
     return (
         <div className="container">
             <div className="row justify-content-between my-1">
-                <button className="col-auto btn btn-secondary" onClick={() => props.history.push(`/teach`)}>
+                <button className="col-auto btn btn-secondary" onClick={() => history.goBack()}>
                     Back
                 </button>
                 <button
@@ -129,8 +132,6 @@ export default function TeacherGroupPageComp(props) {
                             <TeacherGroupElementComp
                                 testId={test.id}
                                 selectedTestId={selectedTestId}
-                                onEdit={() => props.history.push(`/teach/group/${data.group.id}/test/${test.id}/edit`)}
-                                onStatuses={() => props.history.push(`/teach/group/${data.group.id}/test/${test.id}`)}
                             />
                         </li>
                     )}

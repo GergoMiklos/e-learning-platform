@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import gql from "graphql-tag";
 import toast from 'toasted-notes';
-import AuthenticationService from "../AuthenticationService";
 import {useMutation, useQuery} from "@apollo/client";
 import StudentGroupElementComp from "./StudentGroupElementComp";
+import AuthService from "../AuthService";
+import {useHistory} from "react-router-dom";
 
 const STUDENT_GROUP_QUERY = gql`
     query getGroup($groupId: ID!) {
@@ -51,7 +52,7 @@ export default function StudentGroupPageComp(props) {
                 <button className="col-auto btn btn-outline-warning"
                         onClick={() => leaveGroup({
                             variables: {
-                                userId: AuthenticationService.getUserId(),
+                                userId: AuthService.getUserId(),
                                 groupId: props.match.params.groupid
                             }
                         })}

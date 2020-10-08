@@ -4,6 +4,7 @@ import toast from "toasted-notes";
 import EditTestDetailsComp from "./EditTestDetailsComp";
 import EditTestElementComp from "./EditTestElementComp";
 import {useMutation, useQuery} from "@apollo/client";
+import {useHistory} from "react-router-dom";
 
 const {Map: ImmutableMap} = require('immutable');
 

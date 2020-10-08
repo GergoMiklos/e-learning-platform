@@ -4,6 +4,7 @@ import client from "../ApolloClient";
 import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
 import NameDescFormComp from "./NameDescFormComp";
+import {useHistory} from "react-router-dom";
 
 //todo itt lehtne loadolni egy fájlból is, és úgy beállítani
 const TEST_DETAILS_FRAGMENT = gql`

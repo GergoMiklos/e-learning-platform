@@ -3,6 +3,7 @@ import client from "../ApolloClient";
 import {useMutation} from "@apollo/client";
 import toast from "toasted-notes";
 import React from "react";
+import {useHistory} from "react-router-dom";
 
 const TASK_DETAILS_FRAGMENT = gql`
     fragment TaskDetails on Task {

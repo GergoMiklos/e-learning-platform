@@ -1,8 +1,9 @@
 import React, {useState} from 'react'
-import AuthenticationService from "../AuthenticationService";
 import gql from "graphql-tag";
 import toast from "toasted-notes";
 import {useMutation, useQuery} from "@apollo/client";
+import AuthService from "../AuthService";
+import {useHistory} from "react-router-dom";
 
 const NEXT_TASK_QUERY = gql`
     query getNextTask($userId: ID!, $testId: ID!) {
@@ -33,7 +34,7 @@ const CHECK_TASK_SOLUTION_MUTATION = gql`
 export default function StudentLiveTestPageComp(props) {
     const [chosenAnswerNumber, chooseAnswerNumber] = useState(null);
     const {loading, error, data, refetch} = useQuery(NEXT_TASK_QUERY, {
-        variables: {userId: AuthenticationService.getUserId(), testId: props.match.params.testid},
+        variables: {userId: AuthService.getUserId(), testId: props.match.params.testid},
         fetchPolicy: "cache-first",
     },)
     const [checkSolution, {data: solutionData}] = useMutation(CHECK_TASK_SOLUTION_MUTATION, {
@@ -81,7 +82,7 @@ export default function StudentLiveTestPageComp(props) {
                                     onClick={() => {
                                         checkSolution({
                                             variables: {
-                                                userId: AuthenticationService.getUserId(),
+                                                userId: AuthService.getUserId(),
                                                 testId: props.match.params.testid,
                                                 solutionNumber: number
                                             }

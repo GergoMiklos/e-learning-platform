@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import {Modal} from "react-bootstrap";
 import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
+import {useHistory} from "react-router-dom";
 
 const CREATE_TASK_MUTATION = gql`
     mutation CreateTask($taskInput: TaskInput!) {

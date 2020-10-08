@@ -1,17 +1,48 @@
 import React from 'react';
 import {ErrorMessage, Field, Form, Formik} from "formik";
+import gql from "graphql-tag";
+import {useMutation} from "@apollo/client";
+import {useHistory} from "react-router-dom";
+import toast from "toasted-notes";
+import AuthService from "../AuthService";
+
+const LOGIN_MUTATION = gql`
+    mutation Login($input: LoginInput!) {
+        login(input: $input) {
+            token
+            userId
+        }
+    }`;
+
 
 export default function LoginPageComp(props) {
+    let history = useHistory();
+
+    const [login] = useMutation(LOGIN_MUTATION, {
+        onCompleted: (data) => {
+            console.log(data)
+            AuthService.setLogin({token: data.login.token, userId: data.login.userId})
+            history.push(`/student`);
+        },
+        onError: () => toast.notify(`Invalid username or password`),
+    });
 
     return (
         <div className="container">
             <div className="row justify-content-center">
                 <Formik
-                    initialValues={{Username: '', Password: ''}}
-                    onSubmit={this.onSubmit}
+                    initialValues={{username: '', password: ''}}
+                    onSubmit={values => login({
+                        variables: {
+                            input: {
+                                username: values.username,
+                                password: values.password
+                            }
+                        }
+                    })}
                     validateOnChange={true}
                     validateOnBlur={true}
-                    validate={this.validate}
+                    validate={validate}
                     enableReinitialize={true}
                 >
                     {({isValid}) => (
@@ -49,7 +80,12 @@ export default function LoginPageComp(props) {
             </div>
             <div className="row justify-content-center">
                 <div className="col-12 col-md-6 col-lg-4 my-3">
-                    <div className="btn btn-light btn-block">Sign up</div>
+                    <div
+                        className="btn btn-light btn-block"
+                        onClick={() => props.history.push(`/register`)}
+                    >
+                        Sign up
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,30 +94,11 @@ export default function LoginPageComp(props) {
 
 const validate = (values) => {
     let errors = {};
-    if (!values.username || values.username.length > 50 || values.username.length < 5) {
-        errors.username = 'Valid user name is required!';
-    }
-    if (!values.password || values.password.length > 50 || values.password.length < 5) {
-        errors.passsword = 'Valid password is required!';
-    }
+    // if (!values.username || values.username.length > 50 || values.username.length < 5) {
+    //     errors.username = 'Valid user name is required!';
+    // }
+    // if (!values.password || values.password.length > 50 || values.password.length < 5) {
+    //     errors.passsword = 'Valid password is required!';
+    // }
     return errors;
-}
-
-const onSubmit = (values) => {
-    // let userId = AuthenticationService.getUserId();
-    // client.mutate({
-    //     mutation: CREATE_GROUP,
-    //     variables: {input: {description: values.description, name: values.name}, userId: userId},
-    // })
-    //     .then(() => {
-    //         this.showNotification({
-    //             text: 'Group created successfully',
-    //             type: 'success',
-    //         })
-    //         this.props.onHide();
-    //     })
-    //     .catch(errors => {
-    //         console.log(errors);
-    //         this.showNotification({text: 'Something went wrong', type: 'danger'});
-    //     })
 }

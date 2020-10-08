@@ -5,6 +5,7 @@ import {useQuery} from "@apollo/client";
 import EditGroupTeacherListComp from "./EditGroupTeacherListComp";
 import EditGroupStudentListComp from "./EditGroupStudentListComp";
 import EditGroupUserElementComp from "./EditGroupUserElementComp";
+import {useHistory} from "react-router-dom";
 
 //TODO itt írd ki azt is ami nekem kell, pl id-k!
 const EDIT_GROUP_QUERY = gql`

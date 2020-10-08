@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class StatusSubscriptionUtil implements DisposableBean, SubscriptionUtil<Long, UserTestStatus> {
+public class StatusSubscriptionUtil implements DisposableBean {
 
     private final UserTestStatusService userTestStatusService;
     private final Logger logger = LoggerFactory.getLogger(StatusSubscriptionUtil.class);
@@ -54,7 +54,6 @@ public class StatusSubscriptionUtil implements DisposableBean, SubscriptionUtil<
         publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
     }
 
-    @Override
     public Flowable<UserTestStatus> getPublisher(Long testId) {
         return publisher.filter(userTestStatus -> userTestStatus.getTest().getId().equals(testId));
     }

@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import client from "../ApolloClient";
 import React from "react";
+import {useHistory} from "react-router-dom";
 
 const USER_DETAILS_FRAGMENT = gql`
     fragment UserDetails on User {

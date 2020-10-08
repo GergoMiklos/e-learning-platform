@@ -36,7 +36,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
                 DefaultUserDetails userDetails = (DefaultUserDetails) userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        userDetails.getUserId(), null, userDetails.getAuthorities());
+                        userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

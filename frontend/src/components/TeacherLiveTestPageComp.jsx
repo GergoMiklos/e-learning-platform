@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import {useQuery} from "@apollo/client";
 import {Link} from "react-router-dom";
 import StatusElementComp from "./StatusElementComp";
+import {useHistory} from "react-router-dom";
 
 const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
     fragment UserTestStatusDetials on UserTestStatus {

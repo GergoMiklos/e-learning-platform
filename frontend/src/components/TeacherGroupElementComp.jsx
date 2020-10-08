@@ -1,6 +1,7 @@
 import gql from "graphql-tag";
 import client from "../ApolloClient";
 import React from "react";
+import {useHistory, useRouteMatch} from "react-router-dom";
 
 const TEST_DETAILS_FRAGMENT = gql`
     fragment TestDetials on Test {
@@ -10,6 +11,9 @@ const TEST_DETAILS_FRAGMENT = gql`
     }`;
 
 export default function TeacherGroupElementComp(props) {
+    let history = useHistory();
+    let match = useRouteMatch();
+
     const test = client.readFragment({
         id: `Test:${props.testId}`,
         fragment: TEST_DETAILS_FRAGMENT,
@@ -21,10 +25,10 @@ export default function TeacherGroupElementComp(props) {
                 <strong>{test.name}</strong>
                 {props.selectedTestId === test.id &&
                 <span>
-                    <button className="btn btn-primary btn-sm" onClick={() => props.onStatuses()}>
+                    <button className="btn btn-primary btn-sm" onClick={() => history.push(`${match.url}/test/${test.id}`)}>
                         Statuses
                     </button>
-                    <button className="btn btn-outline-warning btn-sm" onClick={() => props.onEdit()}>
+                    <button className="btn btn-outline-warning btn-sm" onClick={() =>  history.push(`${match.url}/test/${test.id}/edit`)}>
                         Edit
                     </button>
                 </span>

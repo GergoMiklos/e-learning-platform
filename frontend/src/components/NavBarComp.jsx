@@ -1,28 +1,36 @@
-import React from 'react';
+import React, {useState} from 'react';
+import AuthService from "../AuthService";
+import {NavLink, Link} from "react-router-dom";
 
 export default function NavBarComp() {
+    const [isCollapsed, setCollapsed] = useState(true)
 
     return (
         <div>
-            <nav className="navbar navbar-expand navbar-dark bg-primary">
-                <a className="navbar-brand" href="/">LearnWell</a>
-                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <nav className="navbar navbar-expand-md navbar-dark bg-primary">
+                <Link className="navbar-brand" to="/student">LearnWell</Link>
+                <button className="navbar-toggler" onClick={() => setCollapsed(!isCollapsed)}>
                     <span className="navbar-toggler-icon"/>
                 </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav">
+                //todo
+                {AuthService.isLoggedIn() &&
+                <collapse className={`navbar-collapse ${isCollapsed? 'collapse' : ''}`}>
+                    <ul className="navbar-nav mr-auto">
                         <li className="nav-item">
-                            <a className="nav-link" href="/learn">Student<span className="sr-only">(current)</span></a>
+                            <NavLink activeClassName="active" className="nav-link" to="/student">Student<span className="sr-only">(current)</span></NavLink>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/teach">Teacher</a>
+                            <NavLink activeClassName="active" className="nav-link" to="/teacher">Teacher</NavLink>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/parent">Parent</a>
+                            <NavLink activeClassName="active" className="nav-link" to="/parent">Parent</NavLink>
                         </li>
                     </ul>
-                </div>
+                    <span className="navbar-nav">
+                        <Link className="nav-link" to="/login" onClick={() => AuthService.logout()}>Logout</Link>
+                    </span>
+                </collapse>
+                }
             </nav>
         </div>
     )

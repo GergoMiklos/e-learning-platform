@@ -3,6 +3,7 @@ import {useMutation} from "@apollo/client";
 import toast from "toasted-notes";
 import React from "react";
 import EditGroupUserElementComp from "./EditGroupUserElementComp";
+import {useHistory} from "react-router-dom";
 
 const DELETE_STUDENT_MUTATION = gql`
     mutation DeleteStudentFromGroup($userId: ID!, $groupId: ID!) {

@@ -1,10 +1,11 @@
 import React from 'react'
 import gql from "graphql-tag";
-import AuthenticationService from "../AuthenticationService";
 import {Modal} from "react-bootstrap";
 import {useMutation} from "@apollo/client";
 import toast from "toasted-notes";
 import NameDescFormComp from "./NameDescFormComp";
+import AuthService from "../AuthService";
+import {useHistory} from "react-router-dom";
 
 const CREATE_GROUP_MUTATION = gql`
     mutation CreateGroup($userId: ID!, $input: NameDescInput!) {
@@ -19,7 +20,7 @@ export default function NewGroupDialogComp(props) {
         onError: (error) => toast.notify(`Error`),
         update: (cache, {data: {createGroup}}) => {
             cache.modify({
-                id: `User:${AuthenticationService.getUserId()}`, //todo ezt honnan?
+                id: `User:${AuthService.getUserId()}`, //todo ezt honnan?
                 fields: {
                     //Todo melyik jobb?
                     teacherGroups(existingGroupRefs, {INVALIDATE}) {
@@ -73,7 +74,7 @@ export default function NewGroupDialogComp(props) {
                                     description: values.description,
                                     name: values.name
                                 },
-                                userId: AuthenticationService.getUserId(),
+                                userId: AuthService.getUserId(),
                             },
                         })
                         props.onHide();

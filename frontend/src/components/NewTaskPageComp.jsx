@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import NewTaskDialogComp from "./NewTaskDialogComp";
 import NewTaskSearchElementComp from "./NewTaskSearchElementComp";
 import {useLazyQuery} from "@apollo/client";
+import {useHistory} from "react-router-dom";
 
 const SEARCH_TASKS_QUERY = gql`
     query SearchTasks($searchText: String, $page: Int!) {

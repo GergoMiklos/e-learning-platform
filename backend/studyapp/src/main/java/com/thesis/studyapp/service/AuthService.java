@@ -9,6 +9,7 @@ import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.model.UserAuthData;
 import com.thesis.studyapp.repository.UserRepository;
 import com.thesis.studyapp.security.jwt.JwtUtil;
+import com.thesis.studyapp.security.service.DefaultUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,10 +30,12 @@ public class AuthService {
 
     @Transactional
     public void register(RegisterInputDto registerInputDto) {
+        registerInputDto.validate();
+
         if (!isUsernameAlreadyRegistered(registerInputDto.getUsername())) {
             userRepository.save(convertToUser(registerInputDto));
         } else {
-            throw new InvalidInputException("username", "Username is already registered.");
+            throw new InvalidInputException("Username is already registered", "username");
         }
     }
 
@@ -44,11 +47,11 @@ public class AuthService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwtToken = jwtUtil.generateJwtToken(authentication);
-            Long userId = (Long) authentication.getPrincipal();
+            DefaultUserDetails userDetails = (DefaultUserDetails) authentication.getPrincipal();
 
             return TokenDto.builder()
                     .token(jwtToken)
-                    .userId(userId)
+                    .userId(userDetails.getUserId())
                     .type("Bearer")
                     .build();
 

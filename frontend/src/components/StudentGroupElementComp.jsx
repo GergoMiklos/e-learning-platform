@@ -1,6 +1,7 @@
 import React from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
+import {useHistory} from "react-router-dom";
 
 const TEST_DETAILS_FRAGMENT = gql`
     fragment TestDetials on Test {

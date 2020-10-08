@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import gql from "graphql-tag";
-import AuthenticationService from "../AuthenticationService";
 import NewGroupDialogComp from "./NewGroupDialogComp";
 import GroupListElementComp from "./GroupListElementComp";
 import {useQuery} from "@apollo/client";
+import AuthService from "../AuthService";
+import {useHistory} from "react-router-dom";
 
 
 const TEACHER_GROUPS_QUERY = gql`
@@ -19,9 +20,10 @@ const TEACHER_GROUPS_QUERY = gql`
     }
 ${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 
-export default function TeacherPageComp(props) {
+export default function TeacherPageComp() {
+    let history = useHistory();
     //todo useeffect a useridra?
-    const userId = AuthenticationService.getUserId();
+    const userId = AuthService.getUserId();
     const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
     const {loading, error, data} = useQuery(
         TEACHER_GROUPS_QUERY, {
@@ -57,7 +59,7 @@ export default function TeacherPageComp(props) {
                     {data.user.teacherGroups.map(group =>
                         <li
                             className="list-group-item list-group-item-action"
-                            onClick={() => props.history.push(`/teach/group/${group.id}`)}
+                            onClick={() => history.push(`/teacher/group/${group.id}`)}
                             key={group.id}
                         >
                             <GroupListElementComp groupId={group.id}/>

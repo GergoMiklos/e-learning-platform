@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import gql from 'graphql-tag';
-import AuthenticationService from "../AuthenticationService";
 import toast from 'toasted-notes';
 import {useMutation, useQuery} from "@apollo/client";
 import GroupListElementComp from "./GroupListElementComp";
+import AuthService from "../AuthService";
+import {useHistory} from "react-router-dom";
 
 //todo itt lehetne loadolni egy fájlból is, és úgy beállítani
 const STUDENT_GROUPS_QUERY = gql`
@@ -30,7 +31,7 @@ ${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 
 export default function StudentPageComp(props) {
     //todo useeffect a useridra?
-    const userId = AuthenticationService.getUserId();
+    const userId = AuthService.getUserId();
     const [joinGroupCode, setJoinGroupCode] = useState('');
     const {loading, error, data} = useQuery(
         STUDENT_GROUPS_QUERY, {

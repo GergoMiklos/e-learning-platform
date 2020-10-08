@@ -1,6 +1,7 @@
 import React from 'react'
 import client from "../ApolloClient";
 import gql from 'graphql-tag';
+import {useHistory} from "react-router-dom";
 
 
 //todo itt lehtne loadolni egy fájlból is, és úgy beállítani

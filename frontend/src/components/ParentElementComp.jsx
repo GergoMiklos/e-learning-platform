@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import gql from "graphql-tag";
 import toast from "toasted-notes";
 import StatusElementComp from "./StatusElementComp";
-import {useMutation, useQuery} from "@apollo/client";
+import {useMutation} from "@apollo/client";
 
 const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
     fragment UserTestStatusDetials on UserTestStatus {
@@ -36,7 +36,7 @@ const DELETE_FOLLOWED_STUDENT_MUTATION = gql`
         deleteStudentFromParent(parentId: $parentId, studentId: $studentId)
     }`;
 
-
+//Todo read fragment studentId
 export default function ParentElementComp(props) {
     const [deleteFollowed] = useMutation(DELETE_FOLLOWED_STUDENT_MUTATION, {
         onCompleted: () => toast.notify(`Student deleted successfully`),

@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import gql from "graphql-tag";
 import toast from "toasted-notes";
-import AuthenticationService from "../AuthenticationService";
-import StatusElementComp from "./StatusElementComp";
 import {useMutation, useQuery} from "@apollo/client";
 import ParentElementComp from "./ParentElementComp";
+import AuthService from "../AuthService";
+import {useHistory} from "react-router-dom";
 
 const PARENT_FOLLOWED_STATUSES_QUERY = gql`
     query getUser($userId: ID!) {
@@ -27,14 +27,14 @@ const ADD_FOLLOWED_STUDENT_MUTATION = gql`
 ${ParentElementComp.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT}`
 
 export default function ParentPageComp(props) {
-    const userId = AuthenticationService.getUserId();
+    const userId = AuthService.getUserId();
     const [addFollowedCode, setAddFollowedCode] = useState('');
     const {loading, error, data} = useQuery(PARENT_FOLLOWED_STATUSES_QUERY, {
         variables: {userId: userId},
     });
     const [addFollowed] = useMutation(ADD_FOLLOWED_STUDENT_MUTATION, {
         onCompleted: (data) => toast.notify(`Student followed: ${data.addStudentFromCodeToParent.name}`),
-        onError: (error) => toast.notify(`No user with code: ${error}`),
+        onError: (error) => toast.notify(`No user with code: ${addFollowedCode}`),
         update: (cache, {data: {addStudentFromCodeToParent}}) => {
             cache.modify({
                 id: `User:${data.user.id}`,
@@ -62,7 +62,7 @@ export default function ParentPageComp(props) {
         },
     });
 
-    if (!data) {
+    if (!data || !data.user) {
         return (<div/>);
     }
 
