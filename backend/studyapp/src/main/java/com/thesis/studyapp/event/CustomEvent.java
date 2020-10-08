@@ -16,16 +16,3 @@ public class CustomEvent<T> extends ApplicationEvent {
     }
 }
 
-
-//todo egy event a testservice-nek, aztán az visszatér egy evenettel  a subscriptnak?
-//@EqualsAndHashCode(callSuper = true)
-//@Builder
-//@Data
-//public class CustomEvent extends ApplicationEvent {
-//    private Long testId;
-//
-//    public CustomEvent(Object source, Long testId) {
-//        super(source);
-//        this.testId = testId;
-//    }
-//}

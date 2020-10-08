@@ -46,9 +46,7 @@ public class UserTestStatusService {
         return userTestTaskStatusRepository.findByIdIn(ids, 1);
     }
 
-    //TODO ilyenkor testId check? vagy pl get Test with depth 1, filter userId == userId && deprecated == false
-    // vagy ez ne is legyen itt mert csak objectresolverből hívjuk?
-    // (FONTOS: objectresolvernél ha errort dobunk egy filednél, attól még a többi meglehet (külön folyamat))
+    //todo (FONTOS: objectresolvernél ha errort dobunk egy filednél, attól még a többi meglehet (külön folyamat))
     public List<UserTestStatus> getUserTestStatusesForTest(Long testId) {
         return userTestStatusRepository.findByTestIdOrderByUserName(testId, 1);
     }
@@ -176,7 +174,7 @@ public class UserTestStatusService {
     public TestTask getNextTask(Long userId, Long testId) {
         UserTestStatus userTestStatus = userTestStatusRepository
                 .findFirstByUserIdAndTestId(userId, testId, 2)
-                .orElseThrow(() -> new CustomGraphQLException("No UserTestStatus available")); //TODO, ez csak query, kell-e?
+                .orElseThrow(() -> new CustomGraphQLException("No UserTestStatus available"));
 
         calculateNextTask(userTestStatus);
 

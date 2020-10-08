@@ -12,7 +12,6 @@ import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,8 +28,9 @@ public class User implements HasId {
     @Index(unique = true)
     private String code;
     private String name;
-    private String email;
-    private String password;
+
+    @Relationship(type = "AUTHDATA", direction = Relationship.OUTGOING)
+    private UserAuthData authData;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude

@@ -2,13 +2,10 @@ package com.thesis.studyapp.resolver.endpoint;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.service.TestService;
-import com.thesis.studyapp.util.SubscriptionUtil;
 import lombok.RequiredArgsConstructor;
-import org.reactivestreams.Publisher;
 import org.springframework.stereotype.Component;
 
 

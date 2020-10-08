@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TaskAnswerDto {
-    int number;
-    String answer;
+public class LoginInputDto {
+    private String username;
+    private String password;
 }

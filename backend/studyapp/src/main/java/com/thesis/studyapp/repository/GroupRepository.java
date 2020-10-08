@@ -12,13 +12,8 @@ import java.util.Optional;
 
 @Repository
 public interface GroupRepository extends Neo4jRepository<Group, Long> {
-    //TODO RETURN_AS_....
-    String RETURN_GROUPDTO = " RETURN id(g) AS id, g.name AS name, g.code AS code, g.description AS description, g.news AS news, g.newsChangedDate";
-    String ORDER_BY_NAME = " ORDER BY g.name";
 
     Optional<Group> findByCodeIgnoreCase(String name, @Depth int depth);
-
-    boolean existsByCodeIgnoreCase(String code);
 
     List<Group> findByIdIn(List<Long> groupIds, @Depth int depth);
 
@@ -26,17 +21,7 @@ public interface GroupRepository extends Neo4jRepository<Group, Long> {
 
     List<Group> findByTeachersIdOrderByName(Long teacherId, @Depth int depth);
 
-//    @Query("MATCH (g:Group) WHERE id(g) = $0 " + RETURN_GROUPDTO)
-//    Optional<GroupDto> getById(Long groupId);
-//
-//    @Query("MATCH (g:Group) WHERE id(g) IN $0 " + RETURN_GROUPDTO)
-//    List<GroupDto> getByIds(List<Long> groupIds);
-//
-//    @Query("MATCH (u:User)-[gs:GROUPSTUDENT]-(g:Group) WHERE id(u) = $0" + RETURN_GROUPDTO + ORDER_BY_NAME)
-//    List<GroupDto> getByStudentId(Long userId);
-//
-//    @Query("MATCH (u:User)-[gt:GROUPTEACHER]-(g:Group) WHERE id(u) = $0" + RETURN_GROUPDTO + ORDER_BY_NAME)
-//    List<GroupDto> getByTeacherId(Long userId);
+    boolean existsByCodeIgnoreCase(String code);
 
     @Query("MATCH (student:User)-[gs:GROUPSTUDENT]-(g:Group)" +
             " WHERE id(student) = $studentId AND id(g) = $groupId" +

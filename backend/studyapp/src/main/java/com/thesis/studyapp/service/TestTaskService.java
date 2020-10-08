@@ -71,8 +71,6 @@ public class TestTaskService {
         return testTaskRepository.findByTestIdOrderByLevel(testId, 1);
     }
 
-    //todo usage -1
-    //TODO usage lehetne dinamikus pl tetTasks.size()? NE!
     //TODO taskService increase/descrease usage fgv(id) !!!
     @Transactional
     public void deleteTaskFromTest(Long testTaskId) {
@@ -84,9 +82,6 @@ public class TestTaskService {
         taskRepository.save(task, 0);
     }
 
-    //Todo, minden Query típusú függvény Optional-lal térjen vissza (GraphQL kezeli),
-    // és ha get->null-nál ne dobjunk kivételt,
-    // csak Mutation-nél, amikor már tényleg probléma van
     private TestTask getTestTaskById(Long testTaskId, int depth) {
         return testTaskRepository.findById(testTaskId, Math.max(depth, 1))
                 .orElseThrow(() -> new CustomGraphQLException("No testTask with id: " + testTaskId));

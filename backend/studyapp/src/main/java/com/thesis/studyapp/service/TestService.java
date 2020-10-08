@@ -34,7 +34,6 @@ public class TestService {
         return testRepository.findByIdIn(ids, 1);
     }
 
-
     //TODO first task? Ha valaki később csatlakozik?
     @Transactional
     public Test createTest(Long groupId, NameDescInputDto input) {
@@ -64,7 +63,7 @@ public class TestService {
     }
 
     //todo ez csak akkor működik ha vizsgálod !!! :(
-    //todo saveljen is, ezt lehet használni group serviceből is
+    //todo saveljen is? Úgy ezt lehet használni group serviceből is
     public Set<UserTestStatus> createUserTestStatuses(Set<User> students) {
         return students.stream()
                 .map(student -> UserTestStatus.builder()

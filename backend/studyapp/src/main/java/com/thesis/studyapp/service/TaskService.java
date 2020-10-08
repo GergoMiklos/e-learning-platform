@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,6 @@ public class TaskService {
         }
     }
 
-    //todo convertInputToTask...
     public Task createTask(TaskInputDto taskInputDto) {
         return taskRepository.save(convertInputToTask(taskInputDto), 1);
     }
@@ -53,6 +53,7 @@ public class TaskService {
     }
 
     private Task convertInputToTask(TaskInputDto taskInputDto) {
+        Random random = new Random();
         int solutionNumber = 1;
         Set<TaskAnswer> answers = new HashSet<>();
 
@@ -65,8 +66,9 @@ public class TaskService {
         Set<TaskAnswer> wrongs = taskInputDto.getIncorrectAnswers().stream()
                 .map(answer -> TaskAnswer.builder()
                         .answer(answer)
-                        .number(taskInputDto.getIncorrectAnswers().indexOf(answer) + 2)
-                        .build())
+                        .number(random.nextInt(1000) + 1)
+                        .build()
+                )
                 .collect(Collectors.toSet());
         answers.addAll(wrongs);
 

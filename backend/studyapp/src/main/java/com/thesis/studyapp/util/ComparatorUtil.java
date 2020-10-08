@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
 
-//todo static innerek ide? van értelme? vagy getComparator()-ok?
-//todo thenComparing? Ehhez kell a 0-val való vissza térés!
 public class ComparatorUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ComparatorUtil.class);
@@ -58,7 +56,7 @@ public class ComparatorUtil {
 
     public static Comparator<UserTestTaskStatus> getUserTestTaskStatusComparator() {
         return ((Comparator<UserTestTaskStatus>) (utts1, utts2) -> {
-            if (utts1.getAllSolutions() == 0 || utts2.getAllSolutions() == 0) {
+            if (utts1.getAllSolutions() == 0 && utts2.getAllSolutions() == 0) {
                 return 0;
             }
             if (utts1.getTestTask() == null || utts2.getTestTask() == null) {

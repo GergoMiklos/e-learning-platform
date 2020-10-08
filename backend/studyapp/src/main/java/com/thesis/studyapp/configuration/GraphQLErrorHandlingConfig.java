@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-public class ErrorHandlingConfiguration {
+public class GraphQLErrorHandlingConfig {
 
     @Bean
     public GraphQLErrorHandler errorHandler() {
@@ -51,7 +51,6 @@ public class ErrorHandlingConfiguration {
 
             @Override
             protected List<GraphQLError> filterGraphQLErrors(List<GraphQLError> errors) {
-//                return (List)errors.stream().filter(this::isClientError).collect(Collectors.toList());
                 return errors.stream().filter(this::isClientError).collect(Collectors.toList());
             }
 

@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @RequiredArgsConstructor
-public class DataLoaderConfiguration {
+public class DataLoaderConfig {
 
     private final UserService userService;
     private final TestService testService;

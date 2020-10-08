@@ -1,4 +1,7 @@
 type Mutation {
+    register(input: RegisterInput!): Boolean
+    login(input: LoginInput!): Token!
+
     createGroup(userId: ID!, input: NameDescInput!): Group!
     editGroup(groupId: ID!, input: NameDescInput!): Group!
     changeGroupNews(groupId: ID!, text: String!): Group!

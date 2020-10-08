@@ -43,7 +43,7 @@ export default function StudentPageComp(props) {
             cache.modify({
                 id: `User:${data.user.id}`,
                 fields: {
-                    //Todo melyik jobb?
+                    //Todo melyik jobb? A sorrendet tönkre teszi a második megoldás
                     // studentGroups(existingGroupRefs, {INVALIDATE}) {
                     //     return INVALIDATE;
                     // },
@@ -56,15 +56,14 @@ export default function StudentPageComp(props) {
                         if (existingGroupRefs.some(ref => readField('id', ref) === newGroupRef.id)) {
                             return existingGroupRefs;
                         }
-
-                        return [...existingGroupRefs, newGroupRef];
+                        return [newGroupRef, ...existingGroupRefs];
                     },
                 },
             });
         },
     });
 
-    if (!data) {
+    if (!data || !data.user) {
         return (<div/>);
     }
 

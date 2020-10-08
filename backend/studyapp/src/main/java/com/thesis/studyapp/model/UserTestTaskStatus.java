@@ -12,7 +12,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
 import java.time.ZonedDateTime;
-import java.util.Comparator;
 
 @NodeEntity
 @Data
@@ -29,6 +28,7 @@ public class UserTestTaskStatus implements HasId, HasRatio {
     @Relationship(type = "STATUSDATATASK", direction = Relationship.OUTGOING)
     private TestTask testTask;
 
+    //TODO közös abstract class? InRow kell egyáltatlán?
     private ZonedDateTime lastSolutionTime;
     private int correctSolutions;
     private int allSolutions;

@@ -10,28 +10,16 @@ import java.util.Optional;
 
 @Repository
 public interface UserTestStatusRepository extends Neo4jRepository<UserTestStatus, Long> {
-    String RETURN_USERTESTSTATUSDTO =
-            " WITH uts," +
-                    " head([(uts:UserTestStatus)--(u:User) | id(u)]) AS userId," +
-                    " head([(uts:UserTestStatus)--(:LiveTest)--(t:Test) | id(t)]) AS testId," +
-                    " head([(uts:UserTestStatus)--(ct:Task) | id(ct)]) AS currentTaskId" +
-                    " RETURN DISTINCT id(lts) AS id, userId, testId, currentTaskId";
 
     List<UserTestStatus> findByIdIn(List<Long> ids, @Depth int depth);
 
-    //todo
+    //todo orderBy nem működik
     List<UserTestStatus> findByTestIdOrderByUserName(Long testId, @Depth int depth);
 
-    //todo order by nem működik
+    //todo orderBy nem működik
     List<UserTestStatus> findByUserIdOrderByTestName(Long testId, @Depth int depth);
 
     Optional<UserTestStatus> findFirstByUserIdAndTestId(Long userId, Long testId, @Depth int depth);
 
-
-//    @Query("MATCH (uts:UserTestStatus)--(t:Test) WHERE uts.deprecated = false AND id(t) = $0" + RETURN_USERTESTSTATUSDTO)
-//    List<UserTestStatusDto> getByTestId(Long testId);
-//
-//    @Query("MATCH (uts:UserTestStatus) WHERE uts.deprecated = false AND id(uts) IN $0" + RETURN_USERTESTSTATUSDTO)
-//    List<UserTestStatusDto> getByManyIds(List<Long> ids);
 
 }

@@ -4,4 +4,5 @@ type Query {
     test(testId: ID!): Test
     searchTasks(searchText: String, page: Int!): TaskSearchResult!
     nextTask(userId: ID!, testId: ID!): TestTask
+    isUsernameAlreadyRegistered(username: String!): Boolean!
 }

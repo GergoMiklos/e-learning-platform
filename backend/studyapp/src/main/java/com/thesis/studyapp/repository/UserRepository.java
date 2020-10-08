@@ -17,6 +17,8 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
 
     Optional<User> findByCodeIgnoreCase(String code, @Depth int depth);
 
+    Optional<User> findByAuthDataUsernameIgnoreCase(String username, @Depth int depth);
+
     List<User> findByIdIn(List<Long> ids, @Depth int depth);
 
     List<User> findByStudentGroupsIdOrderByName(Long studentGroupId, @Depth int depth);
@@ -25,26 +27,14 @@ public interface UserRepository extends Neo4jRepository<User, Long> {
 
     List<User> findByParentsIdOrderByName(Long parentId, @Depth int depth);
 
+    boolean existsByAuthDataUsernameIgnoreCase(String username);
+
+    boolean existsByCodeIgnoreCase(String code);
+
     @Query("MATCH (parent:User)-[sp:STUDENTPARENT]->(student:User)" +
             " WHERE id(parent) = $parentId AND id(student) = $studentId" +
             " DELETE sp")
     void deleteFollowedStudent(@Param("parentId") Long parentId, @Param("studentId") Long studentId);
-
-
-//    @Query("MATCH (u:User) WHERE id(u) IN $0" + RETURN_USERDTO)
-//    List<UserDto> getByIds(List<Long> ids);
-//
-//    @Query("MATCH (u:User) WHERE id(u) = $0" + RETURN_USERDTO)
-//    Optional<UserDto> getById(Long id);
-//
-//    @Query("MATCH (u:User)-[:GROUPSTUDENT]-(g:Group) WHERE id(g) = $0" + RETURN_USERDTO + ORDER_BY_NAME)
-//    List<UserDto> getStudentByGroupId(Long groupId);
-//
-//    @Query("MATCH (u:User)-[:GROUPTEACHER]-(g:Group) WHERE id(g) = $0" + RETURN_USERDTO + ORDER_BY_NAME)
-//    List<UserDto> getTeacherByGroupId(Long groupId);
-//
-//    @Query("MATCH (u:User)<-[:STUDENTPARENT]-(parent:User) WHERE id(parent) = $0" + RETURN_USERDTO + ORDER_BY_NAME)
-//    List<UserDto> getFollowedStudents(Long id);
 
 
 }

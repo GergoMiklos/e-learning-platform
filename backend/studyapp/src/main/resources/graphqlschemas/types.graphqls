@@ -87,6 +87,12 @@ type UserTestTaskStatus {
     allSolutions: Int!
 }
 
+type Token {
+    token: String!
+    type: String!
+    userId: ID!
+}
+
 input TestTaskInput {
     id: ID!
     level: Int!
@@ -101,4 +107,15 @@ input TaskInput {
 input NameDescInput {
     name: String!
     description: String!
+}
+
+input LoginInput {
+    username: String!
+    password: String!
+}
+
+input RegisterInput {
+    name: String!
+    username: String!
+    password: String!
 }

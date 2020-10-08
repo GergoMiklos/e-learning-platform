@@ -61,10 +61,6 @@ public class UserService {
     }
 
     public List<User> getStudentsForGroup(Long groupId) {
-        //todo check group? NE, ez query (BONTSUK SZÉT ESZERINT? KÜLÖNÁLLÓ QUERY SERVICEK, MUTATIONOK PEDIG EZEKET HASZNÁLJÁK)
-        // HISZEN VANNAK KÜLÖNBSÉGEK, ILYENKOR PL NINCS EXCEPTION DOBÁS
-        // egy GRAPHQL ALKALMAZÁSBAN SOKK AZ ÖSSZEFÜGGÉS, DE MEGKELL PRÓBÁLNI CSÖKKENTENI AZOKAT7
-        // BEVÁLLT MÓDSZER NINCS :(
         return userRepository.findByStudentGroupsIdOrderByName(groupId, 1);
     }
 

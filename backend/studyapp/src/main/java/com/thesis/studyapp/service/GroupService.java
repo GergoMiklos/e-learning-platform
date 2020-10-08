@@ -12,7 +12,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -65,7 +64,7 @@ public class GroupService {
         return groupRepository.save(group, 1);
     }
 
-    //todo userteststatus minden teszthez a groupban
+    //todo create userteststatus minden teszthez
     @Transactional
     public Group addStudentToGroupFromCode(Long studentId, String groupCode) {
         User user = getUserById(studentId, 0);
@@ -75,6 +74,7 @@ public class GroupService {
     }
 
     //todo delete userTestStatus?
+    @Transactional
     public void deleteStudentFromGroup(Long studentId, Long groupId) {
         if (userRepository.existsById(studentId) && groupRepository.existsById(groupId)) {
             groupRepository.deleteStudent(groupId, studentId);
@@ -83,6 +83,7 @@ public class GroupService {
         }
     }
 
+    @Transactional
     public void deleteTeacherFromGroup(Long teacherId, Long groupId) {
         if (userRepository.existsById(teacherId) && groupRepository.existsById(groupId)) {
             groupRepository.deleteTeacher(groupId, teacherId);
@@ -116,15 +117,10 @@ public class GroupService {
     }
 
     private String createGroupCode() {
-        String code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
-        boolean alreadyExists = true;
-        while (alreadyExists) {
-            if (groupRepository.existsByCodeIgnoreCase(code)) {
-                code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
-            } else {
-                alreadyExists = false;
-            }
-        }
+        String code;
+        do {
+            code = RandomStringUtils.randomAlphanumeric(8).toUpperCase();
+        } while (userRepository.existsByCodeIgnoreCase(code));
         return code;
     }
 
