@@ -38,7 +38,7 @@ export default function EditGroupPageComp(props) {
     return (
         <div className="container">
             <button className="row btn btn-secondary mt-1"
-                    onClick={() => props.history.push(`/teach/group/${props.match.params.groupid}`)}>
+                    onClick={() => props.history.goBack()}>
                 Back
             </button>
 

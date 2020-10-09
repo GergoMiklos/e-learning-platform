@@ -41,15 +41,15 @@ export default function StudentLiveTestPageComp(props) {
         onError: () => toast.notify(`Error :(`),
     },);
 
-    if(loading) {
+    if (loading) {
         return <div/>;
     }
 
     if (!data.nextTask) {
         return (
             <div
-                className="vh-100 d-flex justify-content-center align-items-center"
-                onClick={() => props.history.push(`/learn/group/${props.match.params.groupid}`)}
+                className="middle"
+                onClick={() => props.history.goBack()}
             >
                 <strong className="bg-warning text-light rounded-pill shadow p-3">
                     No tasks available :(
@@ -62,7 +62,7 @@ export default function StudentLiveTestPageComp(props) {
         <div className="container">
             <button
                 className="row btn btn-secondary mt-1"
-                onClick={() => props.history.push(`/learn/group/${props.match.params.groupid}`)}
+                onClick={() => props.history.goBack()}
             >
                 Back
             </button>
@@ -78,7 +78,11 @@ export default function StudentLiveTestPageComp(props) {
                             ({answer, number}) =>
                                 <button
                                     key={number}
-                                    className={`m-2 btn btn-lg text-left btn-${calculateAnswerColor({answerNumber: number, chosenAnswerNumber, correctAnswerNumber: data.nextTask.task.solutionNumber})}`}
+                                    className={`m-2 btn btn-lg text-left btn-${calculateAnswerColor({
+                                        answerNumber: number,
+                                        chosenAnswerNumber,
+                                        correctAnswerNumber: data.nextTask.task.solutionNumber
+                                    })}`}
                                     onClick={() => {
                                         checkSolution({
                                             variables: {
@@ -128,7 +132,7 @@ const calculateAnswerColor = ({answerNumber, chosenAnswerNumber, correctAnswerNu
     if (!chosenAnswerNumber) {
         return 'primary';
     }
-    if (answerNumber === chosenAnswerNumber &&  answerNumber === correctAnswerNumber) {
+    if (answerNumber === chosenAnswerNumber && answerNumber === correctAnswerNumber) {
         return 'success';
     }
     if (answerNumber === chosenAnswerNumber && answerNumber !== correctAnswerNumber) {

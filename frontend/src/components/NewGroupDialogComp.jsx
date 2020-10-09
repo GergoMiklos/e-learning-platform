@@ -7,6 +7,7 @@ import NameDescFormComp from "./NameDescFormComp";
 import AuthService from "../AuthService";
 import {useHistory} from "react-router-dom";
 
+//todo fragment
 const CREATE_GROUP_MUTATION = gql`
     mutation CreateGroup($userId: ID!, $input: NameDescInput!) {
         createGroup(userId: $userId, input: $input) {
@@ -20,7 +21,7 @@ export default function NewGroupDialogComp(props) {
         onError: (error) => toast.notify(`Error`),
         update: (cache, {data: {createGroup}}) => {
             cache.modify({
-                id: `User:${AuthService.getUserId()}`, //todo ezt honnan?
+                id: `User:${AuthService.getUserId()}`,
                 fields: {
                     //Todo melyik jobb?
                     teacherGroups(existingGroupRefs, {INVALIDATE}) {
@@ -54,7 +55,6 @@ export default function NewGroupDialogComp(props) {
         },
     });
 
-
     return (
         <Modal
             show={props.show}
@@ -63,24 +63,23 @@ export default function NewGroupDialogComp(props) {
         >
             <div className="container">
                 <div className="row bg-primary text-light shadow p-3">
-                    <h1 className="col-10">New Group</h1>
+                    <h1>New Group</h1>
                 </div>
-                <NameDescFormComp
-                    initial
-                    onSubmit={values => {
-                        createGroup({
-                            variables: {
-                                input: {
-                                    description: values.description,
-                                    name: values.name
+                    <NameDescFormComp
+                        onSubmit={values => {
+                            createGroup({
+                                variables: {
+                                    input: {
+                                        description: values.description,
+                                        name: values.name
+                                    },
+                                    userId: AuthService.getUserId(),
                                 },
-                                userId: AuthService.getUserId(),
-                            },
-                        })
-                        props.onHide();
-                    }}
-                />
-            </div>
+                            })
+                            props.onHide();
+                        }}
+                    />
+                </div>
         </Modal>
     );
 }

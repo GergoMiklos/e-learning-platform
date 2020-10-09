@@ -4,7 +4,7 @@ import toast from "toasted-notes";
 import EditTestDetailsComp from "./EditTestDetailsComp";
 import EditTestElementComp from "./EditTestElementComp";
 import {useMutation, useQuery} from "@apollo/client";
-import {useHistory} from "react-router-dom";
+import {useHistory, useRouteMatch} from "react-router-dom";
 
 const {Map: ImmutableMap} = require('immutable');
 
@@ -79,7 +79,7 @@ export default function EditTestPageComp(props) {
         <div className="container">
             <button
                 className="row btn btn-secondary mt-1"
-                onClick={() => props.history.push(`/teach/group/${props.match.params.groupid}`)}
+                onClick={() => props.history.goBack()}
             >
                 Back
             </button>
@@ -97,7 +97,7 @@ export default function EditTestPageComp(props) {
                 <h1>Tasks</h1>
                 <button
                     className="btn btn-primary"
-                    onClick={() => props.history.push(`/teach/group/${props.match.params.groupid}/test/${data.test.id}/tasks`)}
+                    onClick={() => props.history.push(`${props.match.url}/tasks`)}
                 >
                     Add New
                 </button>

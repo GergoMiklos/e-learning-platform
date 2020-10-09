@@ -14,6 +14,7 @@ import ParentPageComp from "./ParentPageComp";
 import LoginPageComp from "./LoginPageComp";
 import SignupPageComp from "./SignupPageComp";
 import AuthService from "../AuthService";
+import NewGroupDialogComp from "./NewGroupDialogComp";
 
 const style = {
     backgroundImage: 'url(https://i.pinimg.com/originals/06/47/7e/06477ea4fbec33a0ad356f6095460775.gif)',
@@ -34,7 +35,8 @@ class AppComp extends Component {
                     <AuthenticatedRoute path="/student/group/:groupid/test/:testid" component={StudentLiveTestPageComp}/>
                     <AuthenticatedRoute path="/student/group/:groupid" component={StudentGroupPageComp}/>
                     <AuthenticatedRoute exact path="/teacher" component={TeacherPageComp}/>
-                    <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid/tasks" component={NewTaskPageComp}/>
+                    <AuthenticatedRoute exact path="/teacher/new" component={NewGroupDialogComp}/>
+                    <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid/edit/tasks" component={NewTaskPageComp}/>
                     <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid/edit" component={EditTestPageComp}/>
                     <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid" component={TeacherLiveTestPageComp}/>
                     <AuthenticatedRoute path="/teacher/group/:groupid/edit" component={EditGroupPageComp}/>

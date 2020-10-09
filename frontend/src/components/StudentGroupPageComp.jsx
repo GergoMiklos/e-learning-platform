@@ -35,7 +35,10 @@ export default function StudentGroupPageComp(props) {
     },)
     //todo ez (meg minden useMutation!) mehetne máshová is, nem? talán useeffecttel
     const [leaveGroup] = useMutation(LEAVE_GROUP_MUTATION, {
-        onCompleted: (data) => toast.notify(`Group left successfully`),
+        onCompleted: (data) => {
+            toast.notify(`Group left successfully`);
+            props.history.goBack();
+        },
         onError: () => toast.notify(`Error`),
     },);
 
@@ -46,7 +49,7 @@ export default function StudentGroupPageComp(props) {
     return (
         <div className="container">
             <div className="row justify-content-between my-1">
-                <button className="col-auto btn btn-secondary" onClick={() => props.history.push(`/learn`)}>
+                <button className="col-auto btn btn-secondary" onClick={() => props.history.goBack()}>
                     Back
                 </button>
                 <button className="col-auto btn btn-outline-warning"
@@ -98,7 +101,6 @@ export default function StudentGroupPageComp(props) {
                             <StudentGroupElementComp
                                 testId={test.id}
                                 selectedTestId={selectedTestId}
-                                onStart={() => props.history.push(`/learn/group/${props.match.params.groupid}/test/${test.id}`)}
                             />
                         </li>
                     )}

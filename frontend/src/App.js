@@ -1,5 +1,6 @@
 import React from 'react';
 import './bootstrap.css'
+import './index.css'
 import 'toasted-notes/src/styles.css';
 import AppComp from "./components/AppComp";
 import {ApolloProvider} from '@apollo/client';

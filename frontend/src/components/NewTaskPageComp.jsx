@@ -44,7 +44,7 @@ export default function NewTaskPageComp(props) {
     return (
         <div className="container">
             <button className="row btn btn-secondary mt-1"
-                    onClick={() => props.history.push(`/teach/group/${props.match.params.groupid}/test/${props.match.params.testid}/edit`)}>
+                    onClick={() => props.history.goBack()}>
                 Back
             </button>
 
@@ -88,7 +88,7 @@ export default function NewTaskPageComp(props) {
                             onClick={() => selectTaskId(task.id)}
                         >
                             <NewTaskSearchElementComp
-                                testId={props.match.params.testid}
+                                testId={props.match.params.testid} //todo
                                 taskId={task.id}
                                 selectedTaskId={selectedTaskId}
                                 levels={levels}

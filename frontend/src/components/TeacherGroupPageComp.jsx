@@ -32,8 +32,6 @@ const CHANGE_NEWS_MUTATION = gql`
     }`;
 
 export default function TeacherGroupPageComp(props) {
-    let history = useHistory();
-    let match = useRouteMatch();
     const [showNewTestDialog, setShowNewTestDialog] = useState(false);
     const [selectedTestId, setSelectedTestId] = useState(null);
     const [changeNewsText, setChangeNewsText] = useState(null);
@@ -53,12 +51,12 @@ export default function TeacherGroupPageComp(props) {
     return (
         <div className="container">
             <div className="row justify-content-between my-1">
-                <button className="col-auto btn btn-secondary" onClick={() => history.goBack()}>
+                <button className="col-auto btn btn-secondary" onClick={() => props.history.goBack()}>
                     Back
                 </button>
                 <button
                     className="col-auto btn btn-outline-warning"
-                    onClick={() => props.history.push(`/teach/group/${data.group.id}/edit`)}
+                    onClick={() => props.history.push(`${props.match.url}/edit`)}
                 >
                     Edit
                 </button>

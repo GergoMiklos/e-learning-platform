@@ -105,7 +105,6 @@ export default function ParentPageComp(props) {
                 <ParentElementComp
                     key={student.id}
                     student={student}
-                    parentId={data.user.id}
                 />
             )}
         </div>

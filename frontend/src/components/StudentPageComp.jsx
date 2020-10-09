@@ -36,6 +36,7 @@ export default function StudentPageComp(props) {
     const {loading, error, data} = useQuery(
         STUDENT_GROUPS_QUERY, {
             variables: {userId: userId},
+            pollInterval: 60 * 1000,
         });
     const [joinGroup] = useMutation(JOIN_GROUP_MUTATION, {
         onCompleted: (data) => toast.notify(`Joined to group: ${data.addStudentToGroupFromCode.name}`),
@@ -105,7 +106,6 @@ export default function StudentPageComp(props) {
                     {data.user.studentGroups.map(group =>
                         <li
                             className="list-group-item list-group-item-action"
-                            onClick={() => props.history.push(`/learn/group/${group.id}`)}
                             key={group.id}
                         >
                             <GroupListElementComp groupId={group.id}/>

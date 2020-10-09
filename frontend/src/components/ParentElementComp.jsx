@@ -3,6 +3,7 @@ import gql from "graphql-tag";
 import toast from "toasted-notes";
 import StatusElementComp from "./StatusElementComp";
 import {useMutation} from "@apollo/client";
+import AuthService from "../AuthService";
 
 const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
     fragment UserTestStatusDetials on UserTestStatus {
@@ -43,13 +44,8 @@ export default function ParentElementComp(props) {
         onError: () => toast.notify(`Error :(}`),
         update: (cache) => {
             cache.modify({
-                id: `User:${props.parentId}`, //Todo userid kell és nem szép, esetleg store?
+                id: `User:${AuthService.getUserId()}`,
                 fields: {
-                    //Todo melyik jobb?
-                    // studentGroups(existingGroupRefs, {INVALIDATE}) {
-                    //     return INVALIDATE;
-                    // },
-
                     followedStudents(existingUserRefs = [], {readField}) {
                         return existingUserRefs.filter(
                             userRef => props.student.id !== readField('id', userRef)

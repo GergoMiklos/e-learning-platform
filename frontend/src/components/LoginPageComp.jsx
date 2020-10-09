@@ -20,7 +20,6 @@ export default function LoginPageComp(props) {
 
     const [login] = useMutation(LOGIN_MUTATION, {
         onCompleted: (data) => {
-            console.log(data)
             AuthService.setLogin({token: data.login.token, userId: data.login.userId})
             history.push(`/student`);
         },

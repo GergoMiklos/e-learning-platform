@@ -57,7 +57,7 @@ export default function NewTestDialogComp(props) {
         >
             <div className="container">
                 <div className="row bg-primary text-light shadow p-3">
-                    <h1 className="col-10">New Test</h1>
+                    <h1>New Test</h1>
                 </div>
                 <NameDescFormComp
                     initial

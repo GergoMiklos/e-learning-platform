@@ -1,7 +1,7 @@
 import React from 'react'
 import client from "../ApolloClient";
 import gql from 'graphql-tag';
-import {useHistory} from "react-router-dom";
+import {useHistory, useRouteMatch} from "react-router-dom";
 
 
 //todo itt lehtne loadolni egy fájlból is, és úgy beállítani
@@ -16,6 +16,8 @@ const GROUP_DETAILS_FRAGMENT = gql`
 
 
 export default function GroupListElementComp(props) {
+    let history = useHistory();
+    let match = useRouteMatch();
     //todo error handling (null/error) / useQuery cache-first?
     const group = client.readFragment({
         id: `Group:${props.groupId}`,
@@ -23,7 +25,7 @@ export default function GroupListElementComp(props) {
     });
 
     return (
-        <div>
+        <div onClick={() => history.push(`${match.url}/group/${group.id}`)}>
             <strong className="mx-2"> {group.name}</strong>
 
             {group.news && isDateFresh(new Date(group.newsChangedDate)) &&

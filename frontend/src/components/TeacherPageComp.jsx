@@ -20,7 +20,7 @@ const TEACHER_GROUPS_QUERY = gql`
     }
 ${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 
-export default function TeacherPageComp() {
+export default function TeacherPageComp(props) {
     let history = useHistory();
     //todo useeffect a useridra?
     const userId = AuthService.getUserId();
@@ -59,7 +59,6 @@ export default function TeacherPageComp() {
                     {data.user.teacherGroups.map(group =>
                         <li
                             className="list-group-item list-group-item-action"
-                            onClick={() => history.push(`/teacher/group/${group.id}`)}
                             key={group.id}
                         >
                             <GroupListElementComp groupId={group.id}/>

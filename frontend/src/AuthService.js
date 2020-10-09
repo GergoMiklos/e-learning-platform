@@ -14,7 +14,6 @@ const getToken = () => {
 const setLogin = ({userId, token}) => {
     localStorage.setItem(USER_KEY, userId.toString());
     localStorage.setItem(TOKEN_KEY, token.toString());
-    console.log(localStorage.getItem(USER_KEY))
 }
 
 const isLoggedIn = () => {

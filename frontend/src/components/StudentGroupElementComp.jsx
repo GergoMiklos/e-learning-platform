@@ -1,7 +1,7 @@
 import React from 'react'
 import gql from "graphql-tag";
 import client from "../ApolloClient";
-import {useHistory} from "react-router-dom";
+import {useHistory, useRouteMatch} from "react-router-dom";
 
 const TEST_DETAILS_FRAGMENT = gql`
     fragment TestDetials on Test {
@@ -11,6 +11,8 @@ const TEST_DETAILS_FRAGMENT = gql`
     }`;
 
 export default function StudentGroupElementComp(props) {
+    let history = useHistory();
+    let match = useRouteMatch();
     //TODO csak props, readFragment vagy cache-first useQuery?
     const test = client.readFragment({
         id: `Test:${props.testId}`,
@@ -23,7 +25,10 @@ export default function StudentGroupElementComp(props) {
                 <strong>{test.name}</strong>
 
                 {(props.selectedTestId === test.id) &&
-                <button className="btn btn-primary btn-sm" onClick={() => props.onStart()}>
+                <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => history.push(`${match.url}/test/${test.id}`)}
+                >
                     Start
                 </button>
                 }

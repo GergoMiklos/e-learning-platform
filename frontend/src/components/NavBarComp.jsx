@@ -12,9 +12,8 @@ export default function NavBarComp() {
                 <button className="navbar-toggler" onClick={() => setCollapsed(!isCollapsed)}>
                     <span className="navbar-toggler-icon"/>
                 </button>
-                //todo
                 {AuthService.isLoggedIn() &&
-                <collapse className={`navbar-collapse ${isCollapsed? 'collapse' : ''}`}>
+                <div className={`navbar-collapse ${isCollapsed? 'collapse' : ''}`}>
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item">
                             <NavLink activeClassName="active" className="nav-link" to="/student">Student<span className="sr-only">(current)</span></NavLink>
@@ -29,7 +28,7 @@ export default function NavBarComp() {
                     <span className="navbar-nav">
                         <Link className="nav-link" to="/login" onClick={() => AuthService.logout()}>Logout</Link>
                     </span>
-                </collapse>
+                </div>
                 }
             </nav>
         </div>
