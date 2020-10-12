@@ -30,10 +30,24 @@ public class UserTestTaskStatus implements HasId, HasRatio {
 
     //TODO közös abstract class? InRow kell egyáltatlán?
     private ZonedDateTime lastSolutionTime;
+
     private int correctSolutions;
     private int allSolutions;
+
     private int correctSolutionsInRow;
     private int wrongSolutionsInRow;
+
+    private int correctSolutionsInCurrentCycle;
+    private int allSolutionsInCurrentCycle;
+
+    private int correctSolutionsInPrevCycle;
+    private int allSolutionsInPrevCycle;
+
+    public UserTestTaskStatus(TestTask testTask, boolean isCorrect, ZonedDateTime solutionTime) {
+        this.testTask = testTask;
+        setNewSolution(isCorrect, solutionTime);
+    }
+
 
     public double getRatio() {
         if (allSolutions != 0) {
@@ -42,5 +56,60 @@ public class UserTestTaskStatus implements HasId, HasRatio {
             return 0;
         }
     }
+
+    public double getRatioInCurrentCycle() {
+        if (allSolutionsInCurrentCycle != 0) {
+            return (double) correctSolutionsInCurrentCycle / (double) allSolutionsInCurrentCycle;
+        } else {
+            return 0;
+        }
+    }
+
+    public double getRatioInPrevCycle() {
+        if (allSolutionsInPrevCycle != 0) {
+            return (double) correctSolutionsInPrevCycle / (double) correctSolutionsInPrevCycle;
+        } else {
+            return 0;
+        }
+    }
+
+    public void setNewSolution(boolean isCorrect, ZonedDateTime newSolutionTime) {
+        if (isCorrect) {
+            setCorrectSolution();
+        } else {
+            setWrongSolution();
+        }
+        lastSolutionTime = newSolutionTime;
+    }
+
+    public void setNewCycle() {
+        correctSolutionsInPrevCycle = correctSolutionsInCurrentCycle;
+        allSolutionsInPrevCycle = allSolutionsInCurrentCycle;
+
+        correctSolutionsInCurrentCycle = 0;
+        allSolutionsInCurrentCycle = 0;
+    }
+
+    //todo setTestTask()?
+    private void setCorrectSolution() {
+        correctSolutions = correctSolutions + 1;
+        allSolutions = allSolutions + 1;
+
+        correctSolutionsInRow = correctSolutionsInRow + 1;
+        wrongSolutionsInRow = 0;
+
+        correctSolutionsInCurrentCycle = correctSolutionsInCurrentCycle + 1;
+        allSolutionsInCurrentCycle = allSolutionsInCurrentCycle + 1;
+    }
+
+    private void setWrongSolution() {
+        allSolutions = allSolutions + 1;
+
+        correctSolutionsInRow = 0;
+        wrongSolutionsInRow = wrongSolutionsInRow + 1;
+
+        allSolutionsInCurrentCycle = allSolutionsInCurrentCycle + 1;
+    }
+
 
 }

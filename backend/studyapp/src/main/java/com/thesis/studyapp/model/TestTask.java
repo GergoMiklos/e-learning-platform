@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -28,10 +29,12 @@ public class TestTask implements HasId, HasRatio {
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Relationship(type = "TASK", direction = Relationship.OUTGOING)
     private Task task;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Relationship(type = "TESTTASK", direction = Relationship.INCOMING)
     private Test test;
 
@@ -41,6 +44,13 @@ public class TestTask implements HasId, HasRatio {
         } else {
             return 0;
         }
+    }
+
+    public void setNewSolution(boolean isCorrect) {
+        if (isCorrect) {
+            correctSolutions = correctSolutions + 1;
+        }
+        allSolutions = allSolutions + 1;
     }
 
 }

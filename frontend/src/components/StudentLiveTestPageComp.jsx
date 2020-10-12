@@ -1,7 +1,7 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import gql from "graphql-tag";
 import toast from "toasted-notes";
-import {useMutation, useQuery} from "@apollo/client";
+import {useMutation, useLazyQuery} from "@apollo/client";
 import AuthService from "../AuthService";
 import {useHistory} from "react-router-dom";
 
@@ -33,15 +33,17 @@ const CHECK_TASK_SOLUTION_MUTATION = gql`
 
 export default function StudentLiveTestPageComp(props) {
     const [chosenAnswerNumber, chooseAnswerNumber] = useState(null);
-    const {loading, error, data, refetch} = useQuery(NEXT_TASK_QUERY, {
+    const [nextTask, {loading, error, data}] = useLazyQuery(NEXT_TASK_QUERY, {
         variables: {userId: AuthService.getUserId(), testId: props.match.params.testid},
-        fetchPolicy: "cache-first",
+        fetchPolicy: "no-cache",
     },)
     const [checkSolution, {data: solutionData}] = useMutation(CHECK_TASK_SOLUTION_MUTATION, {
         onError: () => toast.notify(`Error :(`),
     },);
 
-    if (loading) {
+    useEffect(() => nextTask(), []);
+
+    if (!data) {
         return <div/>;
     }
 
@@ -117,7 +119,7 @@ export default function StudentLiveTestPageComp(props) {
                     className="btn btn-primary btn-lg p-3"
                     onClick={() => {
                         chooseAnswerNumber(null)
-                        refetch();
+                        nextTask();
                     }}
                 >
                     Next
@@ -132,7 +134,7 @@ const calculateAnswerColor = ({answerNumber, chosenAnswerNumber, correctAnswerNu
     if (!chosenAnswerNumber) {
         return 'primary';
     }
-    if (answerNumber === chosenAnswerNumber && answerNumber === correctAnswerNumber) {
+    if (answerNumber === correctAnswerNumber) {
         return 'success';
     }
     if (answerNumber === chosenAnswerNumber && answerNumber !== correctAnswerNumber) {

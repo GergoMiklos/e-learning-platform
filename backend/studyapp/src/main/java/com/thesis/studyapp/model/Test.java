@@ -6,12 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +30,7 @@ public class Test implements HasId {
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Relationship(type = "GROUPTEST", direction = Relationship.INCOMING)
     private Group group;
     @JsonIgnore

@@ -88,7 +88,7 @@ function TeacherLiveTestPageComp(props) {
                                 {uts.user.code}
                             </td>
                             <td className="text-center">
-                                {uts.solvedTasks}/{this.props.data.test.allTasks}
+                                {uts.solvedTasks}/{props.data.test.allTasks}
                             </td>
                             <td className="text-center">
                                 {uts.correctSolutions}/{uts.allSolutions}

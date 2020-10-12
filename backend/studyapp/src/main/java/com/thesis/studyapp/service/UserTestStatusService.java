@@ -182,19 +182,19 @@ public class UserTestStatusService {
         return userTestStatus.getCurrentTestTask();
     }
 
-    public void calculateNextTask(UserTestStatus uts) {
-        if (uts.getTest().getTestTasks().isEmpty()) {
+    public void calculateNextTask(UserTestStatus userStatus) {
+        if (userStatus.getTest().getTestTasks().isEmpty()) {
             return;
         }
-        int currentLevel = uts.getCurrentLevel();
-        int currentCycle = uts.getCurrentCycle();
-        Set<TestTask> allTestTasks = uts.getTest().getTestTasks().stream()
+        int currentLevel = userStatus.getCurrentLevel();
+        int currentCycle = userStatus.getCurrentCycle();
+        Set<TestTask> allTestTasks = userStatus.getTest().getTestTasks().stream()
                 .filter(testTask -> testTask.getLevel() == currentLevel)
                 .collect(Collectors.toSet());
         if (allTestTasks.isEmpty()) {
             return;
         }
-        Set<UserTestTaskStatus> solvedUserTestTaskStatuses = uts.getUserTestTaskStatuses().stream()
+        Set<UserTestTaskStatus> solvedUserTestTaskStatuses = userStatus.getUserTestTaskStatuses().stream()
                 .filter(status -> status.getTestTask().getLevel() == currentLevel && allTestTasks.contains(status.getTestTask()))
                 .collect(Collectors.toSet());
         Set<TestTask> solvedTestTasks = solvedUserTestTaskStatuses.stream()
@@ -206,16 +206,16 @@ public class UserTestStatusService {
 
         if (!newTestTasks.isEmpty()) {
             TestTask nextTask = Collections.max(newTestTasks, Comparator.comparing(TestTask::getRatio));
-            uts.setCurrentTestTask(nextTask);
+            userStatus.setCurrentTestTask(nextTask);
             return;
         }
 
         double weight = max(1, 0.75 + 0.05 * currentCycle);
         if (solvedUserTestTaskStatuses.stream().anyMatch(status -> status.getCorrectSolutions() < currentCycle)
-                || weight * calculateAverageRatio(solvedUserTestTaskStatuses) + (1 - weight) * calculatePreviousAverageRatio(uts.getUser()) < (weight - 0.05)) {
+                || weight * calculateAverageRatio(solvedUserTestTaskStatuses) + (1 - weight) * calculatePreviousAverageRatio(userStatus.getUser()) < (weight - 0.05)) {
             //Todo ez biztos nem mindig ugyanazt adja?
             TestTask nextTask = Collections.max(solvedUserTestTaskStatuses, Comparator.comparing(UserTestTaskStatus::getRatio)).getTestTask();
-            uts.setCurrentTestTask(nextTask);
+            userStatus.setCurrentTestTask(nextTask);
             return;
         }
 
@@ -225,16 +225,16 @@ public class UserTestStatusService {
                 .collect(Collectors.toSet());
         if (!wrongTestTasks.isEmpty()) {
             TestTask nextTask = Collections.max(wrongTestTasks, Comparator.comparing(TestTask::getRatio));
-            uts.setCurrentTestTask(nextTask);
+            userStatus.setCurrentTestTask(nextTask);
             return;
         }
 
         if (currentLevel < 10) {
-            uts.setCurrentLevel(currentLevel + 1);
+            userStatus.setCurrentLevel(currentLevel + 1);
         } else {
-            uts.setCurrentLevel(1);
-            uts.setCurrentCycle(currentCycle + 1);
-            calculateNextTask(uts);
+            userStatus.setCurrentLevel(1);
+            userStatus.setCurrentCycle(currentCycle + 1);
+            calculateNextTask(userStatus);
         }
     }
 

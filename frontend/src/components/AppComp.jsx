@@ -31,7 +31,10 @@ class AppComp extends Component {
             <div className="bg-secondary min-vh-100 pb-3" style={style}>
                 <NavBarComp/>
                 <Switch>
-                    <AuthenticatedRoute exact path={["/", "/student"]} component={StudentPageComp}/>
+                    <AuthenticatedRoute exact path="/">
+                        <Redirect to="/student" />
+                    </AuthenticatedRoute>
+                    <AuthenticatedRoute exact path="/student" component={StudentPageComp}/>
                     <AuthenticatedRoute path="/student/group/:groupid/test/:testid" component={StudentLiveTestPageComp}/>
                     <AuthenticatedRoute path="/student/group/:groupid" component={StudentGroupPageComp}/>
                     <AuthenticatedRoute exact path="/teacher" component={TeacherPageComp}/>

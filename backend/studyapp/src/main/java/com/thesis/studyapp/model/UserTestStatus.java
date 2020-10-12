@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -25,32 +26,38 @@ public class UserTestStatus implements HasId, HasRatio {
     @GeneratedValue
     private Long id;
 
-    private Status status;
-    private int currentLevel;
-    private int currentCycle;
+    private Status status = Status.NOT_STARTED;
+    private ZonedDateTime statusChangedDate;
+
+    private int currentLevel = 1;
+    private int currentCycle = 1;
+
     private int correctSolutionsInRow;
     private int wrongSolutionsInRow;
+
     private int correctSolutions;
     private int allSolutions;
-
-    private ZonedDateTime statusChangedDate;
 
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "CURRENTTESTTASK", direction = Relationship.OUTGOING)
     private TestTask currentTestTask;
+    private boolean isCurrentTestTaskSolved;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Relationship(type = "USERSTATUS", direction = Relationship.INCOMING)
     private User user;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Relationship(type = "TESTSTATUS", direction = Relationship.INCOMING)
     private Test test;
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKSTATUSDATA", direction = Relationship.OUTGOING)
     private Set<UserTestTaskStatus> userTestTaskStatuses = new HashSet<>();
+
 
     public void addUserTestTaskStatus(UserTestTaskStatus userTestTaskStatus) {
         if (this.userTestTaskStatuses == null) {
@@ -65,6 +72,51 @@ public class UserTestStatus implements HasId, HasRatio {
         } else {
             return 0;
         }
+    }
+
+    public void setNewCurrentTestTask(TestTask newTestTask) {
+        currentTestTask = newTestTask;
+        isCurrentTestTaskSolved = false;
+    }
+
+    public void increaseCycle() {
+        currentCycle = currentCycle + 1;
+        currentLevel = 1;
+    }
+
+    public void increaseLevel() {
+        currentLevel = currentLevel + 1;
+        ;
+    }
+
+    public void setNewStatus(Status newStatus, ZonedDateTime newStatusChangedDate) {
+        status = newStatus;
+        statusChangedDate = newStatusChangedDate;
+    }
+
+    public void setNewSolution(boolean isCorrect) {
+        if (isCorrect) {
+            setCorrectSolution();
+        } else {
+            setWrongSolution();
+        }
+        isCurrentTestTaskSolved = true;
+    }
+
+    //todo setUserTestTaskStatus()?
+    private void setCorrectSolution() {
+        correctSolutions = correctSolutions + 1;
+        allSolutions = allSolutions + 1;
+
+        correctSolutionsInRow = correctSolutionsInRow + 1;
+        wrongSolutionsInRow = 0;
+    }
+
+    private void setWrongSolution() {
+        allSolutions = allSolutions + 1;
+
+        correctSolutionsInRow = 0;
+        wrongSolutionsInRow = wrongSolutionsInRow + 1;
     }
 
     public enum Status {

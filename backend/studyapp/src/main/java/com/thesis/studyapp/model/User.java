@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.Index;
@@ -50,6 +51,7 @@ public class User implements HasId {
     private Set<User> followedStudents = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @Relationship(type = "STUDENTPARENT", direction = Relationship.INCOMING)
     private Set<User> parents = new HashSet<>();
 
