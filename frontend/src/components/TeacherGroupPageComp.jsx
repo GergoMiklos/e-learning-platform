@@ -23,8 +23,8 @@ const TEACHER_GROUP_QUERY = gql`
 ${TeacherGroupElementComp.fragments.TEST_DETAILS_FRAGMENT}`;
 
 const CHANGE_NEWS_MUTATION = gql`
-    mutation ChangeNews($groupId: ID!, $text: String!) {
-        changeGroupNews(groupId: $groupId, text: $text) {
+    mutation EditGroupNews($groupId: ID!, $text: String!) {
+        editGroupNews(groupId: $groupId, text: $text) {
             id
             news
             newsChangedDate

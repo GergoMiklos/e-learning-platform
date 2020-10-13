@@ -5,7 +5,6 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.LoginInputDto;
 import com.thesis.studyapp.dto.RegisterInputDto;
 import com.thesis.studyapp.dto.TokenDto;
-import com.thesis.studyapp.security.annotation.NotAuthenticated;
 import com.thesis.studyapp.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,17 +15,14 @@ public class AuthEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final AuthService authService;
 
-    @NotAuthenticated
     public void register(RegisterInputDto input) {
         authService.register(input);
     }
 
-    @NotAuthenticated
     public TokenDto login(LoginInputDto input) {
         return authService.login(input);
     }
 
-    @NotAuthenticated
     public boolean isUsernameAlreadyRegistered(String username) {
         return authService.isUsernameAlreadyRegistered(username);
     }

@@ -1,4 +1,4 @@
-package com.thesis.studyapp.security;
+package com.thesis.studyapp.util;
 
 import com.thesis.studyapp.exception.UnauthorizedException;
 import com.thesis.studyapp.security.service.DefaultUserDetails;
@@ -10,9 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SecurityContextUtil {
+public class AuthenticationUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityContextUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationUtil.class);
 
     public DefaultUserDetails getPrincipals() {
         try {

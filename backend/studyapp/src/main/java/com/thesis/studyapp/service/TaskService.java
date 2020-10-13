@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -45,6 +46,17 @@ public class TaskService {
 
     public Task createTask(TaskInputDto taskInputDto) {
         return taskRepository.save(convertInputToTask(taskInputDto), 1);
+    }
+
+    @Transactional
+    public Task setTaskUsage(Long taskId, boolean oneMore) {
+        Task task = getTaskById(taskId, 1);
+        if (oneMore) {
+            task.setUsage(task.getUsage() + 1);
+        } else {
+            task.setUsage(Math.max(task.getUsage() - 1, 0));
+        }
+        return taskRepository.save(task);
     }
 
     private Task getTaskById(Long taskId, int depth) {

@@ -90,12 +90,13 @@ type UserTestTaskStatus {
 type Token {
     token: String!
     type: String!
-    userId: ID!
+    user: User!
 }
 
 input TestTaskInput {
     id: ID!
-    level: Int!
+    level: Int
+    explanation: String
 }
 
 input TaskInput {

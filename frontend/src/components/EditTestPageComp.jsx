@@ -21,7 +21,7 @@ const TEST_QUERY = gql`
 ${EditTestDetailsComp.fragments.TEST_DETAILS_FRAGMENT}`;
 
 
-//TODO ha az answerst kiszeded működni fog!!!
+//TODO ha az answerst kiszeded működik !!! (egyébként végtelen fetch)
 // const TEST_QUERY = gql`
 //     query getTest($testId: ID!) {
 //         test(testId: $testId) {
@@ -45,9 +45,9 @@ ${EditTestDetailsComp.fragments.TEST_DETAILS_FRAGMENT}`;
 //         }
 //     }`;
 
-const CHANGE_TESTTASK_LEVEL_MUTATION = gql`
-    mutation ChangeTestTaskLevel($testTaskInputs: [TestTaskInput!]) {
-        changeTestTaskLevel(testTaskInputs: $testTaskInputs) {
+const EDIT_TESTTASK_MUTATION = gql`
+    mutation EditTestTasks($testId: ID!, $testTaskInputs: [TestTaskInput!]) {
+        editTestTasks(testId: $testId, testTaskInputs: $testTaskInputs) {
             ...TestTaskDetails
         }
     }
@@ -63,7 +63,7 @@ export default function EditTestPageComp(props) {
         //fetchPolicy: 'cache-and-network',
         fetchPolicy: 'network-only',
     });
-    const [changeTestTaskLevels] = useMutation(CHANGE_TESTTASK_LEVEL_MUTATION, {
+    const [changeTestTaskLevels] = useMutation(EDIT_TESTTASK_MUTATION, {
         onCompleted: () => {
             setUnsavedTestTaskLevels(ImmutableMap());
             toast.notify(`Levels changed successfully`);
@@ -108,8 +108,9 @@ export default function EditTestPageComp(props) {
                 disabled={!unsavedTestTaskLevels.size}
                 onClick={() => changeTestTaskLevels({
                     variables: {
+                        testId: data.test.id,
                         testTaskInputs: [...unsavedTestTaskLevels]
-                            .map(([testTaskId, level]) => ({id: testTaskId, level: level}))
+                            .map(([testTaskId, level]) => ({id: testTaskId, level: level})),
                     }
                 })}
             >

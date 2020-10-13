@@ -9,6 +9,7 @@ import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.model.UserTestTaskStatus;
 import com.thesis.studyapp.repository.UserTestStatusRepository;
+import com.thesis.studyapp.util.AuthenticationUtil;
 import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -29,21 +30,18 @@ public class TestSolvingService {
     private final UserTestStatusRepository userTestStatusRepository;
 
     private final DateUtil dateUtil;
+    private final AuthenticationUtil authenticationUtil;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public TaskSolutionDto checkSolution(Long userId, Long testId, int chosenAnswerNumber) {
-        UserTestStatus userStatus = getUserTestStatus(userId, testId, 2);
-
+    public TaskSolutionDto checkSolution(Long testId, int chosenAnswerNumber) {
+        UserTestStatus userStatus = getUserTestStatus(testId, 2);
         if (userStatus.getCurrentTestTask() == null || userStatus.isCurrentTestTaskSolved()) {
             throw new CustomGraphQLException("No current TestTask available");
         }
 
         int correctAnswerNumber = setNewSolution(userStatus, chosenAnswerNumber);
-
         boolean statusChanged = setNewStatus(userStatus);
-
-        calculateNextTask(userStatus);
 
         userStatus = userTestStatusRepository.save(userStatus, 2);
 
@@ -59,6 +57,18 @@ public class TestSolvingService {
                 .solvedTasks(userStatus.getUserTestTaskStatuses().size())
                 .allTasks(userStatus.getTest().getTestTasks().size())
                 .build();
+    }
+
+    @Transactional
+    public TestTask calculateNextTask(Long testId) {
+        UserTestStatus userStatus = getUserTestStatus(testId, 2);
+
+        if (userStatus.getCurrentTestTask() == null || userStatus.isCurrentTestTaskSolved()) {
+            setNextTask(userStatus);
+            userStatus = userTestStatusRepository.save(userStatus, 2);
+        }
+
+        return userStatus.getCurrentTestTask();
     }
 
     private int setNewSolution(UserTestStatus userStatus, int chosenAnswerNumber) {
@@ -87,28 +97,9 @@ public class TestSolvingService {
         }
     }
 
-
     private boolean setNewStatus(UserTestStatus userStatus) {
-//        double currentLevelRatio = userStatus.getUserTestTaskStatuses().stream()
-//                .filter(taskStatus -> taskStatus.getTestTask().getLevel() == userStatus.getCurrentLevel())
-//                .mapToDouble(UserTestTaskStatus::getRatioInCurrentCycle)
-//                .average()
-//                .orElse(0);
-//        double currentAllRatio = userStatus.getUserTestTaskStatuses().stream()
-//                .mapToDouble(UserTestTaskStatus::getRatioInCurrentCycle)
-//                .average()
-//                .orElse(0);
-
-
-        double currentLevelRatioDiff = userStatus.getUserTestTaskStatuses().stream()
-                .filter(taskStatus -> taskStatus.getTestTask().getLevel() == userStatus.getCurrentLevel())
-                .mapToDouble(taskStatus -> taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio())
-                .average()
-                .orElse(0);
-        double currentAllRatioDiff = userStatus.getUserTestTaskStatuses().stream()
-                .mapToDouble(taskStatus -> taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio())
-                .average()
-                .orElse(0);
+        double currentLevelRatioDiff = getCurrentRatioDiffForLevel(userStatus.getUserTestTaskStatuses(), userStatus.getCurrentLevel());
+        double currentAllRatioDiff = getCurrentRatioDiff(userStatus.getUserTestTaskStatuses());
 
         boolean statusChanged = false;
         switch (userStatus.getStatus()) {
@@ -137,19 +128,22 @@ public class TestSolvingService {
         return statusChanged;
     }
 
-    @Transactional
-    public TestTask getNextTask(Long userId, Long testId) {
-        UserTestStatus userStatus = getUserTestStatus(userId, testId, 2);
-
-        if (userStatus.getCurrentTestTask() == null || userStatus.isCurrentTestTaskSolved()) {
-            calculateNextTask(userStatus);
-            userStatus = userTestStatusRepository.save(userStatus, 2);
-        }
-
-        return userStatus.getCurrentTestTask();
+    private double getCurrentRatioDiffForLevel(Set<UserTestTaskStatus> taskStatuses, int level) {
+        return taskStatuses.stream()
+                .filter(taskStatus -> taskStatus.getTestTask().getLevel() == level)
+                .mapToDouble(taskStatus -> taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio())
+                .average()
+                .orElse(0);
     }
 
-    public void calculateNextTask(UserTestStatus userStatus) {
+    private double getCurrentRatioDiff(Set<UserTestTaskStatus> taskStatuses) {
+        return taskStatuses.stream()
+                .mapToDouble(taskStatus -> taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio())
+                .average()
+                .orElse(0);
+    }
+
+    private void setNextTask(UserTestStatus userStatus) {
         int currentLevel = userStatus.getCurrentLevel();
         int currentCycle = userStatus.getCurrentCycle();
 
@@ -171,65 +165,22 @@ public class TestSolvingService {
 
         if (allTestTasks.isEmpty()) {
             increaseLevel(userStatus);
-            calculateNextTask(userStatus);
+            setNextTask(userStatus);
             return;
         }
 
         if (!newTestTasks.isEmpty()) {
-            TestTask nextTask = getEasiestTestTask(newTestTasks);
-            userStatus.setNewCurrentTestTask(nextTask);
+            userStatus.setNewCurrentTestTask(getEasiestTestTask(newTestTasks));
             return;
         }
 
-        Set<UserTestTaskStatus> newInCurrentCycle = solvedTaskStatuses.stream()
-                .filter(taskStatus -> taskStatus.getAllSolutionsInCurrentCycle() == 0)
-                .collect(Collectors.toSet());
-        if (!newInCurrentCycle.isEmpty()) {
-            TestTask nextTask = getCurrentEasiestTestTask(newInCurrentCycle);
-            userStatus.setNewCurrentTestTask(nextTask);
-            return;
-        }
-
-        Set<UserTestTaskStatus> lastAnswerWrong = solvedTaskStatuses.stream()
-                .filter(taskStatus -> taskStatus.getWrongSolutionsInRow() > 0)
-                .collect(Collectors.toSet());
-        if (!lastAnswerWrong.isEmpty()) {
-            TestTask nextTask = getCurrentEasiestTestTask(getTaskStatusesWithLessSolution(lastAnswerWrong));
-            userStatus.setNewCurrentTestTask(nextTask);
-            return;
-        }
-
-        if (currentCycle == 1) {
-            double averageRatio = solvedTaskStatuses.stream().mapToDouble(UserTestTaskStatus::getRatio).average().orElse(0);
-            if (averageRatio < 0.5) {
-                TestTask nextTask = getCurrentHardestTestTask(getTaskStatusesWithLessSolution(solvedTaskStatuses));
-                userStatus.setNewCurrentTestTask(nextTask);
-                return;
-            }
+        Optional<TestTask> nextTask = calculateNextTaskFromSolved(solvedTaskStatuses, currentCycle);
+        if (nextTask.isPresent()) {
+            userStatus.setNewCurrentTestTask(nextTask.get());
         } else {
-            double currentAverageRatio = solvedTaskStatuses.stream().mapToDouble(UserTestTaskStatus::getRatioInCurrentCycle).average().orElse(0);
-            double prevAverageRatio = solvedTaskStatuses.stream().mapToDouble(UserTestTaskStatus::getRatioInPrevCycle).average().orElse(0);
-            if (currentAverageRatio < prevAverageRatio) {
-                TestTask nextTask = getCurrentHardestTestTask(getTaskStatusesWithLessSolution(solvedTaskStatuses));
-                userStatus.setNewCurrentTestTask(nextTask);
-                return;
-            }
+            increaseLevel(userStatus);
+            setNextTask(userStatus);
         }
-
-        Set<UserTestTaskStatus> bigDiffInRatio = solvedTaskStatuses.stream()
-                .filter(taskStatus -> {
-                    return (taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio() < -0.5)
-                            || (taskStatus.getRatioInPrevCycle() - taskStatus.getTestTask().getRatio() < -0.5);
-                })
-                .collect(Collectors.toSet());
-        if (!bigDiffInRatio.isEmpty()) {
-            TestTask nextTask = getCurrentEasiestTestTask(getTaskStatusesWithLessSolution(bigDiffInRatio));
-            userStatus.setNewCurrentTestTask(nextTask);
-            return;
-        }
-
-        increaseLevel(userStatus);
-        calculateNextTask(userStatus);
     }
 
     private void increaseLevel(UserTestStatus userStatus) {
@@ -241,6 +192,72 @@ public class TestSolvingService {
                 taskStatus.setNewCycle();
             }
         }
+    }
+
+    private Optional<TestTask> calculateNextTaskFromSolved(Set<UserTestTaskStatus> solvedTaskStatuses, int currentCycle) {
+        Optional<TestTask> nextTask = getTaskWhenNewInCurrentCycle(solvedTaskStatuses);
+        if (!nextTask.isPresent()) {
+            nextTask = getTaskWhenLastAnswerWrong(solvedTaskStatuses);
+        }
+        if (!nextTask.isPresent()) {
+            nextTask = getTaskWhenSmallAverageRatio(solvedTaskStatuses, currentCycle);
+        }
+        if (!nextTask.isPresent()) {
+            nextTask = getTaskWhenBigDiffInRatio(solvedTaskStatuses);
+        }
+        return nextTask;
+    }
+
+    private Optional<TestTask> getTaskWhenNewInCurrentCycle(Set<UserTestTaskStatus> solvedTaskStatuses) {
+        Set<UserTestTaskStatus> newInCurrentCycle = solvedTaskStatuses.stream()
+                .filter(taskStatus -> taskStatus.getAllSolutionsInCurrentCycle() == 0)
+                .collect(Collectors.toSet());
+        if (!newInCurrentCycle.isEmpty()) {
+            return Optional.of(getCurrentEasiestTestTask(newInCurrentCycle));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<TestTask> getTaskWhenLastAnswerWrong(Set<UserTestTaskStatus> solvedTaskStatuses) {
+        Set<UserTestTaskStatus> lastAnswerWrong = solvedTaskStatuses.stream()
+                .filter(taskStatus -> taskStatus.getWrongSolutionsInRow() > 0)
+                .collect(Collectors.toSet());
+        if (!lastAnswerWrong.isEmpty()) {
+            return Optional.of(getCurrentEasiestTestTask(getTaskStatusesWithLessSolution(lastAnswerWrong)));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<TestTask> getTaskWhenBigDiffInRatio(Set<UserTestTaskStatus> solvedTaskStatuses) {
+        Set<UserTestTaskStatus> bigDiffInRatio = solvedTaskStatuses.stream()
+                .filter(taskStatus -> {
+                    return (taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio() < -0.5)
+                            || (taskStatus.getRatioInPrevCycle() - taskStatus.getTestTask().getRatio() < -0.5);
+                })
+                .collect(Collectors.toSet());
+        if (!bigDiffInRatio.isEmpty()) {
+            return Optional.of(getCurrentEasiestTestTask(getTaskStatusesWithLessSolution(bigDiffInRatio)));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<TestTask> getTaskWhenSmallAverageRatio(Set<UserTestTaskStatus> solvedTaskStatuses, int currentCycle) {
+        if (currentCycle == 1) {
+            double averageRatio = solvedTaskStatuses.stream().mapToDouble(UserTestTaskStatus::getRatio).average().orElse(0);
+            if (averageRatio < 0.5) {
+                return Optional.of(getCurrentHardestTestTask(getTaskStatusesWithLessSolution(solvedTaskStatuses)));
+            }
+        } else {
+            double currentAverageRatio = solvedTaskStatuses.stream().mapToDouble(UserTestTaskStatus::getRatioInCurrentCycle).average().orElse(0);
+            double prevAverageRatio = solvedTaskStatuses.stream().mapToDouble(UserTestTaskStatus::getRatioInPrevCycle).average().orElse(0);
+            if (currentAverageRatio < prevAverageRatio) {
+                return Optional.of(getCurrentHardestTestTask(getTaskStatusesWithLessSolution(solvedTaskStatuses)));
+            }
+        }
+        return Optional.empty();
     }
 
     private Set<UserTestTaskStatus> getTaskStatusesWithLessSolution(Set<UserTestTaskStatus> taskStatuses) {
@@ -276,8 +293,8 @@ public class TestSolvingService {
         return Collections.max(testTasks, Comparator.comparing(TestTask::getRatio));
     }
 
-    //todo get userId from auth
-    private UserTestStatus getUserTestStatus(Long userId, Long testId, int depth) {
+    private UserTestStatus getUserTestStatus(Long testId, int depth) {
+        Long userId = authenticationUtil.getPrincipals().getUserId();
         return userTestStatusRepository
                 .findFirstByUserIdAndTestId(userId, testId, depth)
                 .orElseThrow(() -> new InvalidInputException("No UserTestStatus available for this Test", "userId"));

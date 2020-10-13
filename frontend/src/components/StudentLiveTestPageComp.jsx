@@ -5,9 +5,9 @@ import {useMutation, useLazyQuery} from "@apollo/client";
 import AuthService from "../AuthService";
 import {useHistory} from "react-router-dom";
 
-const NEXT_TASK_QUERY = gql`
-    query getNextTask($userId: ID!, $testId: ID!) {
-        nextTask(userId: $userId, testId: $testId) {
+const NEXT_TASK_MUTATION = gql`
+    mutation CalculateNextTask($testId: ID!) {
+        calculateNextTask(testId: $testId) {
             task {
                 question
                 answers {
@@ -20,8 +20,8 @@ const NEXT_TASK_QUERY = gql`
     }`;
 
 const CHECK_TASK_SOLUTION_MUTATION = gql`
-    mutation CheckSolution($userId: ID!, $testId: ID!, $solutionNumber: Int!) {
-        checkSolution(userId: $userId, testId: $testId, solutionNumber: $solutionNumber) {
+    mutation CheckSolution($testId: ID!, $solutionNumber: Int!) {
+        checkSolution(testId: $testId, solutionNumber: $solutionNumber) {
             solutionNumber
             allSolutions
             correctSolutions
@@ -33,21 +33,20 @@ const CHECK_TASK_SOLUTION_MUTATION = gql`
 
 export default function StudentLiveTestPageComp(props) {
     const [chosenAnswerNumber, chooseAnswerNumber] = useState(null);
-    const [nextTask, {loading, error, data}] = useLazyQuery(NEXT_TASK_QUERY, {
-        variables: {userId: AuthService.getUserId(), testId: props.match.params.testid},
-        fetchPolicy: "no-cache",
-    },)
+    const [nextTask, {data: nextTaskData}] = useMutation(NEXT_TASK_MUTATION)
     const [checkSolution, {data: solutionData}] = useMutation(CHECK_TASK_SOLUTION_MUTATION, {
         onError: () => toast.notify(`Error :(`),
     },);
 
-    useEffect(() => nextTask(), []);
+    useEffect(() => nextTask({
+        variables: {testId: props.match.params.testid},
+    }), []);
 
-    if (!data) {
+    if (!nextTaskData) {
         return <div/>;
     }
 
-    if (!data.nextTask) {
+    if (!nextTaskData.nextTask) {
         return (
             <div
                 className="middle"
@@ -71,24 +70,23 @@ export default function StudentLiveTestPageComp(props) {
 
             <div className="row rounded shadow bg-light my-3">
                 <h2 className="col-12 m-1">
-                    {data.nextTask.task.question}
+                    {nextTaskData.nextTask.task.question}
                 </h2>
 
                 <div className="col-12 my-3">
                     <ul className="list-group col-12">
-                        {data.nextTask.task.answers.map(
+                        {nextTaskData.nextTask.task.answers.map(
                             ({answer, number}) =>
                                 <button
                                     key={number}
                                     className={`m-2 btn btn-lg text-left btn-${calculateAnswerColor({
                                         answerNumber: number,
                                         chosenAnswerNumber,
-                                        correctAnswerNumber: data.nextTask.task.solutionNumber
+                                        correctAnswerNumber: nextTaskData.nextTask.task.solutionNumber
                                     })}`}
                                     onClick={() => {
                                         checkSolution({
                                             variables: {
-                                                userId: AuthService.getUserId(),
                                                 testId: props.match.params.testid,
                                                 solutionNumber: number
                                             }
@@ -119,7 +117,9 @@ export default function StudentLiveTestPageComp(props) {
                     className="btn btn-primary btn-lg p-3"
                     onClick={() => {
                         chooseAnswerNumber(null)
-                        nextTask();
+                        nextTask({
+                            variables: {userId: AuthService.getUserId(), testId: props.match.params.testid},
+                        });
                     }}
                 >
                     Next

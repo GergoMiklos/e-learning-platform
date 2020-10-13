@@ -2,9 +2,7 @@ package com.thesis.studyapp.security.annotation;
 
 
 import com.thesis.studyapp.exception.UnauthorizedException;
-import com.thesis.studyapp.security.SecurityContextUtil;
-import graphql.schema.DataFetchingEnvironment;
-import graphql.servlet.GraphQLContext;
+import com.thesis.studyapp.util.AuthenticationUtil;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -14,24 +12,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-//todo az object resolverek már másik sec.contextbe futnak?, ott nem authentikált
-//jobb lenne egy secured annotáció?
+//WARNING! This aspect works only from the original request thread
 @Component
 @Aspect
 @Order(1)
 @RequiredArgsConstructor
 public class GraphQLSecurityAspect {
 
-    private final SecurityContextUtil securityContextUtil;
+    private final AuthenticationUtil authenticationUtil;
     private final Logger logger = LoggerFactory.getLogger(GraphQLSecurityAspect.class);
 
     /**
      * All graphQLResolver methods can be called only by authenticated user.
      * Exclusions are named in Pointcut expression.
      */
-    @Before("isDefinedInApplication() && (graphQLQueries() || graphQLMutations()) && !notAuthenticatedAnnotation()")
+    //@Before("isDefinedInApplication() && (graphQLQueries() || graphQLMutations()) && !notAuthenticatedAnnotation()")
+    @Before("authenticated()")
     public void isAuthenticated() throws Throwable {
-        if (!securityContextUtil.isAuthenticated()) {
+        if (!authenticationUtil.isAuthenticated()) {
             logger.error("Unauthorized request prohibited");
             throw new UnauthorizedException("Not authenticated");
         }
@@ -70,7 +68,7 @@ public class GraphQLSecurityAspect {
      * Exact method signature which will be excluded from security check
      */
     @Pointcut("@annotation(com.thesis.studyapp.security.annotation.Authenticated)")
-    private void authenticatedAnnotation() {
+    private void authenticated() {
     }
 
     @Pointcut("@annotation(com.thesis.studyapp.security.annotation.NotAuthenticated)")

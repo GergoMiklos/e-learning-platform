@@ -1,8 +1,8 @@
 type Query {
-    user(userId: ID!): User
-    group(groupId: ID!): Group
-    test(testId: ID!): Test
+    user(userId: ID!): User!
+    group(groupId: ID!): Group!
+    test(testId: ID!): Test!
+    studentStatus(studentStatusId: ID!): UserTestStatus!
     searchTasks(searchText: String, page: Int!): TaskSearchResult!
-    nextTask(userId: ID!, testId: ID!): TestTask
     isUsernameAlreadyRegistered(username: String!): Boolean!
 }

@@ -5,6 +5,7 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.TaskInputDto;
 import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.model.Task;
+import com.thesis.studyapp.security.annotation.Authenticated;
 import com.thesis.studyapp.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class TaskEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
         return TaskSearchResultDto.build(taskService.searchTasks(searchText, page));
     }
 
+    @Authenticated
     public Task createTask(TaskInputDto taskInputDto) {
         return taskService.createTask(taskInputDto);
     }

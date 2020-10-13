@@ -28,6 +28,8 @@ public class Test implements HasId {
     private String name;
     private String description;
 
+    private boolean active;
+
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

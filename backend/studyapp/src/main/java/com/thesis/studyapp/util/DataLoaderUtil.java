@@ -60,7 +60,7 @@ public class DataLoaderUtil {
         return userLoader.load(getId(hasId))
                 .handleAsync((result, exception) -> {
                     if (exception != null) {
-                        logger.error("Exception occurred while loading data with class {} and DataLoader: {}", hasId.getClass().toString(), dataLoader, exception);
+                        logger.error("Exception occurred while loading data with DataLoader: {}", dataLoader, exception);
                     }
                     return result;
                 });

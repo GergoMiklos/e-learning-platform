@@ -1,9 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.exception.CustomGraphQLException;
-import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
 
     public User getUser(Long userId) {
         return getUserById(userId, 1);
@@ -26,21 +23,16 @@ public class UserService {
         return userRepository.findByIdIn(ids, 1);
     }
 
-    //todo userteststatus minden teszthez a groupban
-    @Transactional
-    public User addStudentFromCodeToGroup(Long groupId, String studentCode) {
-        User user = getUserByCode(studentCode, 1);
-        Group group = getGroupById(groupId, 0);
-        user.addStudentGroup(group);
-        return userRepository.save(user, 1);
+    public List<User> getStudentsForGroup(Long groupId) {
+        return userRepository.findByStudentGroupsIdOrderByName(groupId, 1);
     }
 
-    @Transactional
-    public User addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
-        User user = getUserByCode(teacherCode, 1);
-        Group group = getGroupById(groupId, 0);
-        user.addTeacherGroup(group);
-        return userRepository.save(user, 1);
+    public List<User> getTeachersForGroup(Long groupId) {
+        return userRepository.findByTeacherGroupsIdOrderByName(groupId, 1);
+    }
+
+    public List<User> getStudentsForParent(Long parentId) {
+        return userRepository.findByParentsIdOrderByName(parentId, 1);
     }
 
     @Transactional
@@ -60,18 +52,6 @@ public class UserService {
         }
     }
 
-    public List<User> getStudentsForGroup(Long groupId) {
-        return userRepository.findByStudentGroupsIdOrderByName(groupId, 1);
-    }
-
-    public List<User> getTeachersForGroup(Long groupId) {
-        return userRepository.findByTeacherGroupsIdOrderByName(groupId, 1);
-    }
-
-    public List<User> getStudentsForParent(Long parentId) {
-        return userRepository.findByParentsIdOrderByName(parentId, 1);
-    }
-
     private User getUserById(Long userId, int depth) {
         return userRepository.findById(userId, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No user with id: " + userId));
@@ -81,11 +61,5 @@ public class UserService {
         return userRepository.findByCodeIgnoreCase(userCode, depth)
                 .orElseThrow(() -> new CustomGraphQLException("No user with code: " + userCode));
     }
-
-    private Group getGroupById(Long groupId, int depth) {
-        return groupRepository.findById(groupId, depth)
-                .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
-    }
-
 
 }

@@ -10,7 +10,11 @@ const LOGIN_MUTATION = gql`
     mutation Login($input: LoginInput!) {
         login(input: $input) {
             token
-            userId
+            user {
+                id
+                name
+                code
+            }
         }
     }`;
 
@@ -20,7 +24,7 @@ export default function LoginPageComp(props) {
 
     const [login] = useMutation(LOGIN_MUTATION, {
         onCompleted: (data) => {
-            AuthService.setLogin({token: data.login.token, userId: data.login.userId})
+            AuthService.setLogin({token: data.login.token, userId: data.login.user.id})
             history.push(`/student`);
         },
         onError: () => toast.notify(`Invalid username or password`),
