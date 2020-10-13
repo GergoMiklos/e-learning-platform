@@ -38,6 +38,9 @@ public class StatusSubscriptionUtil implements DisposableBean {
         executorService.shutdown();
     }
 
+    /**
+     * Start subscription's thread and connect to it
+     */
     @Autowired
     public StatusSubscriptionUtil(StudentStatusService studentStatusService) {
         this.studentStatusService = studentStatusService;
@@ -45,7 +48,7 @@ public class StatusSubscriptionUtil implements DisposableBean {
         executorService = Executors.newSingleThreadScheduledExecutor();
 
         Observable<StudentStatus> statusObservable = Observable.create(emitter -> {
-            executorService.scheduleAtFixedRate(newUpdateTick(emitter), 0, BROADCAST_RATE_SECONDS, TimeUnit.SECONDS);
+            executorService.scheduleAtFixedRate(newSubscriptionTick(emitter), 0, BROADCAST_RATE_SECONDS, TimeUnit.SECONDS);
         });
 
         ConnectableObservable<StudentStatus> connectableObservable = statusObservable.share().publish();
@@ -54,16 +57,26 @@ public class StatusSubscriptionUtil implements DisposableBean {
         publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
     }
 
+    /**
+     * Subscription for status changes by given test id
+     */
     public Flowable<StudentStatus> getPublisher(Long testId) {
         return publisher.filter(userTestStatus -> userTestStatus.getTest().getId().equals(testId));
     }
 
+    /**
+     * Listening for status changes
+     */
     @EventListener
     public void addNewUpdatedStatus(UpdatedStatusEvent updatedStatusEvent) {
         updatedStatusIds.add(updatedStatusEvent.getData());
     }
 
-    private Runnable newUpdateTick(ObservableEmitter<StudentStatus> emitter) {
+    /**
+     * Subscription's thread tick
+     * Load status changes and emit them
+     */
+    private Runnable newSubscriptionTick(ObservableEmitter<StudentStatus> emitter) {
         return () -> {
             List<StudentStatus> statuses = getUpdatedStatuses();
             if (statuses != null && !statuses.isEmpty()) {

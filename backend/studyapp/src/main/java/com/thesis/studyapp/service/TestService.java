@@ -44,7 +44,6 @@ public class TestService {
     public Test createTest(Long groupId, NameDescInputDto input) {
         input.validate();
         isTeacherOfTestGroup(groupId);
-
         Group group = groupService.getGroup(groupId);
 
         Test test = Test.builder()
@@ -59,7 +58,6 @@ public class TestService {
     @Transactional
     public Test editTestStatus(Long testId, boolean active) {
         Test test = getTestById(testId, 2);
-
         isTeacherOfTestGroup(test.getGroup().getId());
 
         if (test.isActive() == active) {
@@ -79,9 +77,7 @@ public class TestService {
     @Transactional
     public Test editTest(Long testId, NameDescInputDto input) {
         input.validate();
-
         Test test = getTestById(testId, 1);
-
         isTeacherOfTestGroup(test.getGroup().getId());
 
         test.setName(input.getName());
@@ -113,7 +109,7 @@ public class TestService {
 
     private void isTeacherOfTestGroup(Long groupId) {
         Long requesterId = authenticationUtil.getPrincipals().getUserId();
-        if (groupService.isTeacherOfGroup(requesterId, groupId)) {
+        if (!groupService.isTeacherOfGroup(requesterId, groupId)) {
             throw new ForbiddenException("This request authorized only for teachers");
         }
 

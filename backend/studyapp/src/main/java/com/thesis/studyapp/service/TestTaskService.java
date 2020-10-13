@@ -38,7 +38,6 @@ public class TestTaskService {
     @Transactional
     public List<TestTask> editTestTasks(Long testId, List<TestTaskInputDto> testTaskInputDtos) {
         testTaskInputDtos.forEach(TestTaskInputDto::validate);
-
         Test test = testService.getTest(testId);
         isTeacherOfTestGroup(test.getGroup().getId());
 
@@ -67,7 +66,6 @@ public class TestTaskService {
     public TestTask addTaskToTest(Long testId, Long taskId, int level) {
         Test test = testService.getTest(testId);
         Task task = taskService.getTask(taskId);
-
         isTeacherOfTestGroup(test.getGroup().getId());
 
         TestTask testTask = TestTask.builder()
@@ -85,7 +83,6 @@ public class TestTaskService {
     @Transactional
     public void deleteTaskFromTest(Long testTaskId) {
         TestTask testTask = getTestTaskById(testTaskId, 2);
-
         isTeacherOfTestGroup(testTask.getTest().getGroup().getId());
 
         testTaskRepository.deleteFromTest(testTaskId);
@@ -100,7 +97,7 @@ public class TestTaskService {
 
     private void isTeacherOfTestGroup(Long groupId) {
         Long requesterId = authenticationUtil.getPrincipals().getUserId();
-        if (groupService.isTeacherOfGroup(requesterId, groupId)) {
+        if (!groupService.isTeacherOfGroup(requesterId, groupId)) {
             throw new ForbiddenException("This request authorized only for teachers");
         }
     }

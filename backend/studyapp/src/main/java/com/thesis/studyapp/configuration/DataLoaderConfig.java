@@ -10,10 +10,10 @@ import com.thesis.studyapp.repository.TestRepository;
 import com.thesis.studyapp.repository.TestTaskRepository;
 import com.thesis.studyapp.repository.UserRepository;
 import com.thesis.studyapp.util.DataLoaderUtil;
-import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.BatchLoader;
+import org.dataloader.DataLoader;
 import org.dataloader.DataLoaderOptions;
 import org.dataloader.DataLoaderRegistry;
 import org.springframework.context.annotation.Bean;
@@ -52,11 +52,16 @@ public class DataLoaderConfig {
     }
 
     @Bean
-    public Instrumentation dataLoaderInstrumentation(DataLoaderRegistry dataLoaderRegistry) {
+    public DataLoaderDispatcherInstrumentation dataLoaderInstrumentation(DataLoaderRegistry dataLoaderRegistry) {
         return new DataLoaderDispatcherInstrumentation(dataLoaderRegistry);
     }
 
-    private <T extends HasId, L extends ObjectLoader<T>> org.dataloader.DataLoader<Long, T> createLoader(L objectLoader) {
+    /**
+     * Create a new Loader which
+     * loads the objects for the given ids and
+     * then (necessarily) sorts them by the given ids
+     */
+    private <T extends HasId, L extends ObjectLoader<T>> DataLoader<Long, T> createLoader(L objectLoader) {
         BatchLoader<Long, T> batchLoader = new BatchLoader<Long, T>() {
             @Override
             public CompletionStage<List<T>> load(List<Long> ids) {
@@ -66,7 +71,7 @@ public class DataLoaderConfig {
                 });
             }
         };
-        return org.dataloader.DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
+        return DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
     private <T extends HasId> List<T> sortByIds(List<T> list, List<Long> ids) {

@@ -18,8 +18,8 @@ public class TaskEndpoint implements GraphQLQueryResolver, GraphQLMutationResolv
 
     private final TaskService taskService;
 
-    public TaskSearchResultDto searchTasks(@Nullable String searchText, int page) {
-        return TaskSearchResultDto.build(taskService.searchTasks(searchText, page));
+    public TaskSearchResultDto searchTasks(Long testId, @Nullable String searchText, int page) {
+        return TaskSearchResultDto.build(taskService.searchTasks(testId, searchText, page));
     }
 
     @Authenticated

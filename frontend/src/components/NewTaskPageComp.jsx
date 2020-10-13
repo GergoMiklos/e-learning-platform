@@ -6,8 +6,8 @@ import {useLazyQuery} from "@apollo/client";
 import {useHistory} from "react-router-dom";
 
 const SEARCH_TASKS_QUERY = gql`
-    query SearchTasks($searchText: String, $page: Int!) {
-        searchTasks(searchText: $searchText, page: $page) {
+    query SearchTasks($testId: ID! $searchText: String, $page: Int!) {
+        searchTasks(testId: $testId, searchText: $searchText, page: $page) {
             totalPages
             totalElements
             tasks {
@@ -34,7 +34,7 @@ export default function NewTaskPageComp(props) {
     );
 
     if (!called && !data) {
-        call({variables: {searchText: searchText, page: 0}});
+        call({variables: {testId: props.match.params.testid, searchText: searchText, page: 0}});
     }
 
     if (!data) {
@@ -69,7 +69,13 @@ export default function NewTaskPageComp(props) {
                        value={searchText} onChange={event => setSearchText(event.target.value)}/>
                 <div className="input-group-append">
                     <button className="btn btn-primary"
-                            onClick={() => call({variables: {searchText: searchText, page: 0}})}>
+                            onClick={() => call({
+                                variables: {
+                                    testId: props.match.params.testid,
+                                    searchText: searchText,
+                                    page: 0
+                                }
+                            })}>
                         Search
                     </button>
                 </div>

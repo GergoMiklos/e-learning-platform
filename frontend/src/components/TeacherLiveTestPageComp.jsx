@@ -5,8 +5,8 @@ import {Link} from "react-router-dom";
 import StatusElementComp from "./StatusElementComp";
 import {useHistory} from "react-router-dom";
 
-const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
-    fragment UserTestStatusDetials on UserTestStatus {
+const STUDENTSTATUS_DETAILS_FRAGMENT = gql`
+    fragment StudentTestStatusDetials on StudentStatus {
         id
         status
         statusChangedTime
@@ -19,7 +19,7 @@ const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
         }
     }`;
 
-const USERTESTSTATUSES_QUERY = gql`
+const STUDENTSTATUSES_QUERY = gql`
     query getTest($testId: ID!) {
         test(testId: $testId) {
             id
@@ -27,19 +27,19 @@ const USERTESTSTATUSES_QUERY = gql`
             description
             allTasks
             userTestStatuses {
-                ...UserTestStatusDetials
+                ...StudentTestStatusDetials
             }
         }
     }
-${USERTESTSTATUS_DETAILS_FRAGMENT}`;
+${STUDENTSTATUS_DETAILS_FRAGMENT}`;
 
 const STATUS_CHANGE_SUBSCRIPTION = gql`
     subscription onStatusChange($testId: ID!) {
         testStatusChanges(testId: $testId) {
-            ...UserTestStatusDetials
+            ...StudentTestStatusDetials
         }
     }
-${USERTESTSTATUS_DETAILS_FRAGMENT}`;
+${STUDENTSTATUS_DETAILS_FRAGMENT}`;
 
 function TeacherLiveTestPageComp(props) {
 
@@ -107,7 +107,7 @@ function TeacherLiveTestPageComp(props) {
 
 export default function TeacherLiveTestPageCont(props) {
     const {loading, error, data, subscribeToMore} = useQuery(
-        USERTESTSTATUSES_QUERY, {
+        STUDENTSTATUSES_QUERY, {
             variables: {testId: props.match.params.testid},
             pollInterval: 60 * 1000,
         });
@@ -143,6 +143,6 @@ export default function TeacherLiveTestPageCont(props) {
 }
 
 TeacherLiveTestPageCont.fragments = {
-    USERTESTSTATUS_DETAILS_FRAGMENT: USERTESTSTATUS_DETAILS_FRAGMENT,
+    STUDENTSTATUS_DETAILS_FRAGMENT: STUDENTSTATUS_DETAILS_FRAGMENT,
 };
 

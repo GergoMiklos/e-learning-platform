@@ -101,7 +101,7 @@ public class GroupService {
     @Transactional
     public User addTeacherFromCodeToGroup(Long groupId, String teacherCode) {
         User user = getUserByCode(teacherCode);
-        Group group = getGroupById(groupId, 0);
+        Group group = getGroupById(groupId, 1);
         validateTeacher(group);
 
         user.addTeacherGroup(group);
@@ -119,9 +119,10 @@ public class GroupService {
 
     @Transactional
     public void deleteTeacherFromGroup(Long teacherId, Long groupId) {
-        isTeacherOfGroup(groupId, authenticationUtil.getPrincipals().getUserId());
+        Group group = getGroupById(groupId, 1);
+        validateTeacher(group);
 
-        if (userRepository.existsById(teacherId) && groupRepository.existsById(groupId)) {
+        if (userRepository.existsById(teacherId)) {
             groupRepository.deleteTeacher(groupId, teacherId);
         } else {
             throw new NotFoundException("No user with id: " + teacherId + " or group with id: " + groupId);

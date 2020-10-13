@@ -3,6 +3,6 @@ type Query {
     group(groupId: ID!): Group!
     test(testId: ID!): Test!
     studentStatus(studentStatusId: ID!): StudentStatus!
-    searchTasks(searchText: String, page: Int!): TaskSearchResult!
+    searchTasks(testId: ID!, searchText: String, page: Int!): TaskSearchResult!
     isUsernameAlreadyRegistered(username: String!): Boolean!
 }

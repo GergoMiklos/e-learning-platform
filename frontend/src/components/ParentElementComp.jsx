@@ -5,8 +5,8 @@ import StatusElementComp from "./StatusElementComp";
 import {useMutation} from "@apollo/client";
 import AuthService from "../AuthService";
 
-const USERTESTSTATUS_DETAILS_FRAGMENT = gql`
-    fragment UserTestStatusDetials on UserTestStatus {
+const STUDENTSTATUS_DETAILS_FRAGMENT = gql`
+    fragment StudentStatusDetials on StudentStatus {
         id
         status
         statusChangedTime
@@ -26,11 +26,11 @@ const FOLLOWED_STUDENT_DETAILS_FRAGMENT = gql`
         id
         name
         code
-        userTestStatuses {
-            ...UserTestStatusDetials
+        studentStatuses {
+            ...StudentStatusDetials
         }
     }
-${USERTESTSTATUS_DETAILS_FRAGMENT}`
+${STUDENTSTATUS_DETAILS_FRAGMENT}`
 
 const DELETE_FOLLOWED_STUDENT_MUTATION = gql`
     mutation DeleteStudentFromParent($parentId: ID!, $studentId: ID!) {
@@ -110,7 +110,7 @@ export default function ParentElementComp(props) {
 }
 
 ParentElementComp.fragments = {
-    USERTESTSTATUS_DETAILS_FRAGMENT: USERTESTSTATUS_DETAILS_FRAGMENT,
+    STUDENTSTATUS_DETAILS_FRAGMENT: STUDENTSTATUS_DETAILS_FRAGMENT,
     FOLLOWED_STUDENT_DETAILS_FRAGMENT: FOLLOWED_STUDENT_DETAILS_FRAGMENT,
 }
 

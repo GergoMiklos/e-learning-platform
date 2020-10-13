@@ -17,6 +17,13 @@ import java.util.stream.Collectors;
 @Configuration
 public class GraphQLErrorHandlingConfig {
 
+    /**
+     * Changing default GraphQLErrorHandler behaviour to show
+     * default client errors and
+     * filtered custom errors (internalClientErrors) and
+     * an internal error message
+     * to the client
+     */
     @Bean
     public GraphQLErrorHandler errorHandler() {
         return new DefaultGraphQLErrorHandler() {

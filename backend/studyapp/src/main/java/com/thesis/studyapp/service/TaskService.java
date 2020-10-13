@@ -29,13 +29,14 @@ public class TaskService {
         return getTaskById(taskId, 1);
     }
 
-    public Page<Task> searchTasks(@Nullable String searchText, int page) {
+    public Page<Task> searchTasks(Long testId, @Nullable String searchText, int page) {
         Pageable pageable = PageRequest.of(page, 25, Sort.Direction.DESC, "usage");
+
         if (searchText != null && !searchText.trim().isEmpty()) {
-            //List<String> searchWords = searchText.trim().split("\\s+").;
-            return taskRepository.findByQuestionContainingIgnoreCase(searchText, pageable, 1);
+            return taskRepository.findByQuestionContainingIgnoreCaseOrderByUsageDesc(searchText, pageable, 1);
         } else {
-            return taskRepository.findAll(pageable, 1);
+            return taskRepository.findAllByOrderByUsageDesc(pageable, 1);
+//            return taskRepository.findBySimilarTasksForTest(testId);
         }
     }
 

@@ -30,6 +30,10 @@ public class DataLoaderUtil {
     private final DataLoaderRegistry dataLoaderRegistry;
     private final Logger logger = LoggerFactory.getLogger(DataLoaderUtil.class);
 
+    /**
+     * Load objects by the given ids with DataLoader
+     * and tries to avoid error exceptions
+     */
     public <T extends HasId> CompletableFuture<List<T>> loadData(Set<T> hasIds, String dataLoader) {
         if (hasIds == null) {
             logger.error("NullPointerException prevented while using DataLoader with null parameter! Maybe forgot to include relationships for resolvers?");
@@ -50,6 +54,10 @@ public class DataLoaderUtil {
                 });
     }
 
+    /**
+     * Load object by the given id with DataLoader
+     * and tries to avoid error exceptions
+     */
     public <T extends HasId> CompletableFuture<T> loadData(T hasId, String dataLoader) {
         if (hasId == null) {
             logger.error("NullPointerException (not?) prevented while using DataLoader with null parameter! Maybe forgot to include relationships for resolvers?");
