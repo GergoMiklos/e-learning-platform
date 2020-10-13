@@ -2,7 +2,7 @@ type Query {
     user(userId: ID!): User!
     group(groupId: ID!): Group!
     test(testId: ID!): Test!
-    studentStatus(studentStatusId: ID!): UserTestStatus!
+    studentStatus(studentStatusId: ID!): StudentStatus!
     searchTasks(searchText: String, page: Int!): TaskSearchResult!
     isUsernameAlreadyRegistered(username: String!): Boolean!
 }

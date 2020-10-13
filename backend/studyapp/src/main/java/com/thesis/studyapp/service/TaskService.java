@@ -1,7 +1,7 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.TaskInputDto;
-import com.thesis.studyapp.exception.CustomGraphQLException;
+import com.thesis.studyapp.exception.NotFoundException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.TaskAnswer;
 import com.thesis.studyapp.repository.TaskRepository;
@@ -61,7 +61,7 @@ public class TaskService {
 
     private Task getTaskById(Long taskId, int depth) {
         return taskRepository.findById(taskId, depth)
-                .orElseThrow(() -> new CustomGraphQLException("No task with id: " + taskId));
+                .orElseThrow(() -> new NotFoundException("No task with id: " + taskId));
     }
 
     private Task convertInputToTask(TaskInputDto taskInputDto) {

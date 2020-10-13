@@ -42,13 +42,13 @@ public class Test implements HasId {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TESTSTATUS", direction = Relationship.OUTGOING)
-    private Set<UserTestStatus> userTestStatuses = new HashSet<>();
+    private Set<StudentStatus> studentStatuses = new HashSet<>();
 
-    public void addUserTestStatus(UserTestStatus userTestStatus) {
-        if (userTestStatuses == null) {
-            userTestStatuses = new HashSet<>();
+    public void addUserTestStatus(StudentStatus studentStatus) {
+        if (studentStatuses == null) {
+            studentStatuses = new HashSet<>();
         }
-        userTestStatuses.add(userTestStatus);
+        studentStatuses.add(studentStatus);
     }
 
     public void addTask(TestTask task) {

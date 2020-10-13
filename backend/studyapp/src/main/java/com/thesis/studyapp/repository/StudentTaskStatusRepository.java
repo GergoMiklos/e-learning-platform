@@ -1,6 +1,6 @@
 package com.thesis.studyapp.repository;
 
-import com.thesis.studyapp.model.UserTestTaskStatus;
+import com.thesis.studyapp.model.StudentTaskStatus;
 import org.springframework.data.neo4j.annotation.Depth;
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.stereotype.Repository;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserTestTaskStatusRepository extends Neo4jRepository<UserTestTaskStatus, Long> {
+public interface StudentTaskStatusRepository extends Neo4jRepository<StudentTaskStatus, Long> {
 
-    List<UserTestTaskStatus> findByIdIn(List<Long> ids, @Depth int depth);
+    List<StudentTaskStatus> findByIdIn(List<Long> ids, @Depth int depth);
 
 }

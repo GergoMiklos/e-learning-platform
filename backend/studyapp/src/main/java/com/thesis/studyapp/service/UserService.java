@@ -1,6 +1,6 @@
 package com.thesis.studyapp.service;
 
-import com.thesis.studyapp.exception.CustomGraphQLException;
+import com.thesis.studyapp.exception.NotFoundException;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -48,18 +48,18 @@ public class UserService {
         if (userRepository.existsById(parentId) && userRepository.existsById(parentId)) {
             userRepository.deleteFollowedStudent(parentId, studentId);
         } else {
-            throw new CustomGraphQLException("No user with id: " + parentId + " or " + studentId);
+            throw new NotFoundException("No user with id: " + parentId + " or " + studentId);
         }
     }
 
     private User getUserById(Long userId, int depth) {
         return userRepository.findById(userId, depth)
-                .orElseThrow(() -> new CustomGraphQLException("No user with id: " + userId));
+                .orElseThrow(() -> new NotFoundException("No user with id: " + userId));
     }
 
     private User getUserByCode(String userCode, int depth) {
         return userRepository.findByCodeIgnoreCase(userCode, depth)
-                .orElseThrow(() -> new CustomGraphQLException("No user with code: " + userCode));
+                .orElseThrow(() -> new NotFoundException("No user with code: " + userCode));
     }
 
 }

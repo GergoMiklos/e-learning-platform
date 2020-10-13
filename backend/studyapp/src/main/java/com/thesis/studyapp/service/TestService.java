@@ -1,12 +1,12 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.NameDescInputDto;
-import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.exception.ForbiddenException;
+import com.thesis.studyapp.exception.NotFoundException;
 import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.TestRepository;
 import com.thesis.studyapp.util.AuthenticationUtil;
@@ -72,9 +72,9 @@ public class TestService {
 
         test.setActive(active);
         if (active) {
-            test.setUserTestStatuses(createUserTestStatuses(test.getGroup().getStudents()));
+            test.setStudentStatuses(createUserTestStatuses(test.getGroup().getStudents()));
         } else {
-            test.setUserTestStatuses(new HashSet<>());
+            test.setStudentStatuses(new HashSet<>());
         }
 
         return testRepository.save(test, 2);
@@ -95,13 +95,13 @@ public class TestService {
     }
 
     //todo ez csak akkor működik ha vizsgálod !!! :(
-    public Set<UserTestStatus> createUserTestStatuses(Set<User> students) {
+    public Set<StudentStatus> createUserTestStatuses(Set<User> students) {
         ZonedDateTime creationTime = dateUtil.getCurrentTime();
 
         return students.stream()
-                .map(student -> UserTestStatus.builder()
+                .map(student -> StudentStatus.builder()
                         .user(student)
-                        .status(UserTestStatus.Status.NOT_STARTED)
+                        .status(StudentStatus.Status.NOT_STARTED)
                         .statusChangedDate(creationTime)
                         .currentLevel(1)
                         .currentCycle(1)
@@ -112,7 +112,7 @@ public class TestService {
 
     private Test getTestById(Long testId, int depth) {
         return testRepository.findById(testId, depth)
-                .orElseThrow(() -> new CustomGraphQLException("No test with id: " + testId));
+                .orElseThrow(() -> new NotFoundException("No test with id: " + testId));
     }
 
     private void isTeacherOfTestGroup(Long groupId) {

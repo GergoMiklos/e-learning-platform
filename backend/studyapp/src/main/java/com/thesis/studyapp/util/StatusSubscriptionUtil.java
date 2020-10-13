@@ -1,8 +1,8 @@
 package com.thesis.studyapp.util;
 
 import com.thesis.studyapp.event.UpdatedStatusEvent;
-import com.thesis.studyapp.model.UserTestStatus;
-import com.thesis.studyapp.service.UserTestStatusService;
+import com.thesis.studyapp.model.StudentStatus;
+import com.thesis.studyapp.service.StudentStatusService;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class StatusSubscriptionUtil implements DisposableBean {
 
-    private final UserTestStatusService userTestStatusService;
+    private final StudentStatusService studentStatusService;
     private final Logger logger = LoggerFactory.getLogger(StatusSubscriptionUtil.class);
     private final Set<Long> updatedStatusIds;
-    private final Flowable<UserTestStatus> publisher;
+    private final Flowable<StudentStatus> publisher;
     private final ScheduledExecutorService executorService;
     private static final int BROADCAST_RATE_SECONDS = 5;
 
@@ -39,22 +39,22 @@ public class StatusSubscriptionUtil implements DisposableBean {
     }
 
     @Autowired
-    public StatusSubscriptionUtil(UserTestStatusService userTestStatusService) {
-        this.userTestStatusService = userTestStatusService;
+    public StatusSubscriptionUtil(StudentStatusService studentStatusService) {
+        this.studentStatusService = studentStatusService;
         updatedStatusIds = ConcurrentHashMap.newKeySet();
         executorService = Executors.newSingleThreadScheduledExecutor();
 
-        Observable<UserTestStatus> statusObservable = Observable.create(emitter -> {
+        Observable<StudentStatus> statusObservable = Observable.create(emitter -> {
             executorService.scheduleAtFixedRate(newUpdateTick(emitter), 0, BROADCAST_RATE_SECONDS, TimeUnit.SECONDS);
         });
 
-        ConnectableObservable<UserTestStatus> connectableObservable = statusObservable.share().publish();
+        ConnectableObservable<StudentStatus> connectableObservable = statusObservable.share().publish();
         connectableObservable.connect();
 
         publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
     }
 
-    public Flowable<UserTestStatus> getPublisher(Long testId) {
+    public Flowable<StudentStatus> getPublisher(Long testId) {
         return publisher.filter(userTestStatus -> userTestStatus.getTest().getId().equals(testId));
     }
 
@@ -63,27 +63,27 @@ public class StatusSubscriptionUtil implements DisposableBean {
         updatedStatusIds.add(updatedStatusEvent.getData());
     }
 
-    private Runnable newUpdateTick(ObservableEmitter<UserTestStatus> emitter) {
+    private Runnable newUpdateTick(ObservableEmitter<StudentStatus> emitter) {
         return () -> {
-            List<UserTestStatus> statuses = getUpdatedStatuses();
+            List<StudentStatus> statuses = getUpdatedStatuses();
             if (statuses != null && !statuses.isEmpty()) {
-                emitTests(emitter, statuses);
+                emitStatuses(emitter, statuses);
             }
         };
     }
 
-    private List<UserTestStatus> getUpdatedStatuses() {
+    private List<StudentStatus> getUpdatedStatuses() {
         List<Long> ids = new ArrayList<>(updatedStatusIds);
         updatedStatusIds.clear();
-        return userTestStatusService.getUserTestStatusesByIds(ids);
+        return studentStatusService.getUserTestStatusesByIds(ids);
     }
 
-    private void emitTests(ObservableEmitter<UserTestStatus> emitter, List<UserTestStatus> statuses) {
-        for (UserTestStatus status : statuses) {
+    private void emitStatuses(ObservableEmitter<StudentStatus> emitter, List<StudentStatus> statuses) {
+        for (StudentStatus status : statuses) {
             try {
                 emitter.onNext(status);
             } catch (RuntimeException e) {
-                logger.error("Cannot publish subscription for updated UserTestStatus", e);
+                logger.error("Cannot publish subscription for updated StudentStatus", e);
             }
         }
     }

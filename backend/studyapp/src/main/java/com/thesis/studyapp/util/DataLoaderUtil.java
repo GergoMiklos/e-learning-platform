@@ -24,8 +24,8 @@ public class DataLoaderUtil {
     public static final String TASK_LOADER = "taskLoader";
     public static final String TESTTASK_LOADER = "testTaskLoader";
     public static final String USER_LOADER = "userLoader";
-    public static final String USERTESTSTATUS_LOADER = "userTestStatusLoader";
-    public static final String USERTESTTASKSTATUS_LOADER = "userTestTaskStatusLoader";
+    public static final String USERTESTSTATUS_LOADER = "studentStatusLoader";
+    public static final String USERTESTTASKSTATUS_LOADER = "studentTaskStatusLoader";
 
     private final DataLoaderRegistry dataLoaderRegistry;
     private final Logger logger = LoggerFactory.getLogger(DataLoaderUtil.class);

@@ -21,7 +21,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTestStatus implements HasId, HasRatio {
+public class StudentStatus implements HasId, HasRatio {
     @Id
     @GeneratedValue
     private Long id;
@@ -56,14 +56,14 @@ public class UserTestStatus implements HasId, HasRatio {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKSTATUSDATA", direction = Relationship.OUTGOING)
-    private Set<UserTestTaskStatus> userTestTaskStatuses = new HashSet<>();
+    private Set<StudentTaskStatus> studentTaskStatuses = new HashSet<>();
 
 
-    public void addUserTestTaskStatus(UserTestTaskStatus userTestTaskStatus) {
-        if (this.userTestTaskStatuses == null) {
-            this.userTestTaskStatuses = new HashSet<>();
+    public void addUserTestTaskStatus(StudentTaskStatus studentTaskStatus) {
+        if (this.studentTaskStatuses == null) {
+            this.studentTaskStatuses = new HashSet<>();
         }
-        this.userTestTaskStatuses.add(userTestTaskStatus);
+        this.studentTaskStatuses.add(studentTaskStatus);
     }
 
     public double getRatio() {

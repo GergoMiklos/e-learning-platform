@@ -2,18 +2,18 @@ package com.thesis.studyapp.configuration;
 
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.HasId;
+import com.thesis.studyapp.model.StudentStatus;
+import com.thesis.studyapp.model.StudentTaskStatus;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.model.UserTestStatus;
-import com.thesis.studyapp.model.UserTestTaskStatus;
 import com.thesis.studyapp.service.GroupService;
+import com.thesis.studyapp.service.StudentStatusService;
 import com.thesis.studyapp.service.TaskService;
 import com.thesis.studyapp.service.TestService;
 import com.thesis.studyapp.service.TestTaskService;
 import com.thesis.studyapp.service.UserService;
-import com.thesis.studyapp.service.UserTestStatusService;
 import com.thesis.studyapp.util.DataLoaderUtil;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.dataloader.DataLoaderDispatcherInstrumentation;
@@ -40,7 +40,7 @@ public class DataLoaderConfig {
     private final GroupService groupService;
     private final TaskService taskService;
     private final TestTaskService testTaskService;
-    private final UserTestStatusService userTestStatusService;
+    private final StudentStatusService studentStatusService;
 
     @Bean
     public DataLoaderRegistry dataLoaderRegistry() {
@@ -94,25 +94,25 @@ public class DataLoaderConfig {
         return org.dataloader.DataLoader.newDataLoader(groupBatchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private org.dataloader.DataLoader<Long, UserTestStatus> userTestStatusLoader() {
-        BatchLoader<Long, UserTestStatus> batchLoader = new BatchLoader<Long, UserTestStatus>() {
+    private org.dataloader.DataLoader<Long, StudentStatus> userTestStatusLoader() {
+        BatchLoader<Long, StudentStatus> batchLoader = new BatchLoader<Long, StudentStatus>() {
             @Override
-            public CompletionStage<List<UserTestStatus>> load(List<Long> userTestStatusIds) {
+            public CompletionStage<List<StudentStatus>> load(List<Long> userTestStatusIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<UserTestStatus> userTestStatuses = userTestStatusService.getUserTestStatusesByIds(userTestStatusIds);
-                    return sortListByIds(userTestStatuses, userTestStatusIds);
+                    List<StudentStatus> studentStatuses = studentStatusService.getUserTestStatusesByIds(userTestStatusIds);
+                    return sortListByIds(studentStatuses, userTestStatusIds);
                 });
             }
         };
         return org.dataloader.DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private org.dataloader.DataLoader<Long, UserTestTaskStatus> userTestTaskStatusLoader() {
-        BatchLoader<Long, UserTestTaskStatus> batchLoader = new BatchLoader<Long, UserTestTaskStatus>() {
+    private org.dataloader.DataLoader<Long, StudentTaskStatus> userTestTaskStatusLoader() {
+        BatchLoader<Long, StudentTaskStatus> batchLoader = new BatchLoader<Long, StudentTaskStatus>() {
             @Override
-            public CompletionStage<List<UserTestTaskStatus>> load(List<Long> userTestTaskStatusIds) {
+            public CompletionStage<List<StudentTaskStatus>> load(List<Long> userTestTaskStatusIds) {
                 return CompletableFuture.supplyAsync(() -> {
-                    List<UserTestTaskStatus> userTestStatuses = userTestStatusService.getUserTestTaskStatusesByIds(userTestTaskStatusIds);
+                    List<StudentTaskStatus> userTestStatuses = studentStatusService.getUserTestTaskStatusesByIds(userTestTaskStatusIds);
                     return sortListByIds(userTestStatuses, userTestTaskStatusIds);
                 });
             }

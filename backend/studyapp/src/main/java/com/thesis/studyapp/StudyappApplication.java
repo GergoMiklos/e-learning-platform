@@ -1,13 +1,13 @@
 package com.thesis.studyapp;
 
 import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.StudentStatus;
+import com.thesis.studyapp.model.StudentTaskStatus;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.TaskAnswer;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.model.UserTestStatus;
-import com.thesis.studyapp.model.UserTestTaskStatus;
 import com.thesis.studyapp.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -117,7 +117,7 @@ public class StudyappApplication {
             test.addTask(testTask2);
             group.addTest(test);
 
-            UserTestTaskStatus userTestTaskStatus = UserTestTaskStatus.builder()
+            StudentTaskStatus studentTaskStatus = StudentTaskStatus.builder()
                     .allSolutions(2)
                     .correctSolutions(1)
                     .correctSolutionsInRow(0)
@@ -125,7 +125,7 @@ public class StudyappApplication {
                     .lastSolutionTime(ZonedDateTime.now())
                     .testTask(testTask)
                     .build();
-            UserTestTaskStatus userTestTaskStatus2 = UserTestTaskStatus.builder()
+            StudentTaskStatus studentTaskStatus2 = StudentTaskStatus.builder()
                     .allSolutions(87)
                     .correctSolutions(71)
                     .correctSolutionsInRow(16)
@@ -134,8 +134,8 @@ public class StudyappApplication {
                     .testTask(testTask2)
                     .build();
 
-            UserTestStatus userTestStatus = UserTestStatus.builder()
-                    .status(UserTestStatus.Status.IN_PROGRESS)
+            StudentStatus studentStatus = StudentStatus.builder()
+                    .status(StudentStatus.Status.IN_PROGRESS)
                     .statusChangedDate(ZonedDateTime.now(ZoneOffset.UTC))
                     .user(user)
                     .test(test)
@@ -146,10 +146,10 @@ public class StudyappApplication {
                     .correctSolutionsInRow(2)
                     .build();
 
-            userTestStatus.addUserTestTaskStatus(userTestTaskStatus);
-            userTestStatus.addUserTestTaskStatus(userTestTaskStatus2);
-            test.addUserTestStatus(userTestStatus);
-            user.addUserTestStatus(userTestStatus);
+            studentStatus.addUserTestTaskStatus(studentTaskStatus);
+            studentStatus.addUserTestTaskStatus(studentTaskStatus2);
+            test.addUserTestStatus(studentStatus);
+            user.addUserTestStatus(studentStatus);
 
             userRepository.save(user);
             userRepository.save(user2);

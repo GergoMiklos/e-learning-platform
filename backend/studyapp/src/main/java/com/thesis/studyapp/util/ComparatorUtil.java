@@ -1,12 +1,12 @@
 package com.thesis.studyapp.util;
 
 import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.StudentStatus;
+import com.thesis.studyapp.model.StudentTaskStatus;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.model.UserTestStatus;
-import com.thesis.studyapp.model.UserTestTaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +36,8 @@ public class ComparatorUtil {
         return Comparator.comparing(TestTask::getLevel).thenComparing(TestTask::getRatio);
     }
 
-    public static Comparator<UserTestStatus> getUserTestStatusComparator() {
-        return ((Comparator<UserTestStatus>) (uts1, uts2) -> {
+    public static Comparator<StudentStatus> getUserTestStatusComparator() {
+        return ((Comparator<StudentStatus>) (uts1, uts2) -> {
             if (uts1.getUser() == null || uts2.getUser() == null) {
                 logger.error("Relationships needed for comparing UserTestStatuses!");
                 return 0;
@@ -54,8 +54,8 @@ public class ComparatorUtil {
         });
     }
 
-    public static Comparator<UserTestTaskStatus> getUserTestTaskStatusComparator() {
-        return ((Comparator<UserTestTaskStatus>) (utts1, utts2) -> {
+    public static Comparator<StudentTaskStatus> getUserTestTaskStatusComparator() {
+        return ((Comparator<StudentTaskStatus>) (utts1, utts2) -> {
             if (utts1.getAllSolutions() == 0 && utts2.getAllSolutions() == 0) {
                 return 0;
             }

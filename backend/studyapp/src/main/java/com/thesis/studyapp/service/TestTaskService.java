@@ -1,8 +1,8 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.TestTaskInputDto;
-import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.exception.ForbiddenException;
+import com.thesis.studyapp.exception.NotFoundException;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
@@ -85,7 +85,7 @@ public class TestTaskService {
         return testTaskRepository.save(testTask, 1);
     }
 
-    //todo deletnél mindenhonnan deletelni kéne / csak
+    //todo deletnél mindenhonnan deletelni kéne / csak innen
     @Transactional
     public void deleteTaskFromTest(Long testTaskId) {
         TestTask testTask = getTestTaskById(testTaskId, 2);
@@ -99,7 +99,7 @@ public class TestTaskService {
 
     private TestTask getTestTaskById(Long testTaskId, int depth) {
         return testTaskRepository.findById(testTaskId, Math.max(depth, 1))
-                .orElseThrow(() -> new CustomGraphQLException("No testTask with id: " + testTaskId));
+                .orElseThrow(() -> new NotFoundException("No testTask with id: " + testTaskId));
     }
 
     private void isTeacherOfTestGroup(Long groupId) {

@@ -44,7 +44,7 @@ public class User implements HasId {
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "USERSTATUS", direction = Relationship.OUTGOING)
-    private Set<UserTestStatus> userTestStatuses = new HashSet<>();
+    private Set<StudentStatus> studentStatuses = new HashSet<>();
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "STUDENTPARENT", direction = Relationship.OUTGOING)
@@ -69,11 +69,11 @@ public class User implements HasId {
         teacherGroups.add(group);
     }
 
-    public void addUserTestStatus(UserTestStatus userTestStatus) {
-        if (userTestStatuses == null) {
-            userTestStatuses = new HashSet<>();
+    public void addUserTestStatus(StudentStatus studentStatus) {
+        if (studentStatuses == null) {
+            studentStatuses = new HashSet<>();
         }
-        userTestStatuses.add(userTestStatus);
+        studentStatuses.add(studentStatus);
     }
 
     public void addParent(User user) {

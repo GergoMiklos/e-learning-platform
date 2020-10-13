@@ -18,7 +18,7 @@ import java.time.ZonedDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTestTaskStatus implements HasId, HasRatio {
+public class StudentTaskStatus implements HasId, HasRatio {
     @Id
     @GeneratedValue
     private Long id;
@@ -43,7 +43,7 @@ public class UserTestTaskStatus implements HasId, HasRatio {
     private int correctSolutionsInPrevCycle;
     private int allSolutionsInPrevCycle;
 
-    public UserTestTaskStatus(TestTask testTask, boolean isCorrect, ZonedDateTime solutionTime) {
+    public StudentTaskStatus(TestTask testTask, boolean isCorrect, ZonedDateTime solutionTime) {
         this.testTask = testTask;
         setNewSolution(isCorrect, solutionTime);
     }

@@ -1,8 +1,8 @@
 package com.thesis.studyapp.service;
 
 import com.thesis.studyapp.dto.NameDescInputDto;
-import com.thesis.studyapp.exception.CustomGraphQLException;
 import com.thesis.studyapp.exception.ForbiddenException;
+import com.thesis.studyapp.exception.NotFoundException;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.repository.GroupRepository;
@@ -117,7 +117,7 @@ public class GroupService {
         if (userRepository.existsById(studentId) && groupRepository.existsById(groupId)) {
             groupRepository.deleteStudent(groupId, studentId);
         } else {
-            throw new CustomGraphQLException("No user with id: " + studentId + " or group with id: " + groupId);
+            throw new NotFoundException("No user with id: " + studentId + " or group with id: " + groupId);
         }
     }
 
@@ -128,7 +128,7 @@ public class GroupService {
         if (userRepository.existsById(teacherId) && groupRepository.existsById(groupId)) {
             groupRepository.deleteTeacher(groupId, teacherId);
         } else {
-            throw new CustomGraphQLException("No user with id: " + teacherId + " or group with id: " + groupId);
+            throw new NotFoundException("No user with id: " + teacherId + " or group with id: " + groupId);
         }
     }
 
@@ -146,12 +146,12 @@ public class GroupService {
 
     private Group getGroupById(Long groupId, int depth) {
         return groupRepository.findById(groupId, depth)
-                .orElseThrow(() -> new CustomGraphQLException("No group with id: " + groupId));
+                .orElseThrow(() -> new NotFoundException("No group with id: " + groupId));
     }
 
     private Group getGroupByCode(String groupCode, int depth) {
         return groupRepository.findByCodeIgnoreCase(groupCode.toUpperCase(), depth)
-                .orElseThrow(() -> new CustomGraphQLException("No group with code: " + groupCode));
+                .orElseThrow(() -> new NotFoundException("No group with code: " + groupCode));
     }
 
     private String createGroupCode() {
@@ -164,12 +164,12 @@ public class GroupService {
 
     private User getUserById(Long userId) {
         return userRepository.findById(userId, 1)
-                .orElseThrow(() -> new CustomGraphQLException("No user with id: " + userId));
+                .orElseThrow(() -> new NotFoundException("No user with id: " + userId));
     }
 
     private User getUserByCode(String userCode) {
         return userRepository.findByCodeIgnoreCase(userCode, 1)
-                .orElseThrow(() -> new CustomGraphQLException("No user with code: " + userCode));
+                .orElseThrow(() -> new NotFoundException("No user with code: " + userCode));
     }
 
 }

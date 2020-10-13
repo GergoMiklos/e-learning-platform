@@ -2,9 +2,9 @@ package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.TestTask;
-import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.util.DataLoaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,8 +29,8 @@ public class TestResolver implements GraphQLResolver<Test> {
                 });
     }
 
-    public CompletableFuture<List<UserTestStatus>> userTestStatuses(Test test) {
-        return dataLoaderUtil.loadData(test.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
+    public CompletableFuture<List<StudentStatus>> studentStatuses(Test test) {
+        return dataLoaderUtil.loadData(test.getStudentStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
                 .thenApplyAsync((userTestStatuses) -> {
                     userTestStatuses.sort(getUserTestStatusComparator());
                     return userTestStatuses;

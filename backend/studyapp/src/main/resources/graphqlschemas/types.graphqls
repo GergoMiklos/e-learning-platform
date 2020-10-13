@@ -5,7 +5,7 @@ type User {
     studentGroups: [Group!]
     teacherGroups: [Group!]
     followedStudents: [User!]
-    userTestStatuses: [UserTestStatus!]
+    studentStatuses: [StudentStatus!]
 }
 
 type Group {
@@ -26,11 +26,11 @@ type Test {
     description: String
     allTasks: Int!
     testTasks: [TestTask!]
-    userTestStatuses: [UserTestStatus!]
+    studentStatuses: [StudentStatus!]
     group: Group!
 }
 
-type UserTestStatus {
+type StudentStatus {
     id: ID!
     test: Test!
     user: User!
@@ -39,7 +39,7 @@ type UserTestStatus {
     correctSolutions: Int!
     allSolutions: Int!
     solvedTasks: Int!
-    userTestTaskStatuses: [UserTestTaskStatus!]
+    studentTaskStatuses: [StudentTaskStatus!]
 }
 
 type Task {
@@ -79,7 +79,7 @@ type TestTask {
     task: Task!
 }
 
-type UserTestTaskStatus {
+type StudentTaskStatus {
     id: ID!
     testTask: TestTask!
     lastSolutionTime: String!

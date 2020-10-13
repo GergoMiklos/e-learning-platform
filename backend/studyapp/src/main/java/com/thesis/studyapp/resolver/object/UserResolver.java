@@ -2,8 +2,8 @@ package com.thesis.studyapp.resolver.object;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.model.Group;
+import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.model.UserTestStatus;
 import com.thesis.studyapp.util.DataLoaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -45,8 +45,8 @@ public class UserResolver implements GraphQLResolver<User> {
                 });
     }
 
-    public CompletableFuture<List<UserTestStatus>> userTestStatuses(User user) {
-        return dataLoaderUtil.loadData(user.getUserTestStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
+    public CompletableFuture<List<StudentStatus>> studentStatuses(User user) {
+        return dataLoaderUtil.loadData(user.getStudentStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
                 .thenApplyAsync((userTestStatuses) -> {
                     userTestStatuses.sort(getUserTestStatusComparator());
                     return userTestStatuses;
