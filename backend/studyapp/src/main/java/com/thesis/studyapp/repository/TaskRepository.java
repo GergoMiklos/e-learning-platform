@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TaskRepository extends Neo4jRepository<Task, Long> {
+public interface TaskRepository extends Neo4jRepository<Task, Long>, ObjectLoader<Task> {
 
     List<Task> findByIdIn(List<Long> ids, @Depth int depth);
 

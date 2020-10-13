@@ -31,10 +31,6 @@ public class TestTaskService {
         return getTestTaskById(testTaskId, 1);
     }
 
-    public List<TestTask> getTestTasksByIds(List<Long> ids) {
-        return testTaskRepository.findByIdIn(ids, 1);
-    }
-
     public List<TestTask> getTestTasksForTest(Long testId) {
         return testTaskRepository.findByTestIdOrderByLevel(testId, 1);
     }

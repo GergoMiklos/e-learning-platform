@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface StudentTaskStatusRepository extends Neo4jRepository<StudentTaskStatus, Long> {
+public interface StudentTaskStatusRepository extends Neo4jRepository<StudentTaskStatus, Long>, ObjectLoader<StudentTaskStatus> {
 
     List<StudentTaskStatus> findByIdIn(List<Long> ids, @Depth int depth);
 

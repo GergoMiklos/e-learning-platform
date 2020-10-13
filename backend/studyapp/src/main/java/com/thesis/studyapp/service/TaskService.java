@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,10 +27,6 @@ public class TaskService {
 
     public Task getTask(Long taskId) {
         return getTaskById(taskId, 1);
-    }
-
-    public List<Task> getTasksByIds(List<Long> ids) {
-        return taskRepository.findByIdIn(ids, 1);
     }
 
     public Page<Task> searchTasks(@Nullable String searchText, int page) {

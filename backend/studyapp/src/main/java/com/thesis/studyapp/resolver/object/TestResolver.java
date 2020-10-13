@@ -30,7 +30,7 @@ public class TestResolver implements GraphQLResolver<Test> {
     }
 
     public CompletableFuture<List<StudentStatus>> studentStatuses(Test test) {
-        return dataLoaderUtil.loadData(test.getStudentStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
+        return dataLoaderUtil.loadData(test.getStudentStatuses(), DataLoaderUtil.STUDENTSTATUS_LOADER)
                 .thenApplyAsync((userTestStatuses) -> {
                     userTestStatuses.sort(getUserTestStatusComparator());
                     return userTestStatuses;

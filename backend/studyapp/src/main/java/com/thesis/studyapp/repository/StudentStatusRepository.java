@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StudentStatusRepository extends Neo4jRepository<StudentStatus, Long> {
+public interface StudentStatusRepository extends Neo4jRepository<StudentStatus, Long>, ObjectLoader<StudentStatus> {
 
     List<StudentStatus> findByIdIn(List<Long> ids, @Depth int depth);
 

@@ -31,10 +31,6 @@ public class GroupService {
         return getGroupById(groupId, 1);
     }
 
-    public List<Group> getGroupsByIds(List<Long> groupIds) {
-        return groupRepository.findByIdIn(groupIds, 1);
-    }
-
     public List<Group> getGroupsForStudent(Long studentId) {
         return groupRepository.findByStudentsIdOrderByName(studentId, 1);
     }

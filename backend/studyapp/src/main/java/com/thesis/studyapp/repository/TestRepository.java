@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TestRepository extends Neo4jRepository<Test, Long> {
+public interface TestRepository extends Neo4jRepository<Test, Long>, ObjectLoader<Test> {
 
     List<Test> findByGroupIdOrderByName(Long groupId, @Depth int depth);
 

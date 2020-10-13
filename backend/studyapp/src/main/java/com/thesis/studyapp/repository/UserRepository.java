@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends Neo4jRepository<User, Long> {
+public interface UserRepository extends Neo4jRepository<User, Long>, ObjectLoader<User> {
     String RETURN_USERDTO = " RETURN id(u) AS id, u.name AS name, u.code AS code";
     String ORDER_BY_NAME = " ORDER BY u.name";
 

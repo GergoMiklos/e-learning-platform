@@ -39,7 +39,6 @@ public class GraphQLErrorHandlingConfig {
                                 } else {
                                     log.error("Error executing query ({}): {}", error.getClass().getSimpleName(), error.getMessage());
                                 }
-
                             });
                 }
 
@@ -57,11 +56,6 @@ public class GraphQLErrorHandlingConfig {
             @Override
             protected boolean isClientError(GraphQLError error) {
                 return !(error instanceof ExceptionWhileDataFetching || error instanceof Throwable);
-//                if (error instanceof ExceptionWhileDataFetching) {
-//                    return ((ExceptionWhileDataFetching)error).getException() instanceof GraphQLError;
-//                } else {
-//                    return !(error instanceof Throwable);
-//                }
             }
 
             protected boolean isInternalClientError(GraphQLError error) {

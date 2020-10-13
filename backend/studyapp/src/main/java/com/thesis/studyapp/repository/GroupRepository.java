@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface GroupRepository extends Neo4jRepository<Group, Long> {
+public interface GroupRepository extends Neo4jRepository<Group, Long>, ObjectLoader<Group> {
 
     Optional<Group> findByCodeIgnoreCase(String name, @Depth int depth);
 

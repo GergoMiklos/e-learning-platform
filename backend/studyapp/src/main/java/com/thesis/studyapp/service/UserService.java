@@ -19,10 +19,6 @@ public class UserService {
         return getUserById(userId, 1);
     }
 
-    public List<User> getUsersByIds(List<Long> ids) {
-        return userRepository.findByIdIn(ids, 1);
-    }
-
     public List<User> getStudentsForGroup(Long groupId) {
         return userRepository.findByStudentGroupsIdOrderByName(groupId, 1);
     }

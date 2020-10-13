@@ -46,7 +46,7 @@ public class UserResolver implements GraphQLResolver<User> {
     }
 
     public CompletableFuture<List<StudentStatus>> studentStatuses(User user) {
-        return dataLoaderUtil.loadData(user.getStudentStatuses(), DataLoaderUtil.USERTESTSTATUS_LOADER)
+        return dataLoaderUtil.loadData(user.getStudentStatuses(), DataLoaderUtil.STUDENTSTATUS_LOADER)
                 .thenApplyAsync((userTestStatuses) -> {
                     userTestStatuses.sort(getUserTestStatusComparator());
                     return userTestStatuses;

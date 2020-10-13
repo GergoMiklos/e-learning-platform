@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TestTaskRepository extends Neo4jRepository<TestTask, Long> {
+public interface TestTaskRepository extends Neo4jRepository<TestTask, Long>, ObjectLoader<TestTask> {
 
     List<TestTask> findByTestIdOrderByLevel(Long testId, @Depth int depth);
 

@@ -36,10 +36,6 @@ public class TestService {
         return getTestById(testId, 1);
     }
 
-    public List<Test> getTestsByIds(List<Long> ids) {
-        return testRepository.findByIdIn(ids, 1);
-    }
-
     public List<Test> getTestsForGroup(Long groupId) {
         return testRepository.findByGroupIdOrderByName(groupId, 1);
     }
