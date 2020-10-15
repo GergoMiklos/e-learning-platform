@@ -7,8 +7,6 @@ import {useMutation, useQuery} from "@apollo/client";
 import {useHistory, useRouteMatch} from "react-router-dom";
 import LoadingComp from "./LoadingComp";
 
-const {Map: ImmutableMap} = require('immutable');
-
 const TEST_QUERY = gql`
     query getTest($testId: ID!) {
         test(testId: $testId) {
@@ -117,42 +115,6 @@ export default function EditTestPageComp(props) {
         </div>
     );
 }
-
-
-// export default function EditTestPageCont(props) {
-//     //todo ez így nem lesz jó! Ez rohadt sokszor lefut! (too many re-renders)
-//     const {loading, error, data} = useQuery(
-//         TEST_QUERY, {
-//             variables: {testId: props.match.params.testid},
-//             //fetchPolicy: 'cache-first',
-//             fetchPolicy: 'cache-and-network',
-//             //fetchPolicy: 'network-only',
-//         });
-//     const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //todo
-//     const [list, setList] = useState(null)
-//     {console.log("lefutott")}
-//     // {console.log(loading)}
-//     // {console.log(data)}
-//     useEffect(() => {
-//         if(!loading) {
-//             setList([...calculateTestTasksGroupedByLevel(data.test.testTasks, levels)]);
-//         }
-//     }, [data])
-//
-//     if (loading) {
-//         return (<div/>);
-//     }
-//
-//
-//
-//     return (
-//         <EditTestPageComp
-//             {...props}
-//             data={data}
-//             list={list}
-//         />
-//     );
-// }
 
 const calculateTestTasksGroupedByLevel = (testTasks, levels) => {
     const result = new Map();

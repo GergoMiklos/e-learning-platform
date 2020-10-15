@@ -14,7 +14,7 @@ export default function StatusElementComp(props) {
 const isStatusInactive = (statusChangedTime) => {
     const now = new Date();
     const fiveMins = 1000 * 60 * 5;
-    return (now.getTime() - new Date(statusChangedTime).getTime()) > fiveMins;
+    return (now.getTime() - statusChangedTime.getTime()) > fiveMins;
 }
 
 const calculateStatusColor = (studentStatus) => {
@@ -33,7 +33,7 @@ const calculateStatusColor = (studentStatus) => {
 
 const calculateStatusTime = (studentStatus) => {
     const now = new Date();
-    const diff = now.getTime() - new Date(studentStatus.statusChangedTime).getTime();
+    const diff = now.getTime() - studentStatus.statusChangedTime.getTime();
     if (diff < 1000 * 60 * 60) {
         return `${Math.round(diff / (1000 * 60))} mins ago`
     } else if (diff < 1000 * 60 * 60 * 24) {

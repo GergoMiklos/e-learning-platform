@@ -18,6 +18,7 @@ const GROUP_DETAILS_FRAGMENT = gql`
 export default function GroupListElementComp(props) {
     let history = useHistory();
     let match = useRouteMatch();
+
     //todo error handling (null/error) / useQuery cache-first?
     const group = client.readFragment({
         id: `Group:${props.groupId}`,
@@ -30,9 +31,9 @@ export default function GroupListElementComp(props) {
                 {group.name}
             </strong>
 
-            {group.news && isDateFresh(new Date(group.newsChangedDate)) &&
+            {group.news && isDateFresh(group.newsChangedDate) &&
             <span className="badge badge-pill bg-warning text-light mx-2 px-2 py-1">
-                {formatShortDate(new Date(group.newsChangedDate))}
+                {formatShortDate(group.newsChangedDate)}
             </span>
             }
         </div>

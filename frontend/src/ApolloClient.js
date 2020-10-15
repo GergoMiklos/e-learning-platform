@@ -1,4 +1,3 @@
-//import ApolloClient from 'apollo-boost';
 import {from, ApolloClient, ApolloLink, HttpLink, InMemoryCache, split} from '@apollo/client';
 import {getMainDefinition} from '@apollo/client/utilities';
 import {WebSocketLink} from '@apollo/client/link/ws';
@@ -17,7 +16,7 @@ const wsLink = new WebSocketLink({
 });
 
 const splitLink = split(
-    ({ query }) => {
+    ({query}) => {
         const definition = getMainDefinition(query);
         return (definition.kind === 'OperationDefinition' && definition.operation === 'subscription');
     },
@@ -34,9 +33,9 @@ const authMiddleware = new ApolloLink((operation, forward) => {
     return forward(operation);
 })
 
-const logoutMiddleware = onError(({ graphQLErrors, networkError }) => {
+const logoutMiddleware = onError(({graphQLErrors, networkError}) => {
     if (graphQLErrors)
-        graphQLErrors.forEach(({ message, locations, path, extensions }) => {
+        graphQLErrors.forEach(({message, locations, path, extensions}) => {
                 console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
                 if (extensions?.UNAUTHORIZED) {
                     AuthService.logout();
@@ -46,6 +45,31 @@ const logoutMiddleware = onError(({ graphQLErrors, networkError }) => {
     if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
+const cache = new InMemoryCache({
+    typePolicies: {
+        Group: {
+            fields: {
+                newsChangedDate(newsChangedDate) {
+                    return new Date(newsChangedDate);
+                }
+            }
+        },
+        StudentStatus: {
+            fields: {
+                statusChangedTime(statusChangedTime) {
+                    return new Date(statusChangedTime);
+                }
+            }
+        },
+        StudentTaskStatus: {
+            fields: {
+                lastSolutionTime(lastSolutionTime) {
+                    return new Date(lastSolutionTime);
+                }
+            }
+        },
+    }
+})
 
 
 const client = new ApolloClient({
@@ -54,7 +78,7 @@ const client = new ApolloClient({
         logoutMiddleware,
         splitLink
     ]),
-    cache: new InMemoryCache(),
+    cache: cache,
     defaultOptions: {
         watchQuery: {
             fetchPolicy: 'cache-and-network',

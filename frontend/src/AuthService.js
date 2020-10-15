@@ -1,5 +1,6 @@
 import Cookies from 'universal-cookie';
 import {useEffect, useState} from "react";
+import client from "./ApolloClient";
 
 const USER_DATA = 'LEARN_WELL_USER';
 const cookies = new Cookies(USER_DATA);
@@ -40,6 +41,7 @@ const isLoggedIn = () => {
 
 const logout =() => {
     cookies.remove(USER_DATA);
+    client.resetStore();
 }
 
 export default {
