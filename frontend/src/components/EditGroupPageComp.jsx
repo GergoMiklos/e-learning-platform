@@ -6,6 +6,7 @@ import EditGroupTeacherListComp from "./EditGroupTeacherListComp";
 import EditGroupStudentListComp from "./EditGroupStudentListComp";
 import EditGroupUserElementComp from "./EditGroupUserElementComp";
 import {useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 //TODO itt írd ki azt is ami nekem kell, pl id-k!
 const EDIT_GROUP_QUERY = gql`
@@ -31,8 +32,8 @@ export default function EditGroupPageComp(props) {
         variables: {groupId: props.match.params.groupid},
     });
 
-    if (!data) {
-        return (<div/>);
+    if (!data?.group) {
+        return (<LoadingComp/>);
     }
 
     return (

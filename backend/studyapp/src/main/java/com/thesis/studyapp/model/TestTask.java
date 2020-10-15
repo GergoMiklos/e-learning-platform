@@ -23,7 +23,6 @@ public class TestTask implements HasId, HasRatio {
     private Long id;
 
     private int level;
-
     private String explanation;
 
     private int allSolutions;

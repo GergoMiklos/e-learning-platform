@@ -3,8 +3,10 @@ import gql from "graphql-tag";
 import NewGroupDialogComp from "./NewGroupDialogComp";
 import GroupListElementComp from "./GroupListElementComp";
 import {useQuery} from "@apollo/client";
-import AuthService from "../AuthService";
-import {useHistory} from "react-router-dom";
+import AuthService, {useAuthentication} from "../AuthService";
+import {Link, Route, useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
+import NewTestDialogComp from "./NewTestDialogComp";
 
 
 const TEACHER_GROUPS_QUERY = gql`
@@ -14,7 +16,7 @@ const TEACHER_GROUPS_QUERY = gql`
             name
             code
             teacherGroups {
-                ...GroupDetials
+                ...GroupDetails
             }
         }
     }
@@ -22,16 +24,15 @@ ${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 
 export default function TeacherPageComp(props) {
     let history = useHistory();
-    //todo useeffect a useridra?
-    const userId = AuthService.getUserId();
-    const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
+    const {userId} = useAuthentication();
+
     const {loading, error, data} = useQuery(
         TEACHER_GROUPS_QUERY, {
             variables: {userId: userId},
         });
 
-    if (!data) {
-        return (<div/>);
+    if (!data?.user) {
+        return (<LoadingComp/>);
     }
 
     return (
@@ -41,19 +42,20 @@ export default function TeacherPageComp(props) {
                 <h1 className="col-auto rounded-pill bg-primary px-3">{data.user.code}</h1>
             </div>
 
-            <div className="row rounded shadow bg-light my-3 p-3 d-flex justify-content-between">
+            <div className="row rounded shadow bg-light my-3 p-3 justify-content-between">
                 <h1>Teacher Groups</h1>
-                <button className="btn btn-primary" onClick={() => setShowNewGroupDialog(true)}>
-                    New
-                </button>
+                <Link to={`${props.match.url}/new`}>
+                    <button className="btn btn-lg btn-primary">
+                        {'New'}
+                    </button>
+                </Link>
             </div>
 
-            <NewGroupDialogComp
-                show={showNewGroupDialog}
-                onHide={() => setShowNewGroupDialog(false)}
-            />
+            <Route path={`${props.match.url}/new`} render={(props) =>
+                (<NewGroupDialogComp {...props} />)
+            }/>
 
-            {data.user.teacherGroups &&
+            {data.user.teacherGroups?.length === 0 ? "No Groups" :
             <div className="row my-3">
                 <ul className="col-12 list-group">
                     {data.user.teacherGroups.map(group =>

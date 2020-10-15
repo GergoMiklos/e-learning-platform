@@ -60,7 +60,7 @@ public class TestSolvingService {
 
     @Transactional
     public TestTask calculateNextTask(Long testId) {
-        StudentStatus userStatus = getUserTestStatus(testId, 2);
+        StudentStatus userStatus = getUserTestStatus(testId, 3);
 
         if (userStatus.getCurrentTestTask() == null || userStatus.isCurrentTestTaskSolved()) {
             setNextTask(userStatus);
@@ -295,7 +295,7 @@ public class TestSolvingService {
     private StudentStatus getUserTestStatus(Long testId, int depth) {
         Long userId = authenticationUtil.getPrincipals().getUserId();
         return studentStatusRepository
-                .findFirstByUserIdAndTestId(userId, testId, depth)
+                .findFirstByActiveTrueAndUserIdAndTestId(userId, testId, depth)
                 .orElseThrow(() -> new NotFoundException("No StudentStatus available for this Test"));
     }
 

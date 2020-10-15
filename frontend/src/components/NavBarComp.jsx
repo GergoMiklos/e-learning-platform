@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import AuthService from "../AuthService";
+import {useAuthentication} from "../AuthService";
 import {NavLink, Link} from "react-router-dom";
 
 export default function NavBarComp() {
     const [isCollapsed, setCollapsed] = useState(true)
+    const {isLoggedIn, setLogout} = useAuthentication()
 
     return (
         <div>
@@ -12,7 +13,7 @@ export default function NavBarComp() {
                 <button className="navbar-toggler" onClick={() => setCollapsed(!isCollapsed)}>
                     <span className="navbar-toggler-icon"/>
                 </button>
-                {AuthService.isLoggedIn() &&
+                {isLoggedIn &&
                 <div className={`navbar-collapse ${isCollapsed? 'collapse' : ''}`}>
                     <ul className="navbar-nav mr-auto">
                         <li className="nav-item">
@@ -26,7 +27,7 @@ export default function NavBarComp() {
                         </li>
                     </ul>
                     <span className="navbar-nav">
-                        <Link className="nav-link" to="/login" onClick={() => AuthService.logout()}>Logout</Link>
+                        <Link className="nav-link" to="/login" onClick={() => setLogout()}>Logout</Link>
                     </span>
                 </div>
                 }

@@ -5,6 +5,7 @@ import {useMutation, useQuery} from "@apollo/client";
 import StudentGroupElementComp from "./StudentGroupElementComp";
 import AuthService from "../AuthService";
 import {useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 const STUDENT_GROUP_QUERY = gql`
     query getGroup($groupId: ID!) {
@@ -15,7 +16,7 @@ const STUDENT_GROUP_QUERY = gql`
             description
             news
             newsChangedDate
-            tests {
+            tests(active: true) {
                 ...TestDetials
             }
         }
@@ -42,8 +43,8 @@ export default function StudentGroupPageComp(props) {
         onError: () => toast.notify(`Error`),
     },);
 
-    if (loading) {
-        return (<div/>);
+    if (!data?.group) {
+        return (<LoadingComp/>);
     }
 
     return (
@@ -89,8 +90,8 @@ export default function StudentGroupPageComp(props) {
                 <h1 className="col-12">Tests</h1>
             </div>
 
-            {data.group.tests &&
-            <div className="row my-3">
+            {data.group.tests?.length === 0 ? "No Tests" :
+                <div className="row my-3">
                 <ul className="col-12 list-group">
                     {data.group.tests.map(test =>
                         <li

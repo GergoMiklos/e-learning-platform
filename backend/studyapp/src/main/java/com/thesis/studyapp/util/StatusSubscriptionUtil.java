@@ -88,7 +88,7 @@ public class StatusSubscriptionUtil implements DisposableBean {
     private List<StudentStatus> getUpdatedStatuses() {
         List<Long> ids = new ArrayList<>(updatedStatusIds);
         updatedStatusIds.clear();
-        return studentStatusService.getUserTestStatusesByIds(ids);
+        return studentStatusService.getStudentStatusesByIds(ids);
     }
 
     private void emitStatuses(ObservableEmitter<StudentStatus> emitter, List<StudentStatus> statuses) {

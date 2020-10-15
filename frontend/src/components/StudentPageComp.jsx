@@ -3,8 +3,9 @@ import gql from 'graphql-tag';
 import toast from 'toasted-notes';
 import {useMutation, useQuery} from "@apollo/client";
 import GroupListElementComp from "./GroupListElementComp";
-import AuthService from "../AuthService";
-import {useHistory} from "react-router-dom";
+import AuthService, {useAuthentication} from "../AuthService";
+import {useHistory, Route} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 //todo itt lehetne loadolni egy fájlból is, és úgy beállítani
 const STUDENT_GROUPS_QUERY = gql`
@@ -14,7 +15,7 @@ const STUDENT_GROUPS_QUERY = gql`
             name
             code
             studentGroups {
-                ...GroupDetials
+                ...GroupDetails
             }
         }
     }
@@ -23,15 +24,14 @@ ${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 const JOIN_GROUP_MUTATION = gql`
     mutation AddStudentToGroupFromCode($userId: ID!, $groupCode: String!) {
         addStudentToGroupFromCode(userId: $userId, groupCode: $groupCode)  {
-            ...GroupDetials
+            ...GroupDetails
         }
     }
 ${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 
 
 export default function StudentPageComp(props) {
-    //todo useeffect a useridra?
-    const userId = AuthService.getUserId();
+    const {userId} = useAuthentication();
     const [joinGroupCode, setJoinGroupCode] = useState('');
     const {loading, error, data} = useQuery(
         STUDENT_GROUPS_QUERY, {
@@ -65,8 +65,8 @@ export default function StudentPageComp(props) {
         },
     });
 
-    if (!data || !data.user) {
-        return (<div/>);
+    if (!data?.user) {
+        return (<LoadingComp/>);
     }
 
     return (
@@ -100,8 +100,8 @@ export default function StudentPageComp(props) {
                 </div>
             </div>
 
-            {data.user.studentGroups &&
-            <div className="row my-3">
+            {data.user.studentGroups?.length === 0 ? "No Groups" :
+                <div className="row my-3">
                 <ul className="col-12 list-group">
                     {data.user.studentGroups.map(group =>
                         <li

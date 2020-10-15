@@ -14,9 +14,14 @@ const CREATE_TEST_MUTATION = gql`
     }`;
 
 export default function NewTestDialogComp(props) {
+    let history = useHistory();
+
     const [createTest] = useMutation(CREATE_TEST_MUTATION, {
-        onCompleted: (data) => toast.notify(`Test created with name: ${data.createTest.name}`),
-        onError: (error) => toast.notify(`Error :(`),
+        onCompleted: (data) => {
+            toast.notify(`Test created with name: ${data.createTest.name}`);
+            history.goBack();
+        },
+        onError: () => toast.notify(`Error :(`),
         update: (cache, {data: {createTest}}) => {
             cache.modify({
                 id: `Group:${props.groupId}`, //todo ezt honnan?
@@ -51,9 +56,9 @@ export default function NewTestDialogComp(props) {
 
     return (
         <Modal
-            show={props.show}
             centered
-            onHide={() => props.onHide()}
+            onHide={() => history.goBack()}
+            show={true}
         >
             <div className="container">
                 <div className="row bg-primary text-light shadow p-3">
@@ -64,14 +69,13 @@ export default function NewTestDialogComp(props) {
                     onSubmit={values => {
                         createTest({
                             variables: {
-                                    groupId: props.groupId,
-                                    input: {description: values.description, name: values.name},
-                                }
+                                groupId: props.groupId,
+                                input: {description: values.description, name: values.name},
+                            }
                         });
-                        props.onHide();
                     }}
-                        />
-                        </div>
-                        </Modal>
-                        );
-                        }
+                />
+            </div>
+        </Modal>
+    );
+}

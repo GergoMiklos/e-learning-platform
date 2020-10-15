@@ -65,7 +65,7 @@ export default function EditGroupTeacherListComp(props) {
 
             <div className="row input-group px-3">
                 <div className="input-group-prepend">
-                    <span className="input-group-text">Add Teacher: </span>
+                    <span className="input-group-text">New Teacher: </span>
                 </div>
                 <input
                     type="text"
@@ -86,10 +86,9 @@ export default function EditGroupTeacherListComp(props) {
                 </div>
             </div>
 
-            {props.teachers &&
             <div className="row my-3">
                 <ul className="col-12 list-group">
-                    {props.teachers.map(user =>
+                    {props.teachers?.length === 0 ? "No Teachers" : props.teachers.map(user =>
                         <li
                             className="list-group-item list-group-item-action"
                             key={user.id}
@@ -104,7 +103,6 @@ export default function EditGroupTeacherListComp(props) {
                     )}
                 </ul>
             </div>
-            }
         </div>
     );
 }

@@ -36,10 +36,10 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 const logoutMiddleware = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors)
-        graphQLErrors.map(({ message, locations, path, extensions }) => {
+        graphQLErrors.forEach(({ message, locations, path, extensions }) => {
                 console.log(`[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`)
                 if (extensions?.UNAUTHORIZED) {
-                    //AuthService.logout();
+                    AuthService.logout();
                 }
             }
         );

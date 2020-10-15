@@ -2,7 +2,7 @@ import React from 'react';
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/client";
-import {useHistory} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import toast from "toasted-notes";
 import AuthService from "../AuthService";
 
@@ -21,11 +21,12 @@ const LOGIN_MUTATION = gql`
 
 export default function LoginPageComp(props) {
     let history = useHistory();
+    let {from} = useLocation().state || { from: { pathname: "/" } };
 
     const [login] = useMutation(LOGIN_MUTATION, {
         onCompleted: (data) => {
             AuthService.setLogin({token: data.login.token, userId: data.login.user.id})
-            history.push(`/student`);
+            history.replace(from);
         },
         onError: () => toast.notify(`Invalid username or password`),
     });

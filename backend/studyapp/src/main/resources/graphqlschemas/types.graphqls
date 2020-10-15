@@ -17,13 +17,14 @@ type Group {
     newsChangedDate: String
     students: [User!]
     teachers: [User!]
-    tests: [Test!]
+    tests(active: Boolean): [Test!]
 }
 
 type Test {
     id: ID!
     name: String!
     description: String
+    active: Boolean!
     allTasks: Int!
     testTasks: [TestTask!]
     studentStatuses: [StudentStatus!]
@@ -74,6 +75,7 @@ type TaskSearchResult {
 type TestTask {
     id: ID!
     level: Int!
+    explanation: String
     allSolutions: Int!
     correctSolutions: Int!
     task: Task!
@@ -85,6 +87,7 @@ type StudentTaskStatus {
     lastSolutionTime: String!
     correctSolutions: Int!
     allSolutions: Int!
+    wrongSolutionsInRow: Int!
 }
 
 type Token {

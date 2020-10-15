@@ -4,9 +4,9 @@ import React from "react";
 export default function StatusElementComp(props) {
     return (
         <div
-            className={`btn-${calculateStatusColor(props.userTestStatus)} btn rounded-pill disabled w-100 font-weight-bold`}
+            className={`btn-${calculateStatusColor(props.studentStatus)} btn rounded-pill disabled w-100 font-weight-bold`}
         >
-            {props.userTestStatus.status === 'NOT_STARTED' ? 'NOT STARTED' : calculateStatusTime(props.userTestStatus)}
+            {props.studentStatus.status === 'NOT_STARTED' ? 'NOT STARTED' : calculateStatusTime(props.studentStatus)}
         </div>
     );
 }
@@ -17,23 +17,23 @@ const isStatusInactive = (statusChangedTime) => {
     return (now.getTime() - new Date(statusChangedTime).getTime()) > fiveMins;
 }
 
-const calculateStatusColor = (userTestStatus) => {
-    if (userTestStatus.status === 'NOT_STARTED') {
+const calculateStatusColor = (studentStatus) => {
+    if (studentStatus.status === 'NOT_STARTED') {
         return 'info';
-    } else if (isStatusInactive(userTestStatus.statusChangedTime)) {
+    } else if (isStatusInactive(studentStatus.statusChangedTime)) {
         return 'warning';
-    } else if (userTestStatus.status === 'IN_PROGRESS') {
+    } else if (studentStatus.status === 'IN_PROGRESS') {
         return 'success';
-    } else if (userTestStatus.status === 'PROBLEM') {
+    } else if (studentStatus.status === 'PROBLEM') {
         return 'danger';
     } else {
         return 'secondary'
     }
 }
 
-const calculateStatusTime = (userTestStatus) => {
+const calculateStatusTime = (studentStatus) => {
     const now = new Date();
-    const diff = now.getTime() - new Date(userTestStatus.statusChangedTime).getTime();
+    const diff = now.getTime() - new Date(studentStatus.statusChangedTime).getTime();
     if (diff < 1000 * 60 * 60) {
         return `${Math.round(diff / (1000 * 60))} mins ago`
     } else if (diff < 1000 * 60 * 60 * 24) {

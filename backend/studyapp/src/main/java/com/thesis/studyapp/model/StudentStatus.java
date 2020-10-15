@@ -26,6 +26,8 @@ public class StudentStatus implements HasId, HasRatio {
     @GeneratedValue
     private Long id;
 
+    boolean active = true;
+
     private Status status = Status.NOT_STARTED;
     private ZonedDateTime statusChangedDate;
 
@@ -57,6 +59,16 @@ public class StudentStatus implements HasId, HasRatio {
     @EqualsAndHashCode.Exclude
     @Relationship(type = "TASKSTATUSDATA", direction = Relationship.OUTGOING)
     private Set<StudentTaskStatus> studentTaskStatuses = new HashSet<>();
+
+    public StudentStatus(Test test, User student, ZonedDateTime creationTime) {
+        this.user = student;
+        this.test = test;
+        active = true;
+        status = Status.NOT_STARTED;
+        statusChangedDate = creationTime;
+        currentLevel = 1;
+        currentCycle = 1;
+    }
 
 
     public void addUserTestTaskStatus(StudentTaskStatus studentTaskStatus) {

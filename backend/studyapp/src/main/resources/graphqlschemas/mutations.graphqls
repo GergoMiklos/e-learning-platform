@@ -22,7 +22,7 @@ type Mutation {
     createTask(taskInput: TaskInput!): Task!
     addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask!
     deleteTaskFromTest(testTaskId: ID!): Boolean
-    editTestTasks(testId: ID!, testTaskInputs: [TestTaskInput!]): [TestTask!]
+    editTestTasks(testId: ID!, testTaskInputs: [TestTaskInput!]!): [TestTask!]
 
     checkSolution(testId: ID!, solutionNumber: Int!): TaskSolution!
     calculateNextTask(testId: ID!): TestTask

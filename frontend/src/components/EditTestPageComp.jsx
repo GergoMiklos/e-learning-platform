@@ -5,6 +5,7 @@ import EditTestDetailsComp from "./EditTestDetailsComp";
 import EditTestElementComp from "./EditTestElementComp";
 import {useMutation, useQuery} from "@apollo/client";
 import {useHistory, useRouteMatch} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 const {Map: ImmutableMap} = require('immutable');
 
@@ -45,34 +46,18 @@ ${EditTestDetailsComp.fragments.TEST_DETAILS_FRAGMENT}`;
 //         }
 //     }`;
 
-const EDIT_TESTTASK_MUTATION = gql`
-    mutation EditTestTasks($testId: ID!, $testTaskInputs: [TestTaskInput!]) {
-        editTestTasks(testId: $testId, testTaskInputs: $testTaskInputs) {
-            ...TestTaskDetails
-        }
-    }
-${EditTestElementComp.fragments.TESTTASK_DETAILS_FRAGMENT}`;
-
 export default function EditTestPageComp(props) {
     const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; //todo
     const [selectedTestTaskId, selectTestTaskId] = useState(null);
-    const [unsavedTestTaskLevels, setUnsavedTestTaskLevels] = useState(ImmutableMap());
     const {data, loading, error} = useQuery(TEST_QUERY, {
         variables: {testId: props.match.params.testid},
-        //fetchPolicy: 'cache-first',
+        fetchPolicy: 'cache-first',
         //fetchPolicy: 'cache-and-network',
-        fetchPolicy: 'network-only',
-    });
-    const [changeTestTaskLevels] = useMutation(EDIT_TESTTASK_MUTATION, {
-        onCompleted: () => {
-            setUnsavedTestTaskLevels(ImmutableMap());
-            toast.notify(`Levels changed successfully`);
-        },
-        onError: () => toast.notify(`Error :(`),
+        //fetchPolicy: 'network-only',
     });
 
-    if (!data) {
-        return (<div/>);
+    if (!data?.test) {
+        return (<LoadingComp/>);
     }
 
     return (
@@ -99,28 +84,17 @@ export default function EditTestPageComp(props) {
                     className="btn btn-primary"
                     onClick={() => props.history.push(`${props.match.url}/tasks`)}
                 >
-                    Add New
+                    New
                 </button>
             </div>
 
-            <button
-                className="row btn btn-block btn-lg btn-warning m-1"
-                disabled={!unsavedTestTaskLevels.size}
-                onClick={() => changeTestTaskLevels({
-                    variables: {
-                        testId: data.test.id,
-                        testTaskInputs: [...unsavedTestTaskLevels]
-                            .map(([testTaskId, level]) => ({id: testTaskId, level: level})),
-                    }
-                })}
-            >
-                Save level changes!
-            </button>
-
             <div className="row">
-                {[...calculateTestTasksGroupedByLevel(data.test.testTasks, levels)].map(([level, levelGroup]) =>
+                {data.test?.testTasks?.length === 0 ? "No Tasks" :
+                    [...calculateTestTasksGroupedByLevel(data.test.testTasks, levels)].map(([level, levelGroup]) =>
                     <div key={level} className="col-12">
-                        <div className="mt-3 font-weight-bold">Level {level}:</div>
+                        <div className="mt-3">
+                            Level {level}:
+                        </div>
                         <ul className="list-group">
                             {levelGroup.map(testTask =>
                                 <li
@@ -132,7 +106,6 @@ export default function EditTestPageComp(props) {
                                         testTaskId={testTask.id}
                                         testId={data.test.id}
                                         selectedTestTaskId={selectedTestTaskId}
-                                        onLevelChange={level => setUnsavedTestTaskLevels(unsavedTestTaskLevels.set(testTask.id, level))}
                                         levels={levels}
                                     />
                                 </li>

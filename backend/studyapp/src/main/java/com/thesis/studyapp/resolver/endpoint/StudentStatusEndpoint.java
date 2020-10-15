@@ -22,7 +22,7 @@ public class StudentStatusEndpoint implements GraphQLQueryResolver, GraphQLMutat
     }
 
     public StudentStatus studentStatus(Long studentStatusId) {
-        return studentStatusService.getUserTestStatus(studentStatusId);
+        return studentStatusService.getStudentStatus(studentStatusId);
     }
 
 }

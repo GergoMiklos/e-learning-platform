@@ -4,10 +4,12 @@ import toast from "toasted-notes";
 import {useMutation, useLazyQuery} from "@apollo/client";
 import AuthService from "../AuthService";
 import {useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 const NEXT_TASK_MUTATION = gql`
     mutation CalculateNextTask($testId: ID!) {
         calculateNextTask(testId: $testId) {
+            explanation
             task {
                 question
                 answers {
@@ -33,30 +35,23 @@ const CHECK_TASK_SOLUTION_MUTATION = gql`
 
 export default function StudentLiveTestPageComp(props) {
     const [chosenAnswerNumber, chooseAnswerNumber] = useState(null);
-    const [nextTask, {data: nextTaskData}] = useMutation(NEXT_TASK_MUTATION)
+    const [nextTask, {data: nextTaskData}] = useMutation(NEXT_TASK_MUTATION, {
+        errorPolicy: "ignore",
+    });
     const [checkSolution, {data: solutionData}] = useMutation(CHECK_TASK_SOLUTION_MUTATION, {
         onError: () => toast.notify(`Error :(`),
     },);
 
-    useEffect(() => nextTask({
-        variables: {testId: props.match.params.testid},
-    }), []);
+    useEffect(() => {
+        nextTask({variables: {testId: props.match.params.testid},});
+    }, []);
 
-    if (!nextTaskData) {
-        return <div/>;
-    }
-
-    if (!nextTaskData.nextTask) {
+    if (!nextTaskData?.calculateNextTask) {
         return (
-            <div
-                className="middle"
-                onClick={() => props.history.goBack()}
-            >
-                <strong className="bg-warning text-light rounded-pill shadow p-3">
-                    No tasks available :(
-                </strong>
+            <div onClick={() => props.history.goBack()}>
+                <LoadingComp text={'No task available'}/>
             </div>
-        );
+        )
     }
 
     return (
@@ -69,21 +64,22 @@ export default function StudentLiveTestPageComp(props) {
             </button>
 
             <div className="row rounded shadow bg-light my-3">
-                <h2 className="col-12 m-1">
-                    {nextTaskData.nextTask.task.question}
+                <h2 className="col-12 m-1 p-3">
+                    {nextTaskData.calculateNextTask.task.question}
                 </h2>
 
                 <div className="col-12 my-3">
                     <ul className="list-group col-12">
-                        {nextTaskData.nextTask.task.answers.map(
+                        {nextTaskData.calculateNextTask.task.answers.map(
                             ({answer, number}) =>
                                 <button
                                     key={number}
-                                    className={`m-2 btn btn-lg text-left btn-${calculateAnswerColor({
-                                        answerNumber: number,
-                                        chosenAnswerNumber,
-                                        correctAnswerNumber: nextTaskData.nextTask.task.solutionNumber
-                                    })}`}
+                                    className={`m-2 btn btn-lg text-left btn-${
+                                        calculateAnswerColor({
+                                            answerNumber: number,
+                                            chosenAnswerNumber,
+                                            correctAnswerNumber: nextTaskData.calculateNextTask.task.solutionNumber
+                                        })}`}
                                     onClick={() => {
                                         checkSolution({
                                             variables: {
@@ -103,27 +99,38 @@ export default function StudentLiveTestPageComp(props) {
             </div>
 
             {chosenAnswerNumber && solutionData &&
-            <div className="col-12 d-flex justify-content-between">
-                <div>
-                    <div>
-                        Tasks(Solved/All): {solutionData.checkSolution.solvedTasks}/{solutionData.checkSolution.allTasks}
-                    </div>
-                    <div>
-                        Answers(Correct/All): {solutionData.checkSolution.correctSolutions}/{solutionData.checkSolution.allSolutions}
-                    </div>
-                </div>
+            <div className="col-12">
 
-                <button
-                    className="btn btn-primary btn-lg p-3"
-                    onClick={() => {
-                        chooseAnswerNumber(null)
-                        nextTask({
-                            variables: {userId: AuthService.getUserId(), testId: props.match.params.testid},
-                        });
-                    }}
-                >
-                    Next
-                </button>
+                {nextTaskData.calculateNextTask.explanation &&
+                <div className="row rounded shadow bg-primary my-3">
+                    <h3 className="col-12 m-1 p-3 text-light">
+                        {nextTaskData.calculateNextTask.explanation}
+                    </h3>
+                </div>
+                }
+
+                <div className="row justify-content-between">
+                    <div>
+                        <div>
+                            Tasks(Solved/All): {solutionData.checkSolution.solvedTasks}/{solutionData.checkSolution.allTasks}
+                        </div>
+                        <div>
+                            Answers(Correct/All): {solutionData.checkSolution.correctSolutions}/{solutionData.checkSolution.allSolutions}
+                        </div>
+                    </div>
+
+                    <button
+                        className="btn btn-primary btn-lg p-3"
+                        onClick={() => {
+                            chooseAnswerNumber(null)
+                            nextTask({
+                                variables: {userId: AuthService.getUserId(), testId: props.match.params.testid},
+                            });
+                        }}
+                    >
+                        Next
+                    </button>
+                </div>
             </div>
             }
         </div>

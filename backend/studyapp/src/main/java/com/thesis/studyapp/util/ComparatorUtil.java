@@ -17,54 +17,61 @@ public class ComparatorUtil {
     private static final Logger logger = LoggerFactory.getLogger(ComparatorUtil.class);
 
     public static Comparator<Task> getTaskComparator() {
-        return Comparator.comparing(Task::getQuestion);
+        return Comparator.comparing(Task::getQuestion, String::compareToIgnoreCase);
     }
 
     public static Comparator<Test> getTestComparator() {
-        return Comparator.comparing(Test::getName);
+        return Comparator.comparing(Test::getName, String::compareToIgnoreCase);
     }
 
     public static Comparator<Group> getGroupComparator() {
-        return Comparator.comparing(Group::getName);
+        return Comparator.comparing(Group::getName, String::compareToIgnoreCase);
     }
 
     public static Comparator<User> getUserComparator() {
-        return Comparator.comparing(User::getName);
+        return Comparator.comparing(User::getName, String::compareToIgnoreCase);
     }
 
     public static Comparator<TestTask> getTestTaskComparator() {
-        return Comparator.comparing(TestTask::getLevel).thenComparing(TestTask::getRatio);
-    }
-
-    public static Comparator<StudentStatus> getUserTestStatusComparator() {
-        return ((Comparator<StudentStatus>) (uts1, uts2) -> {
-            if (uts1.getUser() == null || uts2.getUser() == null) {
-                logger.error("Relationships needed for comparing UserTestStatuses!");
+        return Comparator.comparing(TestTask::getLevel).thenComparing((task1, task2) -> {
+            if (task1.getTask() == null || task2.getTask() == null) {
+                logger.error("Relationships needed for comparing TestTasks!");
                 return 0;
             } else {
-                return uts1.getUser().getName().compareTo(uts2.getUser().getName());
-            }
-        }).thenComparing((uts1, uts2) -> {
-            if (uts1.getTest() == null || uts2.getTest() == null) {
-                logger.error("Relationships needed for comparing UserTestStatuses!");
-                return 0;
-            } else {
-                return uts1.getTest().getName().compareTo(uts2.getTest().getName());
+                return task1.getTask().getQuestion().compareToIgnoreCase(task2.getTask().getQuestion());
             }
         });
     }
 
-    public static Comparator<StudentTaskStatus> getUserTestTaskStatusComparator() {
-        return ((Comparator<StudentTaskStatus>) (utts1, utts2) -> {
-            if (utts1.getAllSolutions() == 0 && utts2.getAllSolutions() == 0) {
+    public static Comparator<StudentStatus> getStudentStatusComparator() {
+        return ((Comparator<StudentStatus>) (status1, status2) -> {
+            if (status1.getUser() == null || status2.getUser() == null) {
+                logger.error("Relationships needed for comparing UserTestStatuses!");
+                return 0;
+            } else {
+                return status1.getUser().getName().compareToIgnoreCase(status2.getUser().getName());
+            }
+        }).thenComparing((status1, status2) -> {
+            if (status1.getTest() == null || status2.getTest() == null) {
+                logger.error("Relationships needed for comparing UserTestStatuses!");
+                return 0;
+            } else {
+                return status1.getTest().getName().compareToIgnoreCase(status2.getTest().getName());
+            }
+        });
+    }
+
+    public static Comparator<StudentTaskStatus> getStudentTaskStatusComparator() {
+        return ((Comparator<StudentTaskStatus>) (status1, status2) -> {
+            if (status1.getAllSolutions() == 0 && status2.getAllSolutions() == 0) {
                 return 0;
             }
-            if (utts1.getTestTask() == null || utts2.getTestTask() == null) {
+            if (status1.getTestTask() == null || status2.getTestTask() == null) {
                 logger.error("Relationships needed for comparing UserTestTaskStatuses!");
-                return utts1.getRatio() > utts2.getRatio() ? 1 : -1;
+                return status1.getRatio() > status2.getRatio() ? 1 : -1;
             } else {
-                double ratioDiff1 = utts1.getRatio() - utts1.getTestTask().getRatio();
-                double ratioDiff2 = utts2.getRatio() - utts2.getTestTask().getRatio();
+                double ratioDiff1 = status1.getRatio() - status1.getTestTask().getRatio();
+                double ratioDiff2 = status2.getRatio() - status2.getTestTask().getRatio();
                 return ratioDiff1 > ratioDiff2 ? 1 : -1;
             }
         });

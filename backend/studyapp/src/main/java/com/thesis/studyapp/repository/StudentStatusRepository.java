@@ -13,13 +13,11 @@ public interface StudentStatusRepository extends Neo4jRepository<StudentStatus, 
 
     List<StudentStatus> findByIdIn(List<Long> ids, @Depth int depth);
 
-    //todo orderBy nem működik
-    List<StudentStatus> findByTestIdOrderByUserName(Long testId, @Depth int depth);
+    List<StudentStatus> findByActiveTrueAndTestIdOrderByUserName(Long testId, @Depth int depth);
 
-    //todo orderBy nem működik
-    List<StudentStatus> findByUserIdOrderByTestName(Long testId, @Depth int depth);
+    List<StudentStatus> findByActiveTrueAndUserIdOrderByTestName(Long userId, @Depth int depth);
 
-    Optional<StudentStatus> findFirstByUserIdAndTestId(Long userId, Long testId, @Depth int depth);
+    Optional<StudentStatus> findFirstByActiveTrueAndUserIdAndTestId(Long userId, Long testId, @Depth int depth);
 
 
 }

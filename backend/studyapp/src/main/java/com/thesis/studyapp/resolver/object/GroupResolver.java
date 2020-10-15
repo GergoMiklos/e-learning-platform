@@ -7,10 +7,12 @@ import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.util.DataLoaderUtil;
 import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static com.thesis.studyapp.util.ComparatorUtil.getTestComparator;
 import static com.thesis.studyapp.util.ComparatorUtil.getUserComparator;
@@ -37,11 +39,18 @@ public class GroupResolver implements GraphQLResolver<Group> {
                 });
     }
 
-    public CompletableFuture<List<Test>> tests(Group group) {
+    public CompletableFuture<List<Test>> tests(Group group, @Nullable Boolean active) {
         return dataLoaderUtil.loadData(group.getTests(), DataLoaderUtil.TEST_LOADER)
                 .thenApplyAsync((tests) -> {
-                    tests.sort(getTestComparator());
-                    return tests;
+                    if(active != null) {
+                        return tests.stream()
+                                .filter(test -> test.isActive() == active)
+                                .sorted(getTestComparator())
+                                .collect(Collectors.toList());
+                    } else {
+                        tests.sort(getTestComparator());
+                        return tests;
+                    }
                 });
     }
 

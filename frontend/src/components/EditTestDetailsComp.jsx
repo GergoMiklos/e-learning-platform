@@ -17,7 +17,7 @@ const TEST_DETAILS_FRAGMENT = gql`
 const EDIT_TEST_MUTATION = gql`
     mutation EditTest($testId: ID!, $input: NameDescInput!) {
         editTest(testId: $testId, input: $input) {
-            ...TestDetials
+            ...TestDetails
         }
     }
 ${TEST_DETAILS_FRAGMENT}`;

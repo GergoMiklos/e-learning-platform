@@ -4,24 +4,31 @@ import {Modal} from "react-bootstrap";
 import {useMutation} from "@apollo/client";
 import toast from "toasted-notes";
 import NameDescFormComp from "./NameDescFormComp";
-import AuthService from "../AuthService";
+import AuthService, {useAuthentication} from "../AuthService";
+import GroupListElementComp from "./GroupListElementComp";
 import {useHistory} from "react-router-dom";
 
-//todo fragment
 const CREATE_GROUP_MUTATION = gql`
     mutation CreateGroup($userId: ID!, $input: NameDescInput!) {
-        createGroup(userId: $userId, input: $input) {
-            name
+        createGroup(userId: $userId, input: $input){
+            ...GroupDetails
         }
-    }`;
+    }
+${GroupListElementComp.fragments.GROUP_DETAILS_FRAGMENT}`;
 
 export default function NewGroupDialogComp(props) {
+    let history = useHistory();
+    const {userId} = useAuthentication();
+
     const [createGroup] = useMutation(CREATE_GROUP_MUTATION, {
-        onCompleted: (data) => toast.notify(`Group created with name: ${data.createGroup.name}`),
-        onError: (error) => toast.notify(`Error`),
+        onCompleted: (data) => {
+            toast.notify(`Group created with name: ${data.createGroup.name}`);
+            history.goBack();
+        },
+        onError: () => toast.notify(`Error`),
         update: (cache, {data: {createGroup}}) => {
             cache.modify({
-                id: `User:${AuthService.getUserId()}`,
+                id: `User:${userId}`,
                 fields: {
                     //Todo melyik jobb?
                     teacherGroups(existingGroupRefs, {INVALIDATE}) {
@@ -57,9 +64,9 @@ export default function NewGroupDialogComp(props) {
 
     return (
         <Modal
-            show={props.show}
             centered
-            onHide={() => props.onHide()}
+            onHide={() => history.goBack()}
+            show={true}
         >
             <div className="container">
                 <div className="row bg-primary text-light shadow p-3">
@@ -73,10 +80,9 @@ export default function NewGroupDialogComp(props) {
                                         description: values.description,
                                         name: values.name
                                     },
-                                    userId: AuthService.getUserId(),
+                                    userId: userId,
                                 },
                             })
-                            props.onHide();
                         }}
                     />
                 </div>

@@ -10,10 +10,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import static com.thesis.studyapp.util.ComparatorUtil.getGroupComparator;
 import static com.thesis.studyapp.util.ComparatorUtil.getUserComparator;
-import static com.thesis.studyapp.util.ComparatorUtil.getUserTestStatusComparator;
+import static com.thesis.studyapp.util.ComparatorUtil.getStudentStatusComparator;
 
 @Component
 @RequiredArgsConstructor
@@ -47,9 +48,11 @@ public class UserResolver implements GraphQLResolver<User> {
 
     public CompletableFuture<List<StudentStatus>> studentStatuses(User user) {
         return dataLoaderUtil.loadData(user.getStudentStatuses(), DataLoaderUtil.STUDENTSTATUS_LOADER)
-                .thenApplyAsync((userTestStatuses) -> {
-                    userTestStatuses.sort(getUserTestStatusComparator());
-                    return userTestStatuses;
+                .thenApplyAsync((studentStatuses) -> {
+                    return studentStatuses.stream()
+                            .filter(StudentStatus::isActive)
+                            .sorted(getStudentStatusComparator())
+                            .collect(Collectors.toList());
                 });
     }
 

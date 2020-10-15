@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Redirect, Route, Switch} from 'react-router-dom'
+import {Redirect, Route, Switch, useLocation, useHistory} from 'react-router-dom'
 import NavBarComp from "./NavBarComp";
 import StudentPageComp from "./StudentPageComp";
 import TeacherPageComp from "./TeacherPageComp";
@@ -13,8 +13,8 @@ import TeacherLiveTestPageComp from "./TeacherLiveTestPageComp";
 import ParentPageComp from "./ParentPageComp";
 import LoginPageComp from "./LoginPageComp";
 import SignupPageComp from "./SignupPageComp";
-import AuthService from "../AuthService";
-import NewGroupDialogComp from "./NewGroupDialogComp";
+import {useAuthentication} from "../AuthService";
+import NotFoundPageComp from "./NotFoundPageComp";
 
 const style = {
     backgroundImage: 'url(https://i.pinimg.com/originals/06/47/7e/06477ea4fbec33a0ad356f6095460775.gif)',
@@ -31,40 +31,52 @@ class AppComp extends Component {
             <div className="bg-secondary min-vh-100 pb-3" style={style}>
                 <NavBarComp/>
                 <Switch>
-                    <AuthenticatedRoute exact path="/">
-                        <Redirect to="/student" />
-                    </AuthenticatedRoute>
-                    <AuthenticatedRoute exact path="/student" component={StudentPageComp}/>
-                    <AuthenticatedRoute path="/student/group/:groupid/test/:testid" component={StudentLiveTestPageComp}/>
-                    <AuthenticatedRoute path="/student/group/:groupid" component={StudentGroupPageComp}/>
-                    <AuthenticatedRoute exact path="/teacher" component={TeacherPageComp}/>
-                    <AuthenticatedRoute exact path="/teacher/new" component={NewGroupDialogComp}/>
-                    <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid/edit/tasks" component={NewTaskPageComp}/>
-                    <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid/edit" component={EditTestPageComp}/>
-                    <AuthenticatedRoute path="/teacher/group/:groupid/test/:testid" component={TeacherLiveTestPageComp}/>
-                    <AuthenticatedRoute path="/teacher/group/:groupid/edit" component={EditGroupPageComp}/>
-                    <AuthenticatedRoute path="/teacher/group/:groupid" component={TeacherGroupPageComp}/>
-                    <AuthenticatedRoute exact path="/parent" component={ParentPageComp}/>
-                    <Route exact path="/login" component={LoginPageComp}/>
-                    <Route exact path="/register" component={SignupPageComp}/>
-                    <Route component={ErrorComp}/>
+                    <PrivateRoute exact path="/">
+                        <Redirect to="/student"/>
+                    </PrivateRoute>
+                    <PrivateRoute path="/student/group/:groupid/test/:testid" component={StudentLiveTestPageComp}/>
+                    <PrivateRoute path="/student/group/:groupid" component={StudentGroupPageComp}/>
+                    <PrivateRoute path="/student" component={StudentPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid/test/:testid/edit/tasks" component={NewTaskPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid/test/:testid/edit" component={EditTestPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid/test/:testid" component={TeacherLiveTestPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid/edit" component={EditGroupPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid" component={TeacherGroupPageComp}/>
+                    <PrivateRoute path="/teacher" component={TeacherPageComp}/>
+                    <PrivateRoute path="/parent" component={ParentPageComp}/>
+                    <PublicRoute exact path="/login" component={LoginPageComp}/>
+                    <PublicRoute exact path="/register" component={SignupPageComp}/>
+                    <Route component={NotFoundPageComp}/>
                 </Switch>
             </div>
         );
     }
 }
 
-function AuthenticatedRoute(props) {
-    if (AuthService.isLoggedIn()) {
+function PrivateRoute(props) {
+    let location = useLocation();
+    const {isLoggedIn} = useAuthentication();
+
+    if (isLoggedIn) {
         return <Route {...props} />
     } else {
-        return <Redirect to="/login" />
+        return <Redirect to={{
+            pathname: "/login",
+            state: {from: location},
+        }}
+        />
     }
-
 }
 
-function ErrorComp() {
-    return <div>Oops! Something went wrong.</div>
+function PublicRoute(props) {
+    const {isLoggedIn} = useAuthentication();
+
+    if (!isLoggedIn) {
+        return <Route {...props} />
+    } else {
+        return <Redirect to="/student"/>;
+    }
 }
+
 
 export default AppComp;

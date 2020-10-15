@@ -3,8 +3,9 @@ import gql from "graphql-tag";
 import toast from "toasted-notes";
 import {useMutation, useQuery} from "@apollo/client";
 import ParentElementComp from "./ParentElementComp";
-import AuthService from "../AuthService";
+import AuthService, {useAuthentication} from "../AuthService";
 import {useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 const PARENT_FOLLOWED_STATUSES_QUERY = gql`
     query getUser($userId: ID!) {
@@ -27,7 +28,7 @@ const ADD_FOLLOWED_STUDENT_MUTATION = gql`
 ${ParentElementComp.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT}`
 
 export default function ParentPageComp(props) {
-    const userId = AuthService.getUserId();
+    const {userId} = useAuthentication();
     const [addFollowedCode, setAddFollowedCode] = useState('');
     const {loading, error, data} = useQuery(PARENT_FOLLOWED_STATUSES_QUERY, {
         variables: {userId: userId},
@@ -62,8 +63,8 @@ export default function ParentPageComp(props) {
         },
     });
 
-    if (!data || !data.user) {
-        return (<div/>);
+    if (!data?.user) {
+        return (<LoadingComp/>);
     }
 
     return (
@@ -101,7 +102,7 @@ export default function ParentPageComp(props) {
                 <div className="col-3 btn btn-danger disabled">Problem</div>
             </div>
 
-            {data.user.followedStudents.map(student =>
+            {data.user.followedStudents?.length === 0 ? "No Students" : data.user.followedStudents.map(student =>
                 <ParentElementComp
                     key={student.id}
                     student={student}

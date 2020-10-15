@@ -6,7 +6,7 @@ import {useMutation} from "@apollo/client";
 import AuthService from "../AuthService";
 
 const STUDENTSTATUS_DETAILS_FRAGMENT = gql`
-    fragment StudentStatusDetials on StudentStatus {
+    fragment ParentStudentStatusDetails on StudentStatus {
         id
         status
         statusChangedTime
@@ -27,7 +27,7 @@ const FOLLOWED_STUDENT_DETAILS_FRAGMENT = gql`
         name
         code
         studentStatuses {
-            ...StudentStatusDetials
+            ...ParentStudentStatusDetails
         }
     }
 ${STUDENTSTATUS_DETAILS_FRAGMENT}`
@@ -72,7 +72,7 @@ export default function ParentElementComp(props) {
                 </button>
             </div>
 
-            {props.student.userTestStatuses.length === 0 ? "No statuses" :
+            {props.student.studentStatuses?.length === 0 ? "No Statuses" :
                 <div className="table-responsive-sm px-1">
                     <table className="col-12 table table-striped bg-light">
                         <thead>
@@ -85,19 +85,19 @@ export default function ParentElementComp(props) {
                         </thead>
 
                         <tbody>
-                        {props.student.userTestStatuses.map(uts =>
-                            <tr key={uts.id}>
+                        {props.student.studentStatuses.map(status =>
+                            <tr key={status.id}>
                                 <td className="font-weight-bold">
-                                    {uts.test.name}
+                                    {status.test.name}
                                 </td>
                                 <td className="text-center">
-                                    {uts.solvedTasks}/{uts.test.allTasks}
+                                    {status.solvedTasks}/{status.test.allTasks}
                                 </td>
                                 <td className="text-center">
-                                    {uts.correctSolutions}/{uts.allSolutions}
+                                    {status.correctSolutions}/{status.allSolutions}
                                 </td>
                                 <td className='text-center'>
-                                    <StatusElementComp userTestStatus={uts}/>
+                                    <StatusElementComp studentStatus={status}/>
                                 </td>
                             </tr>
                         )}

@@ -3,10 +3,7 @@ package com.thesis.studyapp.service;
 import com.thesis.studyapp.exception.NotFoundException;
 import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.repository.StudentStatusRepository;
-import com.thesis.studyapp.repository.StudentTaskStatusRepository;
-import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,29 +15,24 @@ import static java.lang.Math.max;
 public class StudentStatusService {
 
     private final StudentStatusRepository studentStatusRepository;
-    private final StudentTaskStatusRepository studentTaskStatusRepository;
 
-    private final DateUtil dateUtil;
-    private final ApplicationEventPublisher eventPublisher;
-
-    public StudentStatus getUserTestStatus(Long userTestStatusId) {
-        return getUserTestStatusById(userTestStatusId, 1);
+    public StudentStatus getStudentStatus(Long userTestStatusId) {
+        return getStudentStatusById(userTestStatusId, 1);
     }
 
-    public List<StudentStatus> getUserTestStatusesByIds(List<Long> ids) {
+    public List<StudentStatus> getStudentStatusesByIds(List<Long> ids) {
         return studentStatusRepository.findByIdIn(ids, 1);
     }
 
-    //todo (FONTOS: objectresolvernél ha errort dobunk egy fieldnél, attól még a többi meglehet (külön folyamat/request))
-    public List<StudentStatus> getUserTestStatusesForTest(Long testId) {
-        return studentStatusRepository.findByTestIdOrderByUserName(testId, 1);
+    public List<StudentStatus> getStudentStatusesForTest(Long testId) {
+        return studentStatusRepository.findByActiveTrueAndTestIdOrderByUserName(testId, 1);
     }
 
-    public List<StudentStatus> getUserTestStatusesForUser(Long userId) {
-        return studentStatusRepository.findByUserIdOrderByTestName(userId, 1);
+    public List<StudentStatus> getStudentStatusesForUser(Long userId) {
+        return studentStatusRepository.findByActiveTrueAndUserIdOrderByTestName(userId, 1);
     }
 
-    private StudentStatus getUserTestStatusById(Long userTestStatusId, int depth) {
+    private StudentStatus getStudentStatusById(Long userTestStatusId, int depth) {
         return studentStatusRepository.findById(userTestStatusId, max(1, depth))
                 .orElseThrow(() -> new NotFoundException("No StudentStatus with id: " + userTestStatusId));
     }

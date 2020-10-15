@@ -4,7 +4,8 @@ import NewTestDialogComp from "./NewTestDialogComp";
 import toast from "toasted-notes";
 import {useMutation, useQuery} from "@apollo/client";
 import TeacherGroupElementComp from "./TeacherGroupElementComp";
-import {useHistory, useRouteMatch} from "react-router-dom";
+import {Link, useHistory, useRouteMatch, Route} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 const TEACHER_GROUP_QUERY = gql`
     query getGroup($groupId: ID!) {
@@ -16,7 +17,7 @@ const TEACHER_GROUP_QUERY = gql`
             news
             newsChangedDate
             tests {
-                ...TestDetials
+                ...TestDetails
             }
         }
     }
@@ -32,10 +33,10 @@ const CHANGE_NEWS_MUTATION = gql`
     }`;
 
 export default function TeacherGroupPageComp(props) {
-    const [showNewTestDialog, setShowNewTestDialog] = useState(false);
     const [selectedTestId, setSelectedTestId] = useState(null);
     const [changeNewsText, setChangeNewsText] = useState(null);
-    const {loading, error, data, called} = useQuery(
+
+    const {loading, error, data} = useQuery(
         TEACHER_GROUP_QUERY, {
             variables: {groupId: props.match.params.groupid},
         });
@@ -44,8 +45,8 @@ export default function TeacherGroupPageComp(props) {
         onError: () => toast.notify(`Error`),
     });
 
-    if (!data) {
-        return (<div/>);
+    if (!data?.group) {
+        return (<LoadingComp/>);
     }
 
     return (
@@ -105,21 +106,27 @@ export default function TeacherGroupPageComp(props) {
             </div>
             }
 
-            <div className="row rounded shadow bg-light my-3 p-3 d-flex justify-content-between">
+            <div className="row rounded shadow bg-light my-3 p-3 justify-content-between">
                 <h1>Tests</h1>
-                <button className="btn btn-primary" onClick={() => setShowNewTestDialog(true)}>
-                    New
-                </button>
+                <Link to={`${props.match.url}/new`}>
+                    <button className="btn btn-lg btn-primary">
+                        {'New'}
+                    </button>
+                </Link>
             </div>
 
-            <NewTestDialogComp
-                show={showNewTestDialog}
-                onHide={() => setShowNewTestDialog(false)}
-                groupId={data.group.id}
-            />
+            <Route path={`${props.match.url}/new`} render={(props) =>
+                (<NewTestDialogComp groupId={data.group.id} {...props} />)
+            }/>
 
-            {data.group.tests &&
-            <div className="row my-3">
+            {/*<NewTestDialogComp*/}
+            {/*    show={showNewTestDialog}*/}
+            {/*    onHide={() => setShowNewTestDialog(false)}*/}
+            {/*    groupId={data.group.id}*/}
+            {/*/>*/}
+
+            {data.group.tests?.length === 0 ? "No Tests" :
+                <div className="row my-3">
                 <ul className="col-12 list-group">
                     {data.group.tests.map(test => //todo miért nem csak egy onEdit/onStatuses fgv van, és adja át az idet az element stb? Még jobb lenne ha a router dolgokat ő intézné
                         <li

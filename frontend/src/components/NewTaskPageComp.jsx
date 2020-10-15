@@ -1,9 +1,11 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import gql from "graphql-tag";
 import NewTaskDialogComp from "./NewTaskDialogComp";
 import NewTaskSearchElementComp from "./NewTaskSearchElementComp";
 import {useLazyQuery} from "@apollo/client";
-import {useHistory} from "react-router-dom";
+import {Link, Route, useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
+import NewGroupDialogComp from "./NewGroupDialogComp";
 
 const SEARCH_TASKS_QUERY = gql`
     query SearchTasks($testId: ID! $searchText: String, $page: Int!) {
@@ -24,7 +26,6 @@ export default function NewTaskPageComp(props) {
     const [selectedLevel, selectLevel] = useState(1);
     const [currentPage, setCurrentPage] = useState(0);
     const [searchText, setSearchText] = useState('');
-    const [showNewTaskDialog, setShowNewTaskDialog] = useState(false);
 
     //TODO ez is végtelen hívás kb, olyan mintha a taskot nem bírná :D
     const [call, {data, loading, error, called, fetchMore}] = useLazyQuery(SEARCH_TASKS_QUERY, {
@@ -33,12 +34,14 @@ export default function NewTaskPageComp(props) {
         }
     );
 
-    if (!called && !data) {
-        call({variables: {testId: props.match.params.testid, searchText: searchText, page: 0}});
-    }
+    useEffect(() =>{
+        if(!called && !data?.searchTasks) {
+            call({variables: {testId: props.match.params.testid, searchText: searchText, page: 0}});
+        }
+    }, [])
 
-    if (!data) {
-        return (<div/>)
+    if (!data?.searchTasks) {
+        return (<LoadingComp/>)
     }
 
     return (
@@ -48,21 +51,24 @@ export default function NewTaskPageComp(props) {
                 Back
             </button>
 
-            <div className="row justify-content-between rounded shadow bg-light my-3 p-3">
+            <div className="row rounded shadow bg-light my-3 p-3 justify-content-between">
                 <h1>Add Tasks</h1>
-                <button className="btn btn-primary" onClick={() => setShowNewTaskDialog(true)}>
-                    New
-                </button>
+                <Link to={`${props.match.url}/new`}>
+                    <button className="btn btn-lg btn-primary">
+                        {'New'}
+                    </button>
+                </Link>
             </div>
 
-            <NewTaskDialogComp
-                show={showNewTaskDialog}
-                onHide={() => setShowNewTaskDialog(false)}
-                testId={props.match.params.testid}
-                levels={levels}
-                selectedLevel={selectedLevel}
-                selectLevel={(level) => selectLevel(level)}
-            />
+            <Route path={`${props.match.url}/new`} render={(props) =>
+                (<NewTaskDialogComp
+                    testId={props.match.params.testid}
+                    levels={levels}
+                    selectedLevel={selectedLevel}
+                    selectLevel={(level) => selectLevel(level)}
+                    {...props}
+                />)
+            }/>
 
             <div className="row input-group mb-3">
                 <input type="text" className="form-control" placeholder="Search for tasks"
@@ -82,12 +88,12 @@ export default function NewTaskPageComp(props) {
             </div>
 
             <i className="row m-1">
-                {`${data.searchTasks.totalElements} results:`}
+                {data.searchTasks?.totalElements === 0 ? `${data.searchTasks.totalElements} results:` : 'No Results'}
             </i>
 
             <div className="row my-3">
                 <ul className="col-12 list-group">
-                    {data.searchTasks.tasks.map(task =>
+                    {data.searchTasks?.tasks?.map(task =>
                         <li
                             className="list-group-item list-group-item-action"
                             key={task.id}

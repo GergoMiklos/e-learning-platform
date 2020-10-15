@@ -14,19 +14,21 @@ const CREATE_TASK_MUTATION = gql`
     }`;
 
 export default function NewTaskDialogComp(props) {
+    let history = useHistory();
+
     const [createTask] = useMutation(CREATE_TASK_MUTATION, {
         onCompleted: (data) => {
             toast.notify(`Task created: ${data.createTask.question}`);
-            props.onHide();
+            history.goBack();
         },
         onError: () => toast.notify(`Error :(`),
     });
 
     return (
         <Modal
-            show={props.show}
             centered
-            onHide={() => props.onHide()}
+            onHide={() => history.goBack()}
+            show={true}
         >
             <div className="container">
                 <div className="row bg-primary text-light shadow p-3">

@@ -9,6 +9,7 @@ import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.TestRepository;
+import com.thesis.studyapp.repository.TestTaskRepository;
 import com.thesis.studyapp.util.AuthenticationUtil;
 import com.thesis.studyapp.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,8 @@ import java.util.stream.Collectors;
 public class TestService {
 
     private final TestRepository testRepository;
-    private final GroupRepository groupRepository;
+    private final TestTaskRepository testTaskRepository;
+
     private final GroupService groupService;
     private final AuthenticationUtil authenticationUtil;
 
@@ -66,9 +68,9 @@ public class TestService {
 
         test.setActive(active);
         if (active) {
-            test.setStudentStatuses(createUserTestStatuses(test.getGroup().getStudents()));
+            test.setStudentStatuses(createStudentStatuses(test.getGroup().getStudents()));
         } else {
-            test.setStudentStatuses(new HashSet<>());
+            test.setStudentStatuses(deleteStudentStatuses(test.getStudentStatuses()));
         }
 
         return testRepository.save(test, 2);
@@ -86,13 +88,13 @@ public class TestService {
         return testRepository.save(test, 1);
     }
 
-    //todo ez csak akkor működik ha vizsgálod !!! :(
-    public Set<StudentStatus> createUserTestStatuses(Set<User> students) {
+    private Set<StudentStatus> createStudentStatuses(Set<User> students) {
         ZonedDateTime creationTime = dateUtil.getCurrentTime();
 
         return students.stream()
                 .map(student -> StudentStatus.builder()
                         .user(student)
+                        .active(true)
                         .status(StudentStatus.Status.NOT_STARTED)
                         .statusChangedDate(creationTime)
                         .currentLevel(1)
@@ -100,6 +102,11 @@ public class TestService {
                         .build()
                 )
                 .collect(Collectors.toSet());
+    }
+
+    private Set<StudentStatus> deleteStudentStatuses(Set<StudentStatus> studentStatuses) {
+       studentStatuses.forEach(status -> status.setActive(false));
+       return studentStatuses;
     }
 
     private Test getTestById(Long testId, int depth) {

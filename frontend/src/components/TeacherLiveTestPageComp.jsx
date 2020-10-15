@@ -1,12 +1,13 @@
-import React, {Component, useEffect} from 'react';
+import React, {useEffect} from 'react';
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/client";
 import {Link} from "react-router-dom";
 import StatusElementComp from "./StatusElementComp";
 import {useHistory} from "react-router-dom";
+import LoadingComp from "./LoadingComp";
 
 const STUDENTSTATUS_DETAILS_FRAGMENT = gql`
-    fragment StudentTestStatusDetials on StudentStatus {
+    fragment StudentStatusDetials on StudentStatus {
         id
         status
         statusChangedTime
@@ -26,8 +27,8 @@ const STUDENTSTATUSES_QUERY = gql`
             name
             description
             allTasks
-            userTestStatuses {
-                ...StudentTestStatusDetials
+            studentStatuses {
+                ...StudentStatusDetials
             }
         }
     }
@@ -36,7 +37,7 @@ ${STUDENTSTATUS_DETAILS_FRAGMENT}`;
 const STATUS_CHANGE_SUBSCRIPTION = gql`
     subscription onStatusChange($testId: ID!) {
         testStatusChanges(testId: $testId) {
-            ...StudentTestStatusDetials
+            ...StudentStatusDetials
         }
     }
 ${STUDENTSTATUS_DETAILS_FRAGMENT}`;
@@ -49,12 +50,12 @@ function TeacherLiveTestPageComp(props) {
 
     return (
         <div className="container">
-            <Link
+            <div
                 onClick={() => props.history.goBack()}
                 className="row btn btn-secondary mt-1"
             >
                 Back
-            </Link>
+            </div>
 
             <div className="row bg-primary text-light rounded shadow my-3 p-3">
                 <h1 className="col-10">{props.data.test.name}</h1>
@@ -67,40 +68,42 @@ function TeacherLiveTestPageComp(props) {
                 <div className="col-3 btn btn-danger disabled">Problem</div>
             </div>
 
-            <div className="my-3 table-responsive-sm">
-                <table className="table table-striped bg-light">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th className="text-center">Code</th>
-                        <th className="text-center">Tasks (Solved/All)</th>
-                        <th className="text-center">Answers (Correct/All)</th>
-                        <th className="text-center">Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {props.data.test.userTestStatuses && props.data.test.userTestStatuses.map(uts =>
-                        <tr key={uts.id}>
-                            <td className="font-weight-bold">
-                                {uts.user.name}
-                            </td>
-                            <td className="text-center">
-                                {uts.user.code}
-                            </td>
-                            <td className="text-center">
-                                {uts.solvedTasks}/{props.data.test.allTasks}
-                            </td>
-                            <td className="text-center">
-                                {uts.correctSolutions}/{uts.allSolutions}
-                            </td>
-                            <td className="text-center">
-                                <StatusElementComp userTestStatus={uts}/>
-                            </td>
+            {props.data.test.studentStatuses?.length === 0 ? "No Statuses" :
+                <div className="my-3 table-responsive-sm">
+                    <table className="table table-striped bg-light">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th className="text-center">Code</th>
+                            <th className="text-center">Tasks (Solved/All)</th>
+                            <th className="text-center">Answers (Correct/All)</th>
+                            <th className="text-center">Status</th>
                         </tr>
-                    )}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                        {props.data.test.studentStatuses.map(status =>
+                            <tr key={status.id}>
+                                <td className="font-weight-bold">
+                                    {status.user.name}
+                                </td>
+                                <td className="text-center">
+                                    {status.user.code}
+                                </td>
+                                <td className="text-center">
+                                    {status.solvedTasks}/{props.data.test.allTasks}
+                                </td>
+                                <td className="text-center">
+                                    {status.correctSolutions}/{status.allSolutions}
+                                </td>
+                                <td className="text-center">
+                                    <StatusElementComp studentStatus={status}/>
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>
+            }
         </div>
     );
 }
@@ -112,8 +115,8 @@ export default function TeacherLiveTestPageCont(props) {
             pollInterval: 60 * 1000,
         });
 
-    if (!data) {
-        return (<div/>);
+    if (!data?.test) {
+        return (<LoadingComp/>);
     }
 
     return (
