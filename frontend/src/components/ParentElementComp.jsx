@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import gql from "graphql-tag";
 import toast from "toasted-notes";
-import StatusElementComp from "./StatusElementComp";
+import StatusElementComp from "./common/StatusElementComp";
 import {useMutation} from "@apollo/client";
 import AuthService from "../AuthService";
 

@@ -4,8 +4,7 @@ import NewTaskDialogComp from "./NewTaskDialogComp";
 import NewTaskSearchElementComp from "./NewTaskSearchElementComp";
 import {useLazyQuery} from "@apollo/client";
 import {Link, Route, useHistory} from "react-router-dom";
-import LoadingComp from "./LoadingComp";
-import NewGroupDialogComp from "./NewGroupDialogComp";
+import LoadingComp from "./common/LoadingComp";
 
 const SEARCH_TASKS_QUERY = gql`
     query SearchTasks($testId: ID! $searchText: String, $page: Int!) {
@@ -61,13 +60,7 @@ export default function NewTaskPageComp(props) {
             </div>
 
             <Route path={`${props.match.url}/new`} render={(props) =>
-                (<NewTaskDialogComp
-                    testId={props.match.params.testid}
-                    levels={levels}
-                    selectedLevel={selectedLevel}
-                    selectLevel={(level) => selectLevel(level)}
-                    {...props}
-                />)
+                (<NewTaskDialogComp {...props} />)
             }/>
 
             <div className="row input-group mb-3">
@@ -88,7 +81,7 @@ export default function NewTaskPageComp(props) {
             </div>
 
             <i className="row m-1">
-                {data.searchTasks?.totalElements === 0 ? `${data.searchTasks.totalElements} results:` : 'No Results'}
+                {!data.searchTasks?.totalElements ? `${data.searchTasks.totalElements} results:` : 'No Results'}
             </i>
 
             <div className="row my-3">

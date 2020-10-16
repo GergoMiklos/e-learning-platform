@@ -2,9 +2,9 @@ import React, {useEffect} from 'react';
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/client";
 import {Link} from "react-router-dom";
-import StatusElementComp from "./StatusElementComp";
+import StatusElementComp from "./common/StatusElementComp";
 import {useHistory} from "react-router-dom";
-import LoadingComp from "./LoadingComp";
+import LoadingComp from "./common/LoadingComp";
 
 const STUDENTSTATUS_DETAILS_FRAGMENT = gql`
     fragment StudentStatusDetials on StudentStatus {

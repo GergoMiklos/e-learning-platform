@@ -5,7 +5,7 @@ import {useMutation, useQuery} from "@apollo/client";
 import ParentElementComp from "./ParentElementComp";
 import AuthService, {useAuthentication} from "../AuthService";
 import {useHistory} from "react-router-dom";
-import LoadingComp from "./LoadingComp";
+import LoadingComp from "./common/LoadingComp";
 
 const PARENT_FOLLOWED_STATUSES_QUERY = gql`
     query getUser($userId: ID!) {
@@ -102,7 +102,7 @@ export default function ParentPageComp(props) {
                 <div className="col-3 btn btn-danger disabled">Problem</div>
             </div>
 
-            {data.user.followedStudents?.length === 0 ? "No Students" : data.user.followedStudents.map(student =>
+            {!data.user.followedStudents?.length ? "No Students" : data.user.followedStudents.map(student =>
                 <ParentElementComp
                     key={student.id}
                     student={student}

@@ -1,20 +1,21 @@
 import React, {Component} from 'react'
-import {Redirect, Route, Switch, useLocation, useHistory} from 'react-router-dom'
+import {Redirect, Route, Switch, useLocation} from 'react-router-dom'
+import {useAuthentication} from "../AuthService";
+
 import NavBarComp from "./NavBarComp";
-import StudentPageComp from "./StudentPageComp";
-import TeacherPageComp from "./TeacherPageComp";
-import StudentGroupPageComp from "./StudentGroupPageComp";
-import TeacherGroupPageComp from "./TeacherGroupPageComp";
-import StudentLiveTestPageComp from "./StudentLiveTestPageComp";
-import EditGroupPageComp from "./EditGroupPageComp";
+import StudentPageCont from "../containers/student-page/StudentPageCont";
+import TeacherPageCont from "../containers/teacher-page/TeacherPageCont";
 import NewTaskPageComp from "./NewTaskPageComp"
-import EditTestPageComp from "./EditTestPageComp";
 import TeacherLiveTestPageComp from "./TeacherLiveTestPageComp";
 import ParentPageComp from "./ParentPageComp";
-import LoginPageComp from "./LoginPageComp";
-import SignupPageComp from "./SignupPageComp";
-import {useAuthentication} from "../AuthService";
-import NotFoundPageComp from "./NotFoundPageComp";
+import NotFoundPageComp from "./common/NotFoundPageComp";
+import StudentGroupPageCont from "../containers/student-group-page/StudentGroupPageCont";
+import StudentLiveTestPageCont from "../containers/student-livetest-page/StudentLiveTestPageCont";
+import LoginPageCont from "../containers/login-signup-page/LoginPageCont";
+import SignupPageCont from "../containers/login-signup-page/SignupPageCont";
+import TeacherGroupPageCont from "../containers/teacher-group-page/TeacherGroupPageCont";
+import EditGroupPageCont from "../containers/edit-group-page/EditGroupPageCont";
+import EditTestPageCont from "../containers/edit-test-page/EditTestPageCont";
 
 const style = {
     backgroundImage: 'url(https://i.pinimg.com/originals/06/47/7e/06477ea4fbec33a0ad356f6095460775.gif)',
@@ -34,18 +35,18 @@ class AppComp extends Component {
                     <PrivateRoute exact path="/">
                         <Redirect to="/student"/>
                     </PrivateRoute>
-                    <PrivateRoute path="/student/group/:groupid/test/:testid" component={StudentLiveTestPageComp}/>
-                    <PrivateRoute path="/student/group/:groupid" component={StudentGroupPageComp}/>
-                    <PrivateRoute path="/student" component={StudentPageComp}/>
+                    <PrivateRoute path="/student/group/:groupid/test/:testid" component={StudentLiveTestPageCont}/>
+                    <PrivateRoute path="/student/group/:groupid" component={StudentGroupPageCont}/>
+                    <PrivateRoute path="/student" component={StudentPageCont}/>
                     <PrivateRoute path="/teacher/group/:groupid/test/:testid/edit/tasks" component={NewTaskPageComp}/>
-                    <PrivateRoute path="/teacher/group/:groupid/test/:testid/edit" component={EditTestPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid/test/:testid/edit" component={EditTestPageCont}/>
                     <PrivateRoute path="/teacher/group/:groupid/test/:testid" component={TeacherLiveTestPageComp}/>
-                    <PrivateRoute path="/teacher/group/:groupid/edit" component={EditGroupPageComp}/>
-                    <PrivateRoute path="/teacher/group/:groupid" component={TeacherGroupPageComp}/>
-                    <PrivateRoute path="/teacher" component={TeacherPageComp}/>
+                    <PrivateRoute path="/teacher/group/:groupid/edit" component={EditGroupPageCont}/>
+                    <PrivateRoute path="/teacher/group/:groupid" component={TeacherGroupPageCont}/>
+                    <PrivateRoute path="/teacher" component={TeacherPageCont}/>
                     <PrivateRoute path="/parent" component={ParentPageComp}/>
-                    <PublicRoute exact path="/login" component={LoginPageComp}/>
-                    <PublicRoute exact path="/register" component={SignupPageComp}/>
+                    <PublicRoute exact path="/login" component={LoginPageCont}/>
+                    <PublicRoute exact path="/register" component={SignupPageCont}/>
                     <Route component={NotFoundPageComp}/>
                 </Switch>
             </div>
