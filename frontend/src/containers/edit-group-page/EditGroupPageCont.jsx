@@ -1,7 +1,7 @@
 import React from 'react'
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/client";
-import {useParams, useHistory} from 'react-router-dom'
+import {useHistory, useParams} from 'react-router-dom'
 import LoadingComp from "../../components/common/LoadingComp";
 import EditGroupTeacherElementCont from "./EditGroupTeacherElementCont";
 import EditGroupStudentElementCont from "./EditGroupStudentElementCont";

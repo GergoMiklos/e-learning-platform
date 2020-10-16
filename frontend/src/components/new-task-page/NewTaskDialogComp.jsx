@@ -1,33 +1,15 @@
 import React from 'react'
 import {ErrorMessage, Field, Form, Formik} from 'formik'
-import gql from "graphql-tag";
 import {Modal} from "react-bootstrap";
-import toast from "toasted-notes";
-import {useMutation} from "@apollo/client";
-import {useHistory} from "react-router-dom";
+import PropTypes from "prop-types";
 
-const CREATE_TASK_MUTATION = gql`
-    mutation CreateTask($taskInput: TaskInput!) {
-        createTask(taskInput: $taskInput) {
-            question
-        }
-    }`;
 
-export default function NewTaskDialogComp(props) {
-    let history = useHistory();
-
-    const [createTask] = useMutation(CREATE_TASK_MUTATION, {
-        onCompleted: (data) => {
-            toast.notify(`Task created: ${data.createTask.question}`);
-            history.goBack();
-        },
-        onError: () => toast.notify(`Error :(`),
-    });
+export default function NewTaskDialogComp({onSubmit, onValidate, onNavigateBack}) {
 
     return (
         <Modal
             centered
-            onHide={() => history.goBack()}
+            onHide={() => onNavigateBack()}
             show={true}
         >
             <div className="container">
@@ -37,27 +19,10 @@ export default function NewTaskDialogComp(props) {
 
                 <Formik
                     initialValues={{question: '', correct: '', bad1: '', bad2: '', bad3: ''}}
-                    onSubmit={values => createTask({
-                            variables: {
-                                taskInput: {
-                                    question: values.question,
-                                    correctAnswer: values.correct,
-                                    incorrectAnswers: [values.bad1, values.bad2, values.bad3]
-                                }
-                            }
-                        }
-                    )}
+                    onSubmit={onSubmit}
                     validateOnChange={true}
                     validateOnBlur={true}
-                    validate={(values) => {
-                        let errors = {};
-                        [values.question, values.correct, values.bad1, values.bad2, values.bad3].forEach(field => {
-                            if (!field || field.toString().length > 250 || field.toString().length < 1) {
-                                errors.question = 'All fields should be between min 1 and max 250 characters!';
-                            }
-                        })
-                        return errors;
-                    }}
+                    validate={onValidate}
                     enableReinitialize={true}
                 >
                     {({isValid, isSubmitting}) => (
@@ -107,4 +72,10 @@ export default function NewTaskDialogComp(props) {
             </div>
         </Modal>
     );
+}
+
+NewTaskDialogComp.propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    onValidate: PropTypes.bool.isRequired,
+    onNavigateBack: PropTypes.func.isRequired,
 }

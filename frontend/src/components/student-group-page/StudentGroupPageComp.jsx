@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import {useHistory} from 'react-router-dom'
 import StudentGroupElementCont from "../../containers/student-group-page/StudentGroupElementCont";
 import PropTypes from "prop-types";
 

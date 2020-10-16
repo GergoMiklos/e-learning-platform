@@ -1,21 +1,9 @@
-import React, {useState} from "react";
-import client from "../../ApolloClient";
-import toast from "toasted-notes";
-import gql from "graphql-tag";
-import {useMutation} from "@apollo/client";
-import {useHistory} from "react-router-dom";
+import React from "react";
 import {Collapse} from "react-bootstrap";
-
-const DELETE_TASK_MUTATION = gql`
-    mutation DeleteTaskFromTest($testTaskId: ID!) {
-        deleteTaskFromTest(testTaskId: $testTaskId)
-    }`;
+import PropTypes, {number} from "prop-types";
 
 
-export default function EditTestElementComp({
-                                                testTask, isSelected, levelState, explanationState, levels,
-                                                onExplanationChange, onLevelChange, onEdit, isEditDisabled, onDelete
-                                            }) {
+export default function EditTestElementComp({testTask, isSelected, levelState, explanationState, levels, onExplanationChange, onLevelChange, onEdit, isEditDisabled, onDelete}) {
 
     return (
         <div className="container">
@@ -24,11 +12,12 @@ export default function EditTestElementComp({
                     {testTask.task.question}
                 </strong>
                 <span className="col-9 col-lg-2">
-                    Correct/All: {testTask.allSolutions === 0 ? 0 : Math.floor((testTask.correctSolutions / testTask.allSolutions) * 100)}%
+                    Correct/All: {testTask.allSolutions === 0 ? 0 :
+                    Math.floor((testTask.correctSolutions / testTask.allSolutions) * 100)}%
                 </span>
                 <span className="col-auto">
                     <div
-                        className={`badge badge-${(levelState.changed || explanationState.changed) ? 
+                        className={`badge badge-${(levelState.changed || explanationState.changed) ?
                             'warning' : 'primary'} p-2`}
                     >
                         {levelState.level}
@@ -92,4 +81,18 @@ export default function EditTestElementComp({
             </Collapse>
         </div>
     );
+}
+
+
+EditTestElementComp.propTypes = {
+    testTask: PropTypes.object.isRequired,
+    isSelected: PropTypes.bool.isRequired,
+    levels: PropTypes.arrayOf(number).isRequired,
+    levelState: PropTypes.object.isRequired,
+    explanationState: PropTypes.object.isRequired,
+    onExplanationChange: PropTypes.func.isRequired,
+    onLevelChange: PropTypes.func.isRequired,
+    onEdit: PropTypes.func.isRequired,
+    isEditDisabled: PropTypes.bool.isRequired,
+    onDelete: PropTypes.func.isRequired,
 }

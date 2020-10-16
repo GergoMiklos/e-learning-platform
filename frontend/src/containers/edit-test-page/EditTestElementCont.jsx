@@ -3,9 +3,9 @@ import client from "../../ApolloClient";
 import toast from "toasted-notes";
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/client";
-import {useHistory} from "react-router-dom";
 import EditTestElementComp from "../../components/edit-test-page/EditTestElementComp";
 import {taskLevels} from "../../constants";
+import PropTypes, {number, string} from "prop-types";
 
 const DELETE_TASK_MUTATION = gql`
     mutation DeleteTaskFromTest($testTaskId: ID!) {
@@ -105,4 +105,10 @@ export default function EditTestElementCont({testId, testTaskId, selectedTestTas
 
 EditTestElementCont.fragments = {
     TESTTASK_DETAILS_FRAGMENT: TESTTASK_DETAILS_FRAGMENT,
+}
+
+EditTestElementCont.propTypes = {
+    testId: PropTypes.oneOfType([number, string]).isRequired,
+    testTaskId: PropTypes.oneOfType([number, string]).isRequired,
+    selectedTestTaskId: PropTypes.oneOfType([number, string]),
 }

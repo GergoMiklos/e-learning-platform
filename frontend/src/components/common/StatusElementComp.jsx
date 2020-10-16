@@ -6,13 +6,13 @@ import {statuses} from "../../constants";
 export default function StatusElementComp({status, changedTime, isInactive}) {
 
     const calculateColor = (studentStatus) => {
-        if (studentStatus.status === 'NOT_STARTED') {
+        if (studentStatus === 'NOT_STARTED') {
             return 'info';
         } else if (isInactive) {
             return 'warning';
-        } else if (studentStatus.status === 'IN_PROGRESS') {
+        } else if (studentStatus === 'IN_PROGRESS') {
             return 'success';
-        } else if (studentStatus.status === 'PROBLEM') {
+        } else if (studentStatus === 'PROBLEM') {
             return 'danger';
         } else {
             return 'secondary'

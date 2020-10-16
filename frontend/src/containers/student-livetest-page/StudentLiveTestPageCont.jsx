@@ -68,7 +68,7 @@ export default function StudentLiveTestPageCont() {
             chosenAnswerNumber={chosenAnswerNumber}
             testTask={nextTaskData.calculateNextTask}
             solution={solutionData?.checkSolution}
-            isAnswered={chosenAnswerNumber !== null && !!solutionData}
+            isAnswered={chosenAnswerNumber !== null}
 
             onNavigateBack={() => history.goBack()}
 
@@ -80,10 +80,10 @@ export default function StudentLiveTestPageCont() {
             }}
 
             onNextTask={()=> {
-                chooseAnswerNumber(null)
                 nextTask({
                     variables: {userId: userId, testId: testId},
                 });
+                chooseAnswerNumber(null);
             }}
        />
     );

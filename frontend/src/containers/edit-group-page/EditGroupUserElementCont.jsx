@@ -1,7 +1,6 @@
 import gql from "graphql-tag";
 import client from "../../ApolloClient";
 import React from "react";
-import {useHistory} from "react-router-dom";
 import EditGroupUserElementComp from "../../components/edit-group-page/EditGroupUserElementComp";
 import PropTypes, {number, string} from "prop-types";
 

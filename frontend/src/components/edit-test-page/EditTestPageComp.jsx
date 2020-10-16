@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import {Link} from "react-router-dom";
 import EditTestDetailsCont from "../../containers/edit-test-page/EditTestDetailsCont";
 import EditTestElementCont from "../../containers/edit-test-page/EditTestElementCont";
+import PropTypes, {object} from "prop-types";
 
 
 export default function EditTestPageComp({test, testTasks, onNavigateBack, newTaskPath}) {
@@ -55,4 +56,11 @@ export default function EditTestPageComp({test, testTasks, onNavigateBack, newTa
             </section>
         </div>
     );
+}
+
+EditTestPageComp.propTypes = {
+    testTasks: PropTypes.object.isRequired,
+    test: PropTypes.object.isRequired,
+    onNavigateBack: PropTypes.func.isRequired,
+    newTaskPath: PropTypes.string.isRequired,
 }

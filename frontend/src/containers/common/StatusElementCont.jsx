@@ -1,6 +1,6 @@
 import React from "react";
 import StatusElementComp from "../../components/common/StatusElementComp";
-import PropTypes, {number, string} from "prop-types";
+import PropTypes from "prop-types";
 import {statuses} from "../../constants";
 
 

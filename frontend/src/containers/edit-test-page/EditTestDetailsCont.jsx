@@ -3,10 +3,8 @@ import gql from "graphql-tag";
 import client from "../../ApolloClient";
 import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
-import FormComp from "../../components/common/FormComp";
-import {useHistory} from "react-router-dom";
 import FormCont from "../common/FormCont";
-import PropTypes, {number, resetWarningCache, string} from "prop-types";
+import PropTypes, {number, string} from "prop-types";
 
 //todo itt lehtne loadolni egy fájlból is, és úgy beállítani
 const TEST_DETAILS_FRAGMENT = gql`

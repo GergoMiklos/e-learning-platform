@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {Link, Route, useHistory, useRouteMatch} from "react-router-dom";
+import {Link, Route, useRouteMatch} from "react-router-dom";
 import TeacherGroupElementCont from "../../containers/teacher-group-page/TeacherGroupElementCont";
 import TeacherGroupNewsCont from "../../containers/teacher-group-page/TeacherGroupNewCont";
 import NewTestDialogCont from "../../containers/teacher-group-page/NewTestDialogCont";

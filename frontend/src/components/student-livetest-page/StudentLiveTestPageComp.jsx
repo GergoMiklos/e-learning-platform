@@ -1,15 +1,13 @@
-import React, {useState} from 'react'
-import {useHistory} from 'react-router-dom'
+import React from 'react'
 import {Collapse} from "react-bootstrap";
+import PercentageComp from "../common/PercentageComp";
+import PropTypes from "prop-types";
 
 export default function StudentLiveTestPageComp({testTask, solution, isAnswered, chosenAnswerNumber, onSolution, onNextTask, onNavigateBack}) {
 
     return (
         <div className="container">
-            <button
-                className="row btn btn-secondary mt-1"
-                onClick={() => onNavigateBack()}
-            >
+            <button onClick={() => onNavigateBack()} className="row btn btn-secondary mt-1">
                 Back
             </button>
 
@@ -22,18 +20,20 @@ export default function StudentLiveTestPageComp({testTask, solution, isAnswered,
                     <ul className="list-group col-12">
                         {testTask.task.answers.map(
                             ({answer, number, id}) =>
-                                <li
+                                <button
                                     key={id}
-                                    className={`m-2 btn btn-lg text-left btn-${calculateAnswerColor({
-                                        number,
-                                        chosen: chosenAnswerNumber,
-                                        correct: testTask.solutionNumber
-                                    })}`}
+
                                     onClick={() => onSolution(number)}
                                     disabled={isAnswered}
+                                    className={`m-2 btn btn-lg text-left btn-${
+                                        calculateAnswerColor({
+                                            number,
+                                            chosen: chosenAnswerNumber,
+                                            correct: testTask.task.solutionNumber
+                                        })}`}
                                 >
                                     {answer}
-                                </li>
+                                </button>
                         )}
                     </ul>
                 </div>
@@ -69,15 +69,19 @@ export default function StudentLiveTestPageComp({testTask, solution, isAnswered,
 function SolutionComp({solution}) {
     return (
         <div>
-            <div>
-                {solution.allTasks === 0 ? 0 : Math.floor((solution.solvedTasks / solution.allTasks) * 100)}%
-                &nbsp;Tasks
-                ({solution.solvedTasks}/{solution.allTasks})
+            <div className="d-flex justify-content-start">
+                Tasks:
+                <PercentageComp
+                    correct={solution.solvedTasks}
+                    all={solution.allTasks}
+                />
             </div>
-            <div>
-                {solution.allSolutions === 0 ? 0 : Math.floor((solution.correctSolutions / solution.allSolutions) * 100)}%
-                &nbsp;Answers
-                ({solution.correctSolutions}/{solution.allSolutions})
+            <div className="d-flex justify-content-start">
+                Answers
+                <PercentageComp
+                    correct={solution.correctSolutions}
+                    all={solution.allSolutions}
+                />
             </div>
         </div>
     );
@@ -96,4 +100,15 @@ const calculateAnswerColor = ({number, chosen, correct}) => {
     } else {
         return 'light';
     }
+}
+
+
+StudentLiveTestPageComp.propTypes = {
+    testTask: PropTypes.object.isRequired,
+    solution: PropTypes.object,
+    isAnswered: PropTypes.bool.isRequired,
+    chosenAnswerNumber: PropTypes.number,
+    onNavigateBack: PropTypes.func.isRequired,
+    onNextTask: PropTypes.func.isRequired,
+    onSolution: PropTypes.func.isRequired,
 }

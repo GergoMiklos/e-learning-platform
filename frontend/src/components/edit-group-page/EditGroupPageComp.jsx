@@ -2,7 +2,7 @@ import React from 'react'
 import EditGroupDetailsCont from "../../containers/edit-group-page/EditGroupDetailsCont";
 import EditGroupTeacherListCont from "../../containers/edit-group-page/EditGroupTeacherListCont";
 import EditGroupStudentListCont from "../../containers/edit-group-page/EditGroupStudentListCont";
-import PropTypes, {number, string} from "prop-types";
+import PropTypes from "prop-types";
 
 
 export default function EditGroupPageComp({group, onNavigateBack}) {
