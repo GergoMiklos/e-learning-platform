@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import StatusElementCont from "../../containers/common/StatusElementCont";
 import PercentageComp from "../common/PercentageComp";
 import PropTypes from "prop-types";

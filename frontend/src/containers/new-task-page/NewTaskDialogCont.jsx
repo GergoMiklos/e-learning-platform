@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import gql from "graphql-tag";
 import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";

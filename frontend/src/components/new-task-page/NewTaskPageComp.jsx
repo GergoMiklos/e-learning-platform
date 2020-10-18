@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState} from 'react';
 import {Link, Route, useRouteMatch} from "react-router-dom";
 import NewTaskDialogCont from "../../containers/new-task-page/NewTaskDialogCont";
 import NewTaskSearchElementCont from "../../containers/new-task-page/NewTaskSearchElementCont";

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, Route, useRouteMatch, useHistory} from 'react-router-dom';
+import {Route, useHistory, useRouteMatch} from 'react-router-dom';
 import StatusElementCont from "../../containers/common/StatusElementCont";
 import PercentageComp from "../common/PercentageComp";
 import PropTypes from "prop-types";

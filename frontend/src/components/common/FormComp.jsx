@@ -1,5 +1,5 @@
-import React from 'react'
-import {ErrorMessage, Field, Form, Formik} from 'formik'
+import React from 'react';
+import {ErrorMessage, Field, Form, Formik} from 'formik';
 import PropTypes from "prop-types";
 
 

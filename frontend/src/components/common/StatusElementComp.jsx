@@ -15,7 +15,7 @@ export default function StatusElementComp({status, changedTime, isInactive}) {
         } else if (studentStatus === 'PROBLEM') {
             return 'danger';
         } else {
-            return 'secondary'
+            return 'secondary';
         }
     }
 
@@ -38,10 +38,10 @@ const calculateTime = (changedTime) => {
     const now = new Date();
     const diff = now.getTime() - changedTime.getTime();
     if (diff < 1000 * 60 * 60) {
-        return `${Math.round(diff / (1000 * 60))} mins ago`
+        return `${Math.round(diff / (1000 * 60))} mins ago`;
     } else if (diff < 1000 * 60 * 60 * 24) {
-        return `${Math.round(diff / (1000 * 60 * 60))} hours ago`
+        return `${Math.round(diff / (1000 * 60 * 60))} hours ago`;
     } else {
-        return `${Math.round(diff / (1000 * 60 * 60 * 24))} days ago`
+        return `${Math.round(diff / (1000 * 60 * 60 * 24))} days ago`;
     }
 }

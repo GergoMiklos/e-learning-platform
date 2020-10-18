@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState} from 'react';
 import gql from "graphql-tag";
 import {useLazyQuery} from "@apollo/client";
 import {useHistory, useParams} from "react-router-dom";
