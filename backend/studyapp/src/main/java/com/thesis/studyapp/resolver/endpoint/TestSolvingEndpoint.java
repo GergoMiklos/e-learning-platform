@@ -3,7 +3,7 @@ package com.thesis.studyapp.resolver.endpoint;
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.TaskSolutionDto;
-import com.thesis.studyapp.model.TestTask;
+import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.security.annotation.Authenticated;
 import com.thesis.studyapp.service.TestSolvingService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class TestSolvingEndpoint implements GraphQLQueryResolver, GraphQLMutatio
     }
 
     @Authenticated
-    public TestTask calculateNextTask(Long testId) {
+    public StudentStatus calculateNextTask(Long testId) {
         return testSolvingService.calculateNextTask(testId);
     }
 }

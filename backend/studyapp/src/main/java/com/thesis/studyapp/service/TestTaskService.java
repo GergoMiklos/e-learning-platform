@@ -79,7 +79,6 @@ public class TestTaskService {
         return testTaskRepository.save(testTask, 1);
     }
 
-    //todo deletnél mindenhonnan deletelni kéne / csak innen
     @Transactional
     public void deleteTaskFromTest(Long testTaskId) {
         TestTask testTask = getTestTaskById(testTaskId, 2);

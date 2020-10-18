@@ -59,15 +59,15 @@ public class TestSolvingService {
     }
 
     @Transactional
-    public TestTask calculateNextTask(Long testId) {
-        StudentStatus userStatus = getUserTestStatus(testId, 3);
+    public StudentStatus calculateNextTask(Long testId) {
+        StudentStatus studentStatus = getUserTestStatus(testId, 2);
 
-        if (userStatus.getCurrentTestTask() == null || userStatus.isCurrentTestTaskSolved()) {
-            setNextTask(userStatus);
-            userStatus = studentStatusRepository.save(userStatus, 2);
+        if (studentStatus.getCurrentTestTask() == null || studentStatus.isCurrentTestTaskSolved()) {
+            setNextTask(studentStatus);
+            studentStatus = studentStatusRepository.save(studentStatus, 2);
         }
 
-        return userStatus.getCurrentTestTask();
+        return studentStatus;
     }
 
     private int setNewSolution(StudentStatus userStatus, int chosenAnswerNumber) {

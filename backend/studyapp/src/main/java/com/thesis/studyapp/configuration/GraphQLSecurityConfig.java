@@ -18,7 +18,7 @@ import java.util.List;
 @Configuration
 public class GraphQLSecurityConfig {
     public static final int QUERY_MAX_DEPTH = 5;
-    public static final int QUERY_MAX_COMPLEXITY = 20;
+    public static final int QUERY_MAX_COMPLEXITY = 50;
 
     @Bean
     @Primary
@@ -52,7 +52,7 @@ public class GraphQLSecurityConfig {
                 case "studentStatuses":
                 case "studentTaskStatuses":
                 case "testTasks":
-                    return 3;
+                    return 5;
                 default:
                     return 1;
             }

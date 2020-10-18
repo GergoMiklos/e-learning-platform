@@ -49,11 +49,6 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public SecurityContextWrapper contextWrapper() {
-//        return new SecurityContextWrapper();
-//    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -66,12 +61,11 @@ public class HttpSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/graphql").permitAll()
-                .antMatchers("/subscriptions").permitAll() //todo
+                .antMatchers("/subscriptions").permitAll()
                 .antMatchers("/vendor/**").permitAll()
                 .antMatchers("/graphiql").permitAll()
                 .anyRequest().authenticated();
 
-        //http.headers().frameOptions().sameOrigin();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

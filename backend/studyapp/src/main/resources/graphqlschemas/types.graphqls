@@ -33,6 +33,7 @@ type Test {
 
 type StudentStatus {
     id: ID!
+    currentTestTask: TestTask
     test: Test!
     user: User!
     status: String!

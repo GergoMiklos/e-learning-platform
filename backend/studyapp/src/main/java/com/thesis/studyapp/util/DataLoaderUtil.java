@@ -15,10 +15,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 
-//Todo külön get minden osztályra?
 @Component
 @RequiredArgsConstructor
 public class DataLoaderUtil {
+    private static final String PREVENTED_EXCEPTION_MESSAGE = "NullPointerException prevented while using DataLoader with null parameter! " +
+            "Maybe forgot to include relationships for object resolvers?";
+    private static final String EXCEPTION_OCCURRED_MESSAGE = "Exception occurred while loading data with DataLoader: {}";
+
     public static final String GROUP_LOADER = "groupLoader";
     public static final String TEST_LOADER = "testLoader";
     public static final String TASK_LOADER = "taskLoader";
@@ -31,12 +34,12 @@ public class DataLoaderUtil {
     private final Logger logger = LoggerFactory.getLogger(DataLoaderUtil.class);
 
     /**
-     * Load objects by the given ids with DataLoader
+     * Load more objects by the given ids with DataLoader
      * and tries to avoid error exceptions
      */
     public <T extends HasId> CompletableFuture<List<T>> loadData(Set<T> hasIds, String dataLoader) {
         if (hasIds == null) {
-            logger.error("NullPointerException prevented while using DataLoader with null parameter! Maybe forgot to include relationships for resolvers?");
+            logger.error(PREVENTED_EXCEPTION_MESSAGE);
             return CompletableFuture.completedFuture(new ArrayList<>());
         }
 
@@ -44,7 +47,7 @@ public class DataLoaderUtil {
         return userLoader.loadMany(getIds(hasIds))
                 .handleAsync((result, exception) -> {
                     if (exception != null) {
-                        logger.error("Exception occurred while loading data with class {} and DataLoader: {}", hasIds.getClass().toString(), dataLoader, exception);
+                        logger.error(EXCEPTION_OCCURRED_MESSAGE, dataLoader, exception);
                     }
                     if (result == null) {
                         return new ArrayList<>();
@@ -55,12 +58,12 @@ public class DataLoaderUtil {
     }
 
     /**
-     * Load object by the given id with DataLoader
+     * Load on object by the given id with DataLoader
      * and tries to avoid error exceptions
      */
     public <T extends HasId> CompletableFuture<T> loadData(T hasId, String dataLoader) {
         if (hasId == null) {
-            logger.error("NullPointerException (not?) prevented while using DataLoader with null parameter! Maybe forgot to include relationships for resolvers?");
+            logger.error(PREVENTED_EXCEPTION_MESSAGE);
             return CompletableFuture.completedFuture(null);
         }
 
@@ -68,7 +71,7 @@ public class DataLoaderUtil {
         return userLoader.load(getId(hasId))
                 .handleAsync((result, exception) -> {
                     if (exception != null) {
-                        logger.error("Exception occurred while loading data with DataLoader: {}", dataLoader, exception);
+                        logger.error(EXCEPTION_OCCURRED_MESSAGE, dataLoader, exception);
                     }
                     return result;
                 });

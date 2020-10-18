@@ -4,6 +4,7 @@ import com.coxautodev.graphql.tools.GraphQLResolver;
 import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.model.StudentTaskStatus;
 import com.thesis.studyapp.model.Test;
+import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.util.DataLoaderUtil;
 import com.thesis.studyapp.util.DateUtil;
@@ -20,6 +21,14 @@ import static com.thesis.studyapp.util.ComparatorUtil.getStudentTaskStatusCompar
 public class StudentStatusResolver implements GraphQLResolver<StudentStatus> {
 
     private final DataLoaderUtil dataLoaderUtil;
+
+    public CompletableFuture<TestTask> currentTestTask(StudentStatus studentStatus) {
+        if (studentStatus.getCurrentTestTask() != null) {
+            return dataLoaderUtil.loadData(studentStatus.getCurrentTestTask(), DataLoaderUtil.TESTTASK_LOADER);
+        } else {
+            return CompletableFuture.completedFuture(null);
+        }
+    }
 
     public CompletableFuture<User> user(StudentStatus studentStatus) {
         return dataLoaderUtil.loadData(studentStatus.getUser(), DataLoaderUtil.USER_LOADER);

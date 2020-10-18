@@ -25,6 +25,6 @@ type Mutation {
     editTestTasks(testId: ID!, testTaskInputs: [TestTaskInput!]!): [TestTask!]
 
     checkSolution(testId: ID!, solutionNumber: Int!): TaskSolution!
-    calculateNextTask(testId: ID!): TestTask
+    calculateNextTask(testId: ID!): StudentStatus!
 
 }

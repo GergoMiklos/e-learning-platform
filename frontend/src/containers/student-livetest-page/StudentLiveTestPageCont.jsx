@@ -11,16 +11,19 @@ const NEXT_TASK_MUTATION = gql`
     mutation CalculateNextTask($testId: ID!) {
         calculateNextTask(testId: $testId) {
             id
-            explanation
-            task {
+            currentTestTask {
                 id
-                question
-                answers {
+                explanation
+                task {
                     id
-                    number
-                    answer
+                    question
+                    answers {
+                        id
+                        number
+                        answer
+                    }
+                    solutionNumber
                 }
-                solutionNumber
             }
         }
     }`;
@@ -55,7 +58,7 @@ export default function StudentLiveTestPageCont() {
         nextTask({variables: {testId: testId},});
     }, [testId]);
 
-    if (!nextTaskData?.calculateNextTask) {
+    if (!nextTaskData?.calculateNextTask?.currentTestTask) {
         return (
             <div onClick={() => history.goBack()}>
                 <LoadingComp text={'No task available'}/>
@@ -66,7 +69,7 @@ export default function StudentLiveTestPageCont() {
     return (
        <StudentLiveTestPageComp
             chosenAnswerNumber={chosenAnswerNumber}
-            testTask={nextTaskData.calculateNextTask}
+            testTask={nextTaskData.calculateNextTask.currentTestTask}
             solution={solutionData?.checkSolution}
             isAnswered={chosenAnswerNumber !== null}
 

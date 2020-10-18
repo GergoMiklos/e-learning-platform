@@ -2,9 +2,13 @@ import React, {useEffect} from 'react';
 import StatusElementCont from "../../containers/common/StatusElementCont";
 import PercentageComp from "../common/PercentageComp";
 import PropTypes from "prop-types";
+import {Route, useHistory, useRouteMatch} from "react-router-dom";
+import StatusDetailsPageCont from "../../containers/status-details-page/StatusDetailsPageCont";
 
 
 export default function TeacherLiveTestPageComp({test, onNavigateBack, onSubscribe}) {
+    let match = useRouteMatch();
+    let history = useHistory();
 
     useEffect(() => {
         onSubscribe()
@@ -17,7 +21,7 @@ export default function TeacherLiveTestPageComp({test, onNavigateBack, onSubscri
             </button>
 
             <section className="row bg-primary text-light rounded shadow my-3 p-3">
-                <h1 className="col-10">{test.name}</h1>
+                <h1 className="col-12">{test.name}</h1>
             </section>
 
             <section className="row btn-group btn-block m-1">
@@ -27,8 +31,12 @@ export default function TeacherLiveTestPageComp({test, onNavigateBack, onSubscri
                 <div className="col-3 btn btn-danger disabled">Problem</div>
             </section>
 
-            {!test.studentStatuses?.length ? "No Statuses" :
-                <section className="my-3 table-responsive-sm">
+            <Route path={`${match.url}/details/:studentstatusid`} render={(props) =>
+                (<StatusDetailsPageCont {...props} />)
+            }/>
+
+            <section className="my-3 table-responsive-sm">
+                {!test.studentStatuses?.length ? "No Statuses" :
                     <table className="table table-striped bg-light">
                         <thead>
                         <tr>
@@ -41,7 +49,10 @@ export default function TeacherLiveTestPageComp({test, onNavigateBack, onSubscri
                         </thead>
                         <tbody>
                         {test.studentStatuses.map(status =>
-                            <tr key={status.id}>
+                            <tr
+                                onClick={() => history.push(`${match.url}/details/${status.id}`)}
+                                key={status.id}
+                            >
                                 <td className="font-weight-bold">
                                     {status.user.name}
                                 </td>
@@ -70,8 +81,9 @@ export default function TeacherLiveTestPageComp({test, onNavigateBack, onSubscri
                         )}
                         </tbody>
                     </table>
-                </section>
-            }
+                }
+            </section>
+
         </div>
     );
 }

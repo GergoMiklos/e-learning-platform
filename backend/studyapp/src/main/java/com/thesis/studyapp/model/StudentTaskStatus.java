@@ -11,6 +11,7 @@ import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 
 @NodeEntity
@@ -28,8 +29,8 @@ public class StudentTaskStatus implements HasId, HasRatio {
     @Relationship(type = "STATUSDATATASK", direction = Relationship.OUTGOING)
     private TestTask testTask;
 
-    //TODO közös abstract class? InRow kell egyáltatlán?
     private ZonedDateTime lastSolutionTime;
+    private Long lastSolutionDurationMs;
 
     private int correctSolutions;
     private int allSolutions;
@@ -79,6 +80,8 @@ public class StudentTaskStatus implements HasId, HasRatio {
         } else {
             setWrongSolution();
         }
+        lastSolutionDurationMs = Duration
+                .between(lastSolutionTime.toLocalDateTime(), newSolutionTime.toLocalDateTime()).toMillis();
         lastSolutionTime = newSolutionTime;
     }
 
@@ -90,7 +93,6 @@ public class StudentTaskStatus implements HasId, HasRatio {
         allSolutionsInCurrentCycle = 0;
     }
 
-    //todo setTestTask()?
     private void setCorrectSolution() {
         correctSolutions = correctSolutions + 1;
         allSolutions = allSolutions + 1;

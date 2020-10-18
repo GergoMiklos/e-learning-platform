@@ -13,9 +13,8 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static com.thesis.studyapp.util.ComparatorUtil.getTestComparator;
-import static com.thesis.studyapp.util.ComparatorUtil.getTestTaskComparator;
 import static com.thesis.studyapp.util.ComparatorUtil.getStudentStatusComparator;
+import static com.thesis.studyapp.util.ComparatorUtil.getTestTaskComparator;
 
 @Component
 @RequiredArgsConstructor
@@ -45,7 +44,6 @@ public class TestResolver implements GraphQLResolver<Test> {
         return dataLoaderUtil.loadData(test.getGroup(), DataLoaderUtil.GROUP_LOADER);
     }
 
-    //todo szólni kéne ha null?
     public CompletableFuture<Integer> allTasks(Test test) {
         return CompletableFuture.completedFuture(test.getTestTasks() == null ? 0 : test.getTestTasks().size());
     }

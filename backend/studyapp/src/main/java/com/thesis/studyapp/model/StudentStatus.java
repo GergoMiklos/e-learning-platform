@@ -11,6 +11,7 @@ import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
+import org.springframework.lang.Nullable;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -26,13 +27,13 @@ public class StudentStatus implements HasId, HasRatio {
     @GeneratedValue
     private Long id;
 
-    boolean active = true;
+    boolean active;
 
-    private Status status = Status.NOT_STARTED;
+    private Status status;
     private ZonedDateTime statusChangedDate;
 
-    private int currentLevel = 1;
-    private int currentCycle = 1;
+    private int currentLevel;
+    private int currentCycle;
 
     private int correctSolutionsInRow;
     private int wrongSolutionsInRow;
@@ -40,6 +41,7 @@ public class StudentStatus implements HasId, HasRatio {
     private int correctSolutions;
     private int allSolutions;
 
+    @Nullable
     @JsonIgnore
     @EqualsAndHashCode.Exclude
     @Relationship(type = "CURRENTTESTTASK", direction = Relationship.OUTGOING)
@@ -98,7 +100,6 @@ public class StudentStatus implements HasId, HasRatio {
 
     public void increaseLevel() {
         currentLevel = currentLevel + 1;
-        ;
     }
 
     public void setNewStatus(Status newStatus, ZonedDateTime newStatusChangedDate) {
@@ -115,7 +116,6 @@ public class StudentStatus implements HasId, HasRatio {
         isCurrentTestTaskSolved = true;
     }
 
-    //todo setUserTestTaskStatus()?
     private void setCorrectSolution() {
         correctSolutions = correctSolutions + 1;
         allSolutions = allSolutions + 1;

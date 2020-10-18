@@ -58,8 +58,8 @@ public class DataLoaderConfig {
 
     /**
      * Create a new Loader which
-     * loads the objects for the given ids and
-     * then (necessarily) sorts them by the given ids
+     * loads the objects for the given ids
+     * then (necessarily) orders them by the given ids
      */
     private <T extends HasId, L extends ObjectLoader<T>> DataLoader<Long, T> createLoader(L objectLoader) {
         BatchLoader<Long, T> batchLoader = new BatchLoader<Long, T>() {
@@ -74,11 +74,11 @@ public class DataLoaderConfig {
         return DataLoader.newDataLoader(batchLoader, DataLoaderOptions.newOptions().setCachingEnabled(false));
     }
 
-    private <T extends HasId> List<T> sortByIds(List<T> list, List<Long> ids) {
-        Map<Long, T> map = list.stream().collect(Collectors.toMap(HasId::getId, object -> object));
+    private <T extends HasId> List<T> sortByIds(List<T> objects, List<Long> ids) {
+        Map<Long, T> objectsById = objects.stream().collect(Collectors.toMap(HasId::getId, object -> object));
         List<T> result = new ArrayList<>();
         for (Long id : ids) {
-            result.add(map.get(id));
+            result.add(objectsById.get(id));
         }
         return result;
     }
