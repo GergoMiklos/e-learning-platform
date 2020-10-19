@@ -16,6 +16,7 @@ const TEACHER_GROUP_QUERY = gql`
             news
             newsChangedDate
             tests {
+                id
                 ...TestDetails
             }
         }

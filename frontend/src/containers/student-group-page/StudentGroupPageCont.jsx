@@ -18,6 +18,7 @@ const STUDENT_GROUP_QUERY = gql`
             news
             newsChangedDate
             tests(active: true) {
+                id
                 ...TestDetials
             }
         }

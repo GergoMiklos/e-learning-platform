@@ -17,7 +17,7 @@ import java.util.List;
 
 @Configuration
 public class GraphQLSecurityConfig {
-    public static final int QUERY_MAX_DEPTH = 5;
+    public static final int QUERY_MAX_DEPTH = 15;
     public static final int QUERY_MAX_COMPLEXITY = 50;
 
     @Bean

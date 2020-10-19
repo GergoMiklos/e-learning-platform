@@ -12,6 +12,7 @@ const PARENT_FOLLOWED_STATUSES_QUERY = gql`
         user(userId: $userId) {
             id
             followedStudents {
+                id
                 ...FollowedStudentDetails
             }
         }
@@ -22,12 +23,13 @@ ${ParentElementCont.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT}`
 const ADD_FOLLOWED_STUDENT_MUTATION = gql`
     mutation AddStudentFromCodeToParent($parentId: ID!, $studentCode: String!) {
         addStudentFromCodeToParent(parentId: $parentId, studentCode: $studentCode)  {
+            id
             ...FollowedStudentDetails
         }
     }
 ${ParentElementCont.fragments.FOLLOWED_STUDENT_DETAILS_FRAGMENT}`
 
-export default function ParentPageCont(props) {
+export default function ParentPageCont() {
     const {userId} = useAuthentication();
     const [addFollowedCode, setAddFollowedCode] = useState('');
 
@@ -36,9 +38,9 @@ export default function ParentPageCont(props) {
     });
 
     const [addFollowed] = useMutation(ADD_FOLLOWED_STUDENT_MUTATION, {
-        onCompleted: (data) => toast.notify(`Student followed: ${data.addStudentFromCodeToParent.name}`),
-        onError: (error) => toast.notify(`No user with code: ${addFollowedCode}`),
-        update: (cache, {data: {addStudentFromCodeToParent}}) => {
+        onCompleted: (data) => toast.notify(`Student followed: ${data.addStudentFromCodeToParent?.name}`),
+        onError: () => toast.notify(`No user with code: ${addFollowedCode}`),
+        update: (cache) => {
             cache.modify({
                 id: `User:${data.user.id}`,
                 fields: {

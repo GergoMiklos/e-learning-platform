@@ -6,7 +6,6 @@ import {useMutation} from "@apollo/client";
 import FormCont from "../common/FormCont";
 import PropTypes, {number, string} from "prop-types";
 
-//todo itt lehtne loadolni egy fájlból is, és úgy beállítani
 const TEST_DETAILS_FRAGMENT = gql`
     fragment TestDetails on Test {
         id

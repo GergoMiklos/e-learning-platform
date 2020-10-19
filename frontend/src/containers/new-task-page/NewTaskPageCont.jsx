@@ -12,6 +12,7 @@ const SEARCH_TASKS_QUERY = gql`
             totalPages
             totalElements
             tasks {
+                id
                 ...TaskDetails
             }
         }
@@ -42,6 +43,7 @@ export default function NewTaskPageCont() {
                 },
             });
         }
+        // eslint-disable-next-line
     }, [testId, called])
 
     if (!data?.searchTasks) {

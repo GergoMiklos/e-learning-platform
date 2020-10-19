@@ -12,7 +12,7 @@ export default function TeacherLiveTestPageComp({test, onNavigateBack, onSubscri
 
     useEffect(() => {
         onSubscribe()
-    }, [])
+    }, [onSubscribe])
 
     return (
         <div className="container">

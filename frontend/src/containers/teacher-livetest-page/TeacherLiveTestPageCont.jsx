@@ -27,6 +27,7 @@ const STUDENTSTATUSES_QUERY = gql`
             description
             allTasks
             studentStatuses {
+                id
                 ...StudentStatusDetials
             }
         }
@@ -36,6 +37,7 @@ ${STUDENTSTATUS_DETAILS_FRAGMENT}`;
 const STATUS_CHANGE_SUBSCRIPTION = gql`
     subscription onStatusChange($testId: ID!) {
         testStatusChanges(testId: $testId) {
+            id
             ...StudentStatusDetials
         }
     }

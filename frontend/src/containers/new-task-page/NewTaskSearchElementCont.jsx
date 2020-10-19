@@ -26,6 +26,7 @@ const ADD_TASK_MUTATION = gql`
             id
             level
             task {
+                id
                 ...TaskDetails
             }
         }

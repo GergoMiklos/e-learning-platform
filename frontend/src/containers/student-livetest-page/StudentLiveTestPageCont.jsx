@@ -56,6 +56,7 @@ export default function StudentLiveTestPageCont() {
 
     useEffect(() => {
         nextTask({variables: {testId: testId},});
+        // eslint-disable-next-line
     }, [testId]);
 
     if (!nextTaskData?.calculateNextTask?.currentTestTask) {

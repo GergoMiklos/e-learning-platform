@@ -9,7 +9,6 @@ import EditGroupDetailsCont from "./EditGroupDetailsCont";
 import EditGroupPageComp from "../../components/edit-group-page/EditGroupPageComp";
 
 
-//TODO itt írd ki azt is ami nekem kell, pl id-k!
 const EDIT_GROUP_QUERY = gql`
     query getGroup($groupId: ID!) {
         group(groupId: $groupId) {

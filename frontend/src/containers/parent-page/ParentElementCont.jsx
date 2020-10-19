@@ -28,6 +28,7 @@ const FOLLOWED_STUDENT_DETAILS_FRAGMENT = gql`
         name
         code
         studentStatuses {
+            id
             ...ParentStudentStatusDetails
         }
     }

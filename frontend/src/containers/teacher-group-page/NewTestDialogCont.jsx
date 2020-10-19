@@ -17,9 +17,9 @@ export default function NewTestDialogCont({groupId}) {
     let history = useHistory();
 
     const [createTest] = useMutation(CREATE_TEST_MUTATION, {
-        onCompleted: (data) => toast.notify(`Test created with name: ${data.createTest.name}`),
+        onCompleted: (data) => toast.notify(`Test created with name: ${data.createTest?.name}`),
         onError: () => toast.notify(`Error :(`),
-        update: (cache, {data: {createTest}}) => {
+        update: (cache) => {
             cache.modify({
                 id: `Group:${groupId}`,
                 fields: {

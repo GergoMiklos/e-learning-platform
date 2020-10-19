@@ -9,6 +9,7 @@ import PropTypes, {number, string} from "prop-types";
 const ADD_STUDENT_MUTATION = gql`
     mutation AddStudentFromCodeToGroup($groupId: ID!, $userCode: String!) {
         addStudentFromCodeToGroup(groupId: $groupId, userCode: $userCode)  {
+            id
             ...StudentDetails
         }
     }

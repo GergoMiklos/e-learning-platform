@@ -5,7 +5,7 @@ import {useRouteMatch} from "react-router-dom";
 import GroupListElementComp from "../../components/common/GroupListElementComp";
 import PropTypes, {number, string} from "prop-types";
 
-//todo itt lehtne loadolni egy fájlból is, és úgy beállítani
+
 const GROUP_DETAILS_FRAGMENT = gql`
     fragment GroupDetails on Group {
         id

@@ -2,8 +2,8 @@ import React, {useState} from 'react'
 import gql from 'graphql-tag';
 import toast from 'toasted-notes';
 import {useMutation, useQuery} from "@apollo/client";
-import StudentPageComp from "../../components/student-page/StudentPageComp";
 import {useAuthentication} from "../../AuthService";
+import StudentPageComp from "../../components/student-page/StudentPageComp";
 import LoadingComp from "../../components/common/LoadingComp";
 import GroupListElementCont from "../common/GroupListElementCont";
 
@@ -15,6 +15,7 @@ const STUDENT_GROUPS_QUERY = gql`
             name
             code
             studentGroups {
+                id
                 ...GroupDetails
             }
         }
@@ -24,6 +25,7 @@ ${GroupListElementCont.fragments.GROUP_DETAILS_FRAGMENT}`;
 const JOIN_GROUP_MUTATION = gql`
     mutation AddStudentToGroupFromCode($userId: ID!, $groupCode: String!) {
         addStudentToGroupFromCode(userId: $userId, groupCode: $groupCode)  {
+            id
             ...GroupDetails
         }
     }
@@ -41,9 +43,9 @@ export default function StudentPageCont() {
         });
 
     const [joinGroup] = useMutation(JOIN_GROUP_MUTATION, {
-        onCompleted: (data) => toast.notify(`Joined to group: ${data.addStudentToGroupFromCode.name}`),
+        onCompleted: (data) => toast.notify(`Joined to group: ${data.addStudentToGroupFromCode?.name}`),
         onError: () => toast.notify(`No group with code: ${joinGroupCode}`),
-        update: (cache, {data: {addStudentToGroupFromCode}}) => {
+        update: (cache) => {
             cache.modify({
                 id: `User:${userId}`,
                 fields: {

@@ -26,7 +26,7 @@ export default function EditGroupStudentElementCont({userId, groupId, selectedUs
     });
 
     const [deleteStudent] = useMutation(DELETE_STUDENT_MUTATION, {
-        onCompleted: (data) => toast.notify(`Student deleted successfully`),
+        onCompleted: () => toast.notify(`Student deleted successfully`),
         onError: () => toast.notify(`Error`),
         update: (cache) => cache.modify({
             id: `Group:${groupId}`,

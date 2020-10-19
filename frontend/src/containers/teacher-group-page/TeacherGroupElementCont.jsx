@@ -19,6 +19,7 @@ const TEST_DETAILS_FRAGMENT = gql`
 const EDIT_TEST_STATUS_MUTATION = gql`
     mutation EditTestStatus($testId: ID!, $active: Boolean!) {
         editTestStatus(testId: $testId, active: $active)  {
+            id
             ...TestDetails
         }
     }
@@ -29,7 +30,7 @@ export default function TeacherGroupElementCont({testId, selectedTestId}) {
     let match = useRouteMatch();
 
     const [changeTestStatus] = useMutation(EDIT_TEST_STATUS_MUTATION, {
-        onCompleted: (data) => toast.notify(`Test status changed to: ${data.editTestStatus.active ? 'Active' : 'Inactive'}`),
+        onCompleted: (data) => toast.notify(`Test status changed to: ${data.editTestStatus?.active ? 'Active' : 'Inactive'}`),
         onError: () => toast.notify(`Error :(`),
     });
 

@@ -67,7 +67,7 @@ export default function NewTaskPageComp({searchData, onSearch, onLoadMore, isMor
                                 taskId={task.id}
                                 selectedTaskId={selectedTaskId}
                                 selectedLevel={selectedLevel}
-                                selectLevel={level => selectLevel(level)}
+                                onSelectLevel={level => selectLevel(level)}
                             />
                         </li>
                     )}
@@ -88,13 +88,11 @@ export default function NewTaskPageComp({searchData, onSearch, onLoadMore, isMor
 
 NewTaskPageComp.propTypes = {
     searchData: PropTypes.object.isRequired,
-    isSelected: PropTypes.bool.isRequired,
     selectedLevel: PropTypes.number.isRequired,
     searchText: PropTypes.string.isRequired,
     onSearchTextChange: PropTypes.func.isRequired,
     onNavigateBack: PropTypes.func.isRequired,
     selectLevel: PropTypes.func.isRequired,
-    onEdit: PropTypes.func.isRequired,
     isMore: PropTypes.bool.isRequired,
     onLoadMore: PropTypes.func.isRequired,
     onSearch: PropTypes.func.isRequired,
