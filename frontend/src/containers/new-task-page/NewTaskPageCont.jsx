@@ -29,7 +29,7 @@ export default function NewTaskPageCont() {
 
 
     const [call, {data, called, fetchMore}] = useLazyQuery(SEARCH_TASKS_QUERY, {
-            fetchPolicy: "network-only",
+            fetchPolicy: 'no-cache',
         }
     );
 
@@ -72,6 +72,7 @@ export default function NewTaskPageCont() {
             }}
 
             isMore={currentPage + 1 < data.searchTasks.totalPages}
+
             onLoadMore={() => fetchMore({
                 onCompleted: () => setCurrentPage(currentPage + 1),
                 variables: {

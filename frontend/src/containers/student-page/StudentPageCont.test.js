@@ -1,12 +1,11 @@
 import React from 'react';
-import {act, fireEvent, render, screen, cleanup, wait} from '@testing-library/react';
+import {cleanup, fireEvent, render, screen, wait} from '@testing-library/react';
 import {MockedProvider} from "@apollo/client/testing";
-import StudentPageCont, {STUDENT_GROUPS_QUERY, JOIN_GROUP_MUTATION} from "./StudentPageCont";
+import StudentPageCont, {JOIN_GROUP_MUTATION, STUDENT_GROUPS_QUERY} from "./StudentPageCont";
 import {useAuthentication} from "../../AuthService";
 import {MemoryRouter} from 'react-router-dom'
 import {cache as clientCache} from "../../ApolloClient";
-import renderWithWrappers, {waitNextTick} from "../../utils/test-utils";
-import userEvent from "@testing-library/user-event";
+import {waitNextTick} from "../../utils/test-utils";
 
 jest.mock('../../AuthService');
 

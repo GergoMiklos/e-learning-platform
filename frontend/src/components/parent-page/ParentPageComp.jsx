@@ -39,7 +39,7 @@ export default function ParentPageComp({user, addFollowedCode, onAddFollowedCode
                 user.followedStudents.map(student =>
                     <ParentElementCont
                         key={student.id}
-                        studentId={student.id}
+                        student={student}
                     />
                 )}
         </div>

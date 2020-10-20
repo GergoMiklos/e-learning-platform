@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import client from "../../ApolloClient";
 import React from "react";
 import {useRouteMatch} from "react-router-dom";
 import {useMutation} from "@apollo/client";
@@ -26,7 +25,7 @@ const EDIT_TEST_STATUS_MUTATION = gql`
 ${TEST_DETAILS_FRAGMENT}`;
 
 
-export default function TeacherGroupElementCont({testId, selectedTestId}) {
+export default function TeacherGroupElementCont({test, selectedTestId}) {
     let match = useRouteMatch();
 
     const [changeTestStatus] = useMutation(EDIT_TEST_STATUS_MUTATION, {
@@ -34,16 +33,11 @@ export default function TeacherGroupElementCont({testId, selectedTestId}) {
         onError: () => toast.notify(`Error :(`),
     });
 
-    const test = client.readFragment({
-        id: `Test:${testId}`,
-        fragment: TEST_DETAILS_FRAGMENT,
-    });
-
     return (
         <TeacherGroupElementComp
             isSelected={selectedTestId === test.id}
             test={test}
-            onChangeStatus={() => changeTestStatus({variables: {testId: testId, active: !test.active}})}
+            onChangeStatus={() => changeTestStatus({variables: {testId: test.id, active: !test.active}})}
             statusPath={`${match.url}/test/${test.id}`}
             editPath={`${match.url}/test/${test.id}/edit`}
         />);
@@ -51,7 +45,7 @@ export default function TeacherGroupElementCont({testId, selectedTestId}) {
 }
 
 TeacherGroupElementCont.propTypes = {
-    testId: PropTypes.oneOfType([number, string]).isRequired,
+    test: PropTypes.object.isRequired,
     selectedTestId: PropTypes.oneOfType([number, string]),
 }
 

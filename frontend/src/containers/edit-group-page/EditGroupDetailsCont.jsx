@@ -1,10 +1,9 @@
 import React from 'react'
 import gql from "graphql-tag";
-import client from "../../ApolloClient";
 import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
 import FormCont from "../common/FormCont";
-import PropTypes, {number, string} from "prop-types";
+import PropTypes from "prop-types";
 
 
 const GROUP_DETAILS_FRAGMENT = gql`
@@ -23,11 +22,7 @@ const EDIT_GROUP_MUTATION = gql`
 ${GROUP_DETAILS_FRAGMENT}`;
 
 
-export default function EditGroupDetailsCont({groupId}) {
-    const group = client.readFragment({
-        id: `Group:${groupId}`,
-        fragment: GROUP_DETAILS_FRAGMENT,
-    });
+export default function EditGroupDetailsCont({group}) {
 
     const [editTest] = useMutation(EDIT_GROUP_MUTATION, {
         onCompleted: () => toast.notify(`Group details edited successfully`),
@@ -50,7 +45,7 @@ export default function EditGroupDetailsCont({groupId}) {
                             description: values.description,
                             name: values.name
                         },
-                        groupId: groupId,
+                        groupId: group.id,
                     },
                 })
             }}
@@ -64,5 +59,5 @@ EditGroupDetailsCont.fragments = {
 }
 
 EditGroupDetailsCont.propTypes = {
-    groupId: PropTypes.oneOfType([number, string]).isRequired,
+    group: PropTypes.object.isRequired,
 }

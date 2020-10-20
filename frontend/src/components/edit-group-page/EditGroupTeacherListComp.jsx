@@ -39,7 +39,7 @@ export default function EditGroupTeacherListComp({teachers, addUserCode, onAddUs
                             onClick={() => selectUserId(user.id)}
                         >
                             <EditGroupTeacherElementCont
-                                userId={user.id}
+                                user={user}
                                 groupId={groupId}
                                 selectedUserId={selectedUserId}
                             />

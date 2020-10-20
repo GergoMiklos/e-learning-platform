@@ -1,10 +1,9 @@
 import React from 'react'
 import gql from "graphql-tag";
-import client from "../../ApolloClient";
 import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
 import FormCont from "../common/FormCont";
-import PropTypes, {number, string} from "prop-types";
+import PropTypes from "prop-types";
 
 const TEST_DETAILS_FRAGMENT = gql`
     fragment TestDetails on Test {
@@ -21,11 +20,7 @@ const EDIT_TEST_MUTATION = gql`
     }
 ${TEST_DETAILS_FRAGMENT}`;
 
-export default function EditTestDetailsCont({testId}) {
-    const test = client.readFragment({
-        id: `Test:${testId}`,
-        fragment: TEST_DETAILS_FRAGMENT,
-    });
+export default function EditTestDetailsCont({test}) {
 
     const [editTest] = useMutation(EDIT_TEST_MUTATION, {
         onCompleted: () => toast.notify(`Test details edited successfully`),
@@ -47,7 +42,7 @@ export default function EditTestDetailsCont({testId}) {
                             description: values.description,
                             name: values.name
                         },
-                        testId: testId,
+                        testId: test.id,
                     },
                 })
             }}
@@ -61,5 +56,5 @@ EditTestDetailsCont.fragments = {
 }
 
 EditTestDetailsCont.propTypes = {
-    testId: PropTypes.oneOfType([number, string]).isRequired,
+    test: PropTypes.object.isRequired,
 }

@@ -29,9 +29,6 @@ export const JOIN_GROUP_MUTATION = gql`
     mutation AddStudentToGroupFromCode($userId: ID!, $groupCode: String!) {
         addStudentToGroupFromCode(userId: $userId, groupCode: $groupCode)  {
             id
-            name
-            news
-            newsChangedDate
             ...GroupDetails
         }
     }

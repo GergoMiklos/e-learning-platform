@@ -4,7 +4,6 @@ import toast from "toasted-notes";
 import EditGroupUserElementComp from "../../components/edit-group-page/EditGroupUserElementComp";
 import React from "react";
 import PropTypes, {number, string} from "prop-types";
-import client from "../../ApolloClient";
 
 const USER_DETAILS_FRAGMENT = gql`
     fragment TeacherDetails on User {
@@ -19,11 +18,7 @@ const DELETE_TEACHER_MUTATION = gql`
     }`;
 
 
-export default function EditGroupTeacherElementCont({userId, groupId, selectedUserId}) {
-    const user = client.readFragment({
-        id: `User:${userId}`,
-        fragment: USER_DETAILS_FRAGMENT,
-    });
+export default function EditGroupTeacherElementCont({user, groupId, selectedUserId}) {
 
     const [deleteTeacher] = useMutation(DELETE_TEACHER_MUTATION, {
         onCompleted: () => toast.notify(`Teacher deleted successfully`),
@@ -32,7 +27,7 @@ export default function EditGroupTeacherElementCont({userId, groupId, selectedUs
             id: `Group:${groupId}`,
             fields: {
                 teachers(existingUserRefs, {readField}) {
-                    return existingUserRefs.filter(userRef => userId !== readField('id', userRef));
+                    return existingUserRefs.filter(userRef => user.id !== readField('id', userRef));
                 },
             }
         }),
@@ -45,8 +40,8 @@ export default function EditGroupTeacherElementCont({userId, groupId, selectedUs
     return (
         <EditGroupUserElementComp
             user={user}
-            isSelected={selectedUserId === userId}
-            onDelete={() => deleteTeacher({variables: {userId: userId, groupId: groupId}})}
+            isSelected={selectedUserId === user.id}
+            onDelete={() => deleteTeacher({variables: {userId: user.id, groupId: groupId}})}
         />
     );
 }
@@ -56,7 +51,7 @@ EditGroupTeacherElementCont.fragments = {
 }
 
 EditGroupTeacherElementCont.propTypes = {
-    userId: PropTypes.oneOfType([number, string]).isRequired,
+    user: PropTypes.object.isRequired,
     groupId: PropTypes.oneOfType([number, string]).isRequired,
     selectedUserId: PropTypes.oneOfType([number, string]),
 }

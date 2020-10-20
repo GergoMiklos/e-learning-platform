@@ -54,6 +54,6 @@ NewTaskSearchElementComp.propTypes = {
     isSelected: PropTypes.bool.isRequired,
     levels: PropTypes.arrayOf(number).isRequired,
     selectedLevel: PropTypes.number.isRequired,
-    onSelectLevel: PropTypes.bool.isRequired,
+    onSelectLevel: PropTypes.func.isRequired,
     onAddTask: PropTypes.func.isRequired,
 }

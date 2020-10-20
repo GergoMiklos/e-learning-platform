@@ -36,7 +36,7 @@ export default function TeacherPageComp({user}) {
                                 className="list-group-item list-group-item-action"
                                 key={group.id}
                             >
-                                <GroupListElementCont groupId={group.id}/>
+                                <GroupListElementCont group={group}/>
                             </li>
                         )}
                 </ul>

@@ -20,7 +20,7 @@ export default function EditGroupPageComp({group, onNavigateBack}) {
 
             <EditGroupDetailsCont
                 className="row"
-                groupId={group.id}
+                group={group}
             />
 
             <EditGroupTeacherListCont

@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import client from "../../ApolloClient";
 import toast from "toasted-notes";
 import gql from "graphql-tag";
 import {useMutation} from "@apollo/client";
@@ -40,12 +39,7 @@ const EDIT_TESTTASK_MUTATION = gql`
     }
 ${TESTTASK_DETAILS_FRAGMENT}`;
 
-export default function EditTestElementCont({testId, testTaskId, selectedTestTaskId}) {
-
-    const testTask = client.readFragment({
-        id: `TestTask:${testTaskId}`,
-        fragment: TESTTASK_DETAILS_FRAGMENT,
-    });
+export default function EditTestElementCont({testId, testTask, selectedTestTaskId}) {
 
     const [levelState, setLevel] = useState({changed: false, level: testTask.level});
     const [explanationState, setExplanation] = useState({changed: false, explanation: testTask.explanation ?? ''});
@@ -59,7 +53,7 @@ export default function EditTestElementCont({testId, testTaskId, selectedTestTas
                 fields: {
                     testTasks(existingTestTaskRefs, {readField}) {
                         return existingTestTaskRefs.filter(
-                            testTaskRef => testTaskId !== readField('id', testTaskRef)
+                            testTaskRef => testTask.id !== readField('id', testTaskRef)
                         );
                     },
                 },
@@ -79,7 +73,7 @@ export default function EditTestElementCont({testId, testTaskId, selectedTestTas
     return (
         <EditTestElementComp
             testTask={testTask}
-            isSelected={testTaskId === selectedTestTaskId}
+            isSelected={testTask.id === selectedTestTaskId}
             levelState={levelState}
             explanationState={explanationState}
             onLevelChange={value => setLevel({changed: true, level: value})}
@@ -98,7 +92,7 @@ export default function EditTestElementCont({testId, testTaskId, selectedTestTas
             })}
             isEditDisabled={!levelState.changed && !explanationState.changed}
 
-            onDelete={() => deleteTask({variables: {testTaskId: testTaskId}})}
+            onDelete={() => deleteTask({variables: {testTaskId: testTask.id}})}
         />
     );
 }
@@ -109,6 +103,6 @@ EditTestElementCont.fragments = {
 
 EditTestElementCont.propTypes = {
     testId: PropTypes.oneOfType([number, string]).isRequired,
-    testTaskId: PropTypes.oneOfType([number, string]).isRequired,
+    testTask: PropTypes.object.isRequired,
     selectedTestTaskId: PropTypes.oneOfType([number, string]),
 }

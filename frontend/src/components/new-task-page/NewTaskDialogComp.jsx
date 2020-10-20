@@ -76,6 +76,6 @@ export default function NewTaskDialogComp({onSubmit, onValidate, onNavigateBack}
 
 NewTaskDialogComp.propTypes = {
     onSubmit: PropTypes.func.isRequired,
-    onValidate: PropTypes.bool.isRequired,
+    onValidate: PropTypes.func.isRequired,
     onNavigateBack: PropTypes.func.isRequired,
 }

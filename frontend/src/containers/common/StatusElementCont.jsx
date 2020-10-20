@@ -15,9 +15,8 @@ export default function StatusElementCont({status, changedTime}) {
 }
 
 const isStatusInactive = (statusChangedTime) => {
-    const now = new Date();
     const fiveMins = 1000 * 60 * 5;
-    return (now.getTime() - statusChangedTime.getTime()) > fiveMins;
+    return (Date.now() - statusChangedTime.getTime()) > fiveMins;
 }
 
 StatusElementCont.propTypes = {

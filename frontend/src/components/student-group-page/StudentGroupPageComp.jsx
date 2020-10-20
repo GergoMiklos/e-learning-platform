@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import StudentGroupElementCont from "../../containers/student-group-page/StudentGroupElementCont";
 import PropTypes from "prop-types";
+import {formatLongDate} from "../../utils/date-utils";
 
 
 export default function StudentGroupPageComp({group, onLeaveGroup, onNavigateBack}) {
@@ -58,7 +59,7 @@ export default function StudentGroupPageComp({group, onLeaveGroup, onNavigateBac
                                 key={test.id}
                             >
                                 <StudentGroupElementCont
-                                    testId={test.id}
+                                    test={test}
                                     selectedTestId={selectedTestId}
                                 />
                             </li>
@@ -73,16 +74,4 @@ StudentGroupPageComp.propTypes = {
     group: PropTypes.object.isRequired,
     onLeaveGroup: PropTypes.func.isRequired,
     onNavigateBack: PropTypes.func.isRequired,
-}
-
-const formatLongDate = (date) => {
-    const options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-    };
-    return new Date(date).toLocaleString(/*navigator.language*/ 'en', options); //todo
 }

@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import {Link, Route, useRouteMatch} from "react-router-dom";
 import TeacherGroupElementCont from "../../containers/teacher-group-page/TeacherGroupElementCont";
-import TeacherGroupNewsCont from "../../containers/teacher-group-page/TeacherGroupNewCont";
+import TeacherGroupNewsCont from "../../containers/teacher-group-page/TeacherGroupNewsCont";
 import NewTestDialogCont from "../../containers/teacher-group-page/NewTestDialogCont";
 import PropTypes from "prop-types";
+import {formatLongDate} from "../../utils/date-utils";
 
 
 export default function TeacherGroupPageComp({group, editPath, onNavigateBack}) {
@@ -68,7 +69,7 @@ export default function TeacherGroupPageComp({group, editPath, onNavigateBack}) 
                                 key={test.id}
                             >
                                 <TeacherGroupElementCont
-                                    testId={test.id}
+                                    test={test}
                                     selectedTestId={selectedTestId}
                                 />
                             </li>
@@ -85,14 +86,3 @@ TeacherGroupPageComp.propTypes = {
     onNavigateBack: PropTypes.func.isRequired,
 }
 
-const formatLongDate = (date) => {
-    const options = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric'
-    };
-    return new Date(date).toLocaleString(/*navigator.language*/ 'en', options); //todo
-}

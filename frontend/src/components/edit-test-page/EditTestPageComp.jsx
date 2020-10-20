@@ -18,7 +18,7 @@ export default function EditTestPageComp({test, testTasks, onNavigateBack, newTa
                 <h1 className="col-auto">Edit Test</h1>
             </section>
 
-            <EditTestDetailsCont testId={test.id} className="row"/>
+            <EditTestDetailsCont test={test} className="row"/>
 
             <section className="row rounded shadow bg-light my-3 p-3 justify-content-between">
                 <h1>Tasks</h1>
@@ -44,7 +44,7 @@ export default function EditTestPageComp({test, testTasks, onNavigateBack, newTa
                                     onClick={() => selectTestTaskId(testTask.id)}
                                 >
                                     <EditTestElementCont
-                                        testTaskId={testTask.id}
+                                        testTask={testTask}
                                         testId={test.id}
                                         selectedTestTaskId={selectedTestTaskId}
                                     />

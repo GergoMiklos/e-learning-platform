@@ -1,6 +1,5 @@
 import React from 'react'
 import gql from "graphql-tag";
-import client from "../../ApolloClient";
 import {useRouteMatch} from "react-router-dom";
 import StudentGroupElementComp from "../../components/student-group-page/StudentGroupElementComp";
 import PropTypes, {number, string} from "prop-types";
@@ -12,13 +11,8 @@ const TEST_DETAILS_FRAGMENT = gql`
         description
     }`;
 
-export default function StudentGroupElementCont({testId, selectedTestId}) {
+export default function StudentGroupElementCont({test, selectedTestId}) {
     let match = useRouteMatch();
-
-    const test = client.readFragment({
-        id: `Test:${testId}`,
-        fragment: TEST_DETAILS_FRAGMENT,
-    });
 
     if(!test) {
         return (<div/>);
@@ -38,7 +32,7 @@ StudentGroupElementCont.fragments = {
 };
 
 StudentGroupElementCont.propTypes = {
-    testId: PropTypes.oneOfType([number, string]).isRequired,
+    test: PropTypes.object.isRequired,
     selectedTestId: PropTypes.oneOfType([number, string]),
 }
 

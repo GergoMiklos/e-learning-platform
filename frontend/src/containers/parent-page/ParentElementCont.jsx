@@ -4,7 +4,7 @@ import toast from "toasted-notes";
 import {useMutation} from "@apollo/client";
 import {useAuthentication} from "../../AuthService";
 import ParentElementComp from "../../components/parent-page/ParentElementComp";
-import client from "../../ApolloClient";
+import PropTypes from "prop-types";
 
 const STUDENTSTATUS_DETAILS_FRAGMENT = gql`
     fragment ParentStudentStatusDetails on StudentStatus {
@@ -40,14 +40,8 @@ const DELETE_FOLLOWED_STUDENT_MUTATION = gql`
     }`;
 
 
-export default function ParentElementCont({studentId}) {
+export default function ParentElementCont({student}) {
     const {userId} = useAuthentication()
-
-    const student = client.readFragment({
-        id: `User:${studentId}`,
-        fragment: FOLLOWED_STUDENT_DETAILS_FRAGMENT,
-        fragmentName: 'FollowedStudentDetails',
-    });
 
     const [deleteFollowed] = useMutation(DELETE_FOLLOWED_STUDENT_MUTATION, {
         onCompleted: () => toast.notify(`Student deleted successfully`),
@@ -58,7 +52,7 @@ export default function ParentElementCont({studentId}) {
                 fields: {
                     followedStudents(existingUserRefs = [], {readField}) {
                         return existingUserRefs.filter(
-                            userRef => studentId !== readField('id', userRef)
+                            userRef => student.id !== readField('id', userRef)
                         );
                     },
                 }
@@ -66,7 +60,7 @@ export default function ParentElementCont({studentId}) {
         },
     });
 
-    if(!studentId) {
+    if(!student) {
         return (<div/>);
     }
 
@@ -76,7 +70,7 @@ export default function ParentElementCont({studentId}) {
 
             onDelete={() => deleteFollowed({
                 variables: {
-                    parentId: userId, studentId: studentId,
+                    parentId: userId, studentId: student.id,
                 }
             })}
         />
@@ -87,5 +81,9 @@ export default function ParentElementCont({studentId}) {
 ParentElementCont.fragments = {
     STUDENTSTATUS_DETAILS_FRAGMENT: STUDENTSTATUS_DETAILS_FRAGMENT,
     FOLLOWED_STUDENT_DETAILS_FRAGMENT: FOLLOWED_STUDENT_DETAILS_FRAGMENT,
+}
+
+ParentElementCont.propTypes = {
+    student: PropTypes.object.isRequired,
 }
 

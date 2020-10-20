@@ -31,8 +31,6 @@ export default function EditTestPageCont() {
     const {data} = useQuery(TEST_QUERY, {
         variables: {testId: testId},
         fetchPolicy: 'cache-first',
-        //fetchPolicy: 'cache-and-network',
-        //fetchPolicy: 'network-only',
     });
 
     if (!data?.test) {

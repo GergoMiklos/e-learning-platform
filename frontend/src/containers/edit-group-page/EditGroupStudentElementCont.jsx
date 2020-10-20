@@ -3,7 +3,6 @@ import {useMutation} from "@apollo/client";
 import toast from "toasted-notes";
 import React from "react";
 import EditGroupUserElementComp from "../../components/edit-group-page/EditGroupUserElementComp";
-import client from "../../ApolloClient";
 import PropTypes, {number, string} from "prop-types";
 
 const USER_DETAILS_FRAGMENT = gql`
@@ -19,11 +18,7 @@ const DELETE_STUDENT_MUTATION = gql`
     }`;
 
 
-export default function EditGroupStudentElementCont({userId, groupId, selectedUserId}) {
-    const user = client.readFragment({
-        id: `User:${userId}`,
-        fragment: USER_DETAILS_FRAGMENT,
-    });
+export default function EditGroupStudentElementCont({user, groupId, selectedUserId}) {
 
     const [deleteStudent] = useMutation(DELETE_STUDENT_MUTATION, {
         onCompleted: () => toast.notify(`Student deleted successfully`),
@@ -32,7 +27,7 @@ export default function EditGroupStudentElementCont({userId, groupId, selectedUs
             id: `Group:${groupId}`,
             fields: {
                 students(existingUserRefs, {readField}) {
-                    return existingUserRefs.filter(userRef => userId !== readField('id', userRef));
+                    return existingUserRefs.filter(userRef => user.id !== readField('id', userRef));
                 },
             }
         }),
@@ -45,8 +40,8 @@ export default function EditGroupStudentElementCont({userId, groupId, selectedUs
     return (
         <EditGroupUserElementComp
             user={user}
-            isSelected={selectedUserId === userId}
-            onDelete={() => deleteStudent({variables: {userId: userId, groupId: groupId}})}
+            isSelected={selectedUserId === user.id}
+            onDelete={() => deleteStudent({variables: {userId: user.id, groupId: groupId}})}
         />
     );
 }
@@ -57,7 +52,7 @@ EditGroupStudentElementCont.fragments = {
 }
 
 EditGroupStudentElementCont.propTypes = {
-    userId: PropTypes.oneOfType([number, string]).isRequired,
+    user: PropTypes.object.isRequired,
     groupId: PropTypes.oneOfType([number, string]).isRequired,
     selectedUserId: PropTypes.oneOfType([number, string]),
 }

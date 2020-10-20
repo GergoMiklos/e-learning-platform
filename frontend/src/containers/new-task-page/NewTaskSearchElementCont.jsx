@@ -1,5 +1,4 @@
 import gql from "graphql-tag";
-import client from "../../ApolloClient";
 import {useMutation} from "@apollo/client";
 import toast from "toasted-notes";
 import React from "react";
@@ -33,12 +32,7 @@ const ADD_TASK_MUTATION = gql`
     }
 ${TASK_DETAILS_FRAGMENT}`;
 
-export default function NewTaskSearchElementCont({testId, taskId, selectedTaskId, selectedLevel, onSelectLevel}) {
-
-    const task = client.readFragment({
-        id: `Task:${taskId}`,
-        fragment: TASK_DETAILS_FRAGMENT,
-    });
+export default function NewTaskSearchElementCont({testId, task, selectedTaskId, selectedLevel, onSelectLevel}) {
 
     const [addTask] = useMutation(ADD_TASK_MUTATION, {
         onCompleted: () => toast.notify('Task added successfully'),
@@ -62,7 +56,7 @@ export default function NewTaskSearchElementCont({testId, taskId, selectedTaskId
     return (
         <NewTaskSearchElementComp
                 task={task}
-                isSelected={selectedTaskId === taskId}
+                isSelected={selectedTaskId === task.id}
                 selectedLevel={selectedLevel}
                 levels={taskLevels}
                 onSelectLevel={onSelectLevel}
@@ -70,7 +64,7 @@ export default function NewTaskSearchElementCont({testId, taskId, selectedTaskId
                 onAddTask={() => addTask({
                     variables: {
                         testId: testId,
-                        taskId: taskId,
+                        taskId: task.id,
                         level: selectedLevel
                     }
                 })}
@@ -84,7 +78,7 @@ NewTaskSearchElementCont.fragments = {
 
 NewTaskSearchElementCont.propTypes = {
     testId: PropTypes.oneOfType([number, string]).isRequired,
-    taskId: PropTypes.oneOfType([number, string]).isRequired,
+    task: PropTypes.object.isRequired,
     selectedTaskId: PropTypes.oneOfType([number, string]),
     selectedLevel: PropTypes.number.isRequired,
     onSelectLevel: PropTypes.func.isRequired,

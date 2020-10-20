@@ -1,9 +1,8 @@
 import React from 'react'
-import client from "../../ApolloClient";
 import gql from 'graphql-tag';
 import {useRouteMatch} from "react-router-dom";
 import GroupListElementComp from "../../components/common/GroupListElementComp";
-import PropTypes, {number, string} from "prop-types";
+import PropTypes from "prop-types";
 import {isDateInAWeek} from "../../utils/date-utils";
 
 
@@ -17,11 +16,6 @@ const GROUP_DETAILS_FRAGMENT = gql`
 
 export default function GroupListElementCont({group}) {
     let match = useRouteMatch();
-
-    // const group2 = client.readFragment({
-    //     id: `Group:${group.id}`,
-    //     fragment: GROUP_DETAILS_FRAGMENT,
-    // });
 
     if (!group) {
         return (<div/>);
@@ -41,7 +35,6 @@ GroupListElementCont.fragments = {
 };
 
 GroupListElementCont.propTypes = {
-    //groupId: PropTypes.oneOfType([number, string]).isRequired,
     group: PropTypes.object.isRequired,
 }
 

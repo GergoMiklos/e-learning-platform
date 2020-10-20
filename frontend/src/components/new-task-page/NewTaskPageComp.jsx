@@ -64,7 +64,7 @@ export default function NewTaskPageComp({searchData, onSearch, onLoadMore, isMor
                         >
                             <NewTaskSearchElementCont
                                 testId={testId}
-                                taskId={task.id}
+                                task={task}
                                 selectedTaskId={selectedTaskId}
                                 selectedLevel={selectedLevel}
                                 onSelectLevel={level => selectLevel(level)}
