@@ -45,7 +45,7 @@ const logoutMiddleware = onError(({graphQLErrors, networkError}) => {
     if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 
-const cache = new InMemoryCache({
+export const cache = new InMemoryCache({
     typePolicies: {
         Group: {
             fields: {

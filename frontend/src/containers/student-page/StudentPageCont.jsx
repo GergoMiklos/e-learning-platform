@@ -7,8 +7,8 @@ import StudentPageComp from "../../components/student-page/StudentPageComp";
 import LoadingComp from "../../components/common/LoadingComp";
 import GroupListElementCont from "../common/GroupListElementCont";
 
-
-const STUDENT_GROUPS_QUERY = gql`
+//todo fragmentek nem működnek teszt közben
+export const STUDENT_GROUPS_QUERY = gql`
     query getUser($userId: ID!) {
         user(userId: $userId) {
             id
@@ -16,16 +16,22 @@ const STUDENT_GROUPS_QUERY = gql`
             code
             studentGroups {
                 id
+                name
+                news
+                newsChangedDate
                 ...GroupDetails
             }
         }
     }
 ${GroupListElementCont.fragments.GROUP_DETAILS_FRAGMENT}`;
 
-const JOIN_GROUP_MUTATION = gql`
+export const JOIN_GROUP_MUTATION = gql`
     mutation AddStudentToGroupFromCode($userId: ID!, $groupCode: String!) {
         addStudentToGroupFromCode(userId: $userId, groupCode: $groupCode)  {
             id
+            name
+            news
+            newsChangedDate
             ...GroupDetails
         }
     }
@@ -39,7 +45,6 @@ export default function StudentPageCont() {
     const {data} = useQuery(
         STUDENT_GROUPS_QUERY, {
             variables: {userId: userId},
-            pollInterval: 60 * 1000,
         });
 
     const [joinGroup] = useMutation(JOIN_GROUP_MUTATION, {
@@ -56,7 +61,6 @@ export default function StudentPageCont() {
             });
         },
     });
-
 
     if (!data?.user) {
         return (<LoadingComp/>);

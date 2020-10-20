@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 import {useRouteMatch} from "react-router-dom";
 import GroupListElementComp from "../../components/common/GroupListElementComp";
 import PropTypes, {number, string} from "prop-types";
+import {isDateInAWeek} from "../../utils/date-utils";
 
 
 const GROUP_DETAILS_FRAGMENT = gql`
@@ -14,13 +15,13 @@ const GROUP_DETAILS_FRAGMENT = gql`
         newsChangedDate
     }`;
 
-export default function GroupListElementCont({groupId}) {
+export default function GroupListElementCont({group}) {
     let match = useRouteMatch();
 
-    const group = client.readFragment({
-        id: `Group:${groupId}`,
-        fragment: GROUP_DETAILS_FRAGMENT,
-    });
+    // const group2 = client.readFragment({
+    //     id: `Group:${group.id}`,
+    //     fragment: GROUP_DETAILS_FRAGMENT,
+    // });
 
     if (!group) {
         return (<div/>);
@@ -29,8 +30,8 @@ export default function GroupListElementCont({groupId}) {
     return (
         <GroupListElementComp
             group={group}
-            onClickPath={`${match.url}/group/${groupId}`}
-            isNewsFresh={isDateFresh(group.newsChangedDate)}
+            onClickPath={`${match.url}/group/${group.id}`}
+            isNewsFresh={isDateInAWeek(group.newsChangedDate)}
         />
     );
 }
@@ -40,14 +41,9 @@ GroupListElementCont.fragments = {
 };
 
 GroupListElementCont.propTypes = {
-    groupId: PropTypes.oneOfType([number, string]).isRequired,
+    //groupId: PropTypes.oneOfType([number, string]).isRequired,
+    group: PropTypes.object.isRequired,
 }
 
-
-const isDateFresh = (date) => {
-    const now = new Date();
-    const sixDays = 1000 * 60 * 60 * 24 * 6;
-    return (now.getTime() - date.getTime()) < sixDays;
-}
 
 

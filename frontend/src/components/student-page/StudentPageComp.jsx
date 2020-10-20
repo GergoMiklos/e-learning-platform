@@ -26,6 +26,7 @@ export default function StudentPageComp({user, joinCode, onJoinCodeChange, onJoi
                 />
                 <div className="input-group-append">
                     <button
+                        data-testid="asd"
                         className="btn btn-outline-primary"
                         onClick={() => onJoinGroup()}
                         disabled={joinDisabled}
@@ -43,7 +44,7 @@ export default function StudentPageComp({user, joinCode, onJoinCodeChange, onJoi
                                 className="list-group-item list-group-item-action"
                                 key={group.id}
                             >
-                                <GroupListElementCont groupId={group.id}/>
+                                <GroupListElementCont group={group}/>
                             </li>
                         )}
                 </ul>

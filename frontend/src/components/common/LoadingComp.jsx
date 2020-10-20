@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 export default function LoadingComp({text}) {
     return(
         <div className="middle container">
-            <div className="row justify-content-center">
+            <div className="row justify-content-center" data-testid="loading">
                 <Spinner animation="border" variant="secondary"/>
             </div>
 

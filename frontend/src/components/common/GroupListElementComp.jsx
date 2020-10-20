@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 import PropTypes from "prop-types";
+import {formatShortDate} from "../../utils/date-utils";
 
 export default function GroupListElementComp({group, onClickPath, isNewsFresh}) {
 
@@ -25,11 +26,3 @@ GroupListElementComp.propTypes = {
     isNewsFresh: PropTypes.bool.isRequired,
 }
 
-const formatShortDate = (date) => {
-    const options = {
-        weekday: 'long',
-        hour: 'numeric',
-        minute: 'numeric'
-    }
-    return date.toLocaleString(/*navigator.language*/ 'en', options); //todo
-}
