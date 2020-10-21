@@ -56,6 +56,7 @@ type StudentStatus {
     correctSolutions: Int!
     currentTestTask: TestTask
     id: ID!
+    lastSolutionTime: String!
     solvedTasks: Int!
     status: String!
     statusChangedTime: String!

@@ -1,20 +1,19 @@
 import React from 'react';
-import './bootstrap.css'
-import './index.css'
+import './bootstrap.css';
+import './index.css';
 import 'toasted-notes/src/styles.css';
-import AppComp from "./components/app/AppComp";
-import {ApolloProvider} from '@apollo/client';
-import {BrowserRouter as Router} from 'react-router-dom'
-import client from "./ApolloClient";
-
+import { ApolloProvider } from '@apollo/client';
+import { BrowserRouter as Router } from 'react-router-dom';
+import AppComp from './components/app/AppComp';
+import client from './ApolloClient';
 
 function App() {
   return (
-      <ApolloProvider client={client}>
-          <Router>
-              <AppComp/>
-          </Router>
-      </ApolloProvider>
+    <ApolloProvider client={client}>
+      <Router>
+        <AppComp />
+      </Router>
+    </ApolloProvider>
   );
 }
 
