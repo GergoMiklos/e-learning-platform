@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "study-app-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -26,8 +26,7 @@
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.3",
-    "subscriptions-transport-ws": "^0.9.18",
-    "universal-cookie": "^4.0.4"
+    "subscriptions-transport-ws": "^0.9.18"
   },
   "scripts": {
     "start": "react-scripts start",

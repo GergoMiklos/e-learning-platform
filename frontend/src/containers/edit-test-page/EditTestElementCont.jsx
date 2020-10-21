@@ -11,7 +11,6 @@ const DELETE_TASK_MUTATION = gql`
         deleteTaskFromTest(testTaskId: $testTaskId)
     }`;
 
-//todo itt lehtne loadolni egy fájlból is, és úgy beállítani?
 const TESTTASK_DETAILS_FRAGMENT = gql`
     fragment TestTaskDetails on TestTask {
         id
@@ -38,6 +37,7 @@ const EDIT_TESTTASK_MUTATION = gql`
         }
     }
 ${TESTTASK_DETAILS_FRAGMENT}`;
+
 
 export default function EditTestElementCont({testId, testTask, selectedTestTaskId}) {
 
