@@ -17,6 +17,7 @@
     "graphql-tag": "^2.10.3",
     "immutable": "^4.0.0-rc.12",
     "jest-transform-graphql": "^2.1.0",
+    "local-storage": "^2.0.0",
     "moment": "^2.25.3",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",

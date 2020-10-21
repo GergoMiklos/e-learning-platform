@@ -1,0 +1,11 @@
+mutation addStudentToGroupFromCode($userId: ID = 0, $groupCode: String = "GROUP_CODE"){
+    addStudentToGroupFromCode(userId: $userId, groupCode: $groupCode) {
+        id
+        name
+        code
+        students {
+            id
+            name
+        }
+    }
+}

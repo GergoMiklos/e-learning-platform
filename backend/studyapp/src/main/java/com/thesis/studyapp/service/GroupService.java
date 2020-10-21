@@ -82,8 +82,8 @@ public class GroupService {
 
     @Transactional
     public Group addStudentToGroupFromCode(Long studentId, String groupCode) {
-        User user = getUserById(studentId);
         Group group = getGroupByCode(groupCode, 1);
+        User user = getUserById(studentId);
 
         group.addStudent(user);
         return groupRepository.save(group, 1);

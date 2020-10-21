@@ -1,0 +1,7 @@
+query user($userId: ID = 0){
+    user(userId: $userId) {
+        id
+        name
+        code
+    }
+}
