@@ -7,7 +7,6 @@ import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.StudentStatus;
 import com.thesis.studyapp.model.Test;
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.repository.GroupRepository;
 import com.thesis.studyapp.repository.TestRepository;
 import com.thesis.studyapp.repository.TestTaskRepository;
 import com.thesis.studyapp.util.AuthenticationUtil;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -97,6 +95,7 @@ public class TestService {
                         .active(true)
                         .status(StudentStatus.Status.NOT_STARTED)
                         .statusChangedDate(creationTime)
+                        .lastSolutionTime(creationTime)
                         .currentLevel(1)
                         .currentCycle(1)
                         .build()

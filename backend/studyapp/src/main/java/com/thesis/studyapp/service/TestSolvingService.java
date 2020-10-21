@@ -1,6 +1,5 @@
 package com.thesis.studyapp.service;
 
-
 import com.thesis.studyapp.dto.TaskSolutionDto;
 import com.thesis.studyapp.event.UpdatedStatusEvent;
 import com.thesis.studyapp.exception.NotFoundException;
@@ -80,7 +79,7 @@ public class TestSolvingService {
     }
 
     private void setNewSolution(StudentStatus userStatus, boolean isCorrect) {
-        userStatus.setNewSolution(isCorrect);
+        userStatus.setNewSolution(isCorrect, dateUtil.getCurrentTime());
 
         userStatus.getCurrentTestTask().setNewSolution(isCorrect);
 
@@ -195,14 +194,14 @@ public class TestSolvingService {
 
     private Optional<TestTask> calculateNextTaskFromSolved(Set<StudentTaskStatus> solvedTaskStatuses, int currentCycle) {
         Optional<TestTask> nextTask = getTaskWhenNewInCurrentCycle(solvedTaskStatuses);
-        if (!nextTask.isPresent()) {
+        if (nextTask.isEmpty()) {
             nextTask = getTaskWhenLastAnswerWrong(solvedTaskStatuses);
         }
-        if (!nextTask.isPresent()) {
+        if (nextTask.isEmpty()) {
             nextTask = getTaskWhenSmallAverageRatio(solvedTaskStatuses, currentCycle);
         }
-        if (!nextTask.isPresent()) {
-            nextTask = getTaskWhenBigDiffInRatio(solvedTaskStatuses);
+        if (nextTask.isEmpty()) {
+            nextTask = getTaskWhenBigDiffInRatio(solvedTaskStatuses, currentCycle);
         }
         return nextTask;
     }
@@ -229,11 +228,11 @@ public class TestSolvingService {
         }
     }
 
-    private Optional<TestTask> getTaskWhenBigDiffInRatio(Set<StudentTaskStatus> solvedTaskStatuses) {
+    private Optional<TestTask> getTaskWhenBigDiffInRatio(Set<StudentTaskStatus> solvedTaskStatuses, int currentCycle) {
         Set<StudentTaskStatus> bigDiffInRatio = solvedTaskStatuses.stream()
                 .filter(taskStatus -> {
                     return (taskStatus.getRatioInCurrentCycle() - taskStatus.getTestTask().getRatio() < -0.5)
-                            || (taskStatus.getRatioInPrevCycle() - taskStatus.getTestTask().getRatio() < -0.5);
+                            || (currentCycle != 1 && (taskStatus.getRatioInPrevCycle() - taskStatus.getTestTask().getRatio() < -0.5));
                 })
                 .collect(Collectors.toSet());
         if (!bigDiffInRatio.isEmpty()) {
@@ -298,6 +297,5 @@ public class TestSolvingService {
                 .findFirstByActiveTrueAndUserIdAndTestId(userId, testId, depth)
                 .orElseThrow(() -> new NotFoundException("No StudentStatus available for this Test"));
     }
-
 
 }

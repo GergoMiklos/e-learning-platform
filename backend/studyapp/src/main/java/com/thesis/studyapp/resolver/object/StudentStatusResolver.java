@@ -50,6 +50,10 @@ public class StudentStatusResolver implements GraphQLResolver<StudentStatus> {
         return CompletableFuture.completedFuture(DateUtil.convertToIsoString(studentStatus.getStatusChangedDate()));
     }
 
+    public CompletableFuture<String> lastSolutionTime(StudentStatus studentStatus) {
+        return CompletableFuture.completedFuture(DateUtil.convertToIsoString(studentStatus.getLastSolutionTime()));
+    }
+
     public CompletableFuture<String> status(StudentStatus studentStatus) {
         return CompletableFuture.completedFuture(studentStatus.getStatus().name());
     }

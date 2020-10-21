@@ -31,6 +31,7 @@ public class StudentStatus implements HasId, HasRatio {
 
     private Status status;
     private ZonedDateTime statusChangedDate;
+    private ZonedDateTime lastSolutionTime;
 
     private int currentLevel;
     private int currentCycle;
@@ -68,6 +69,7 @@ public class StudentStatus implements HasId, HasRatio {
         active = true;
         status = Status.NOT_STARTED;
         statusChangedDate = creationTime;
+        lastSolutionTime = creationTime;
         currentLevel = 1;
         currentCycle = 1;
     }
@@ -107,13 +109,14 @@ public class StudentStatus implements HasId, HasRatio {
         statusChangedDate = newStatusChangedDate;
     }
 
-    public void setNewSolution(boolean isCorrect) {
+    public void setNewSolution(boolean isCorrect, ZonedDateTime newSolutionTime) {
         if (isCorrect) {
             setCorrectSolution();
         } else {
             setWrongSolution();
         }
         isCurrentTestTaskSolved = true;
+        lastSolutionTime = newSolutionTime;
     }
 
     private void setCorrectSolution() {

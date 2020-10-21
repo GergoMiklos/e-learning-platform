@@ -80,8 +80,10 @@ public class StudentTaskStatus implements HasId, HasRatio {
         } else {
             setWrongSolution();
         }
-        lastSolutionDurationMs = Duration
-                .between(lastSolutionTime.toLocalDateTime(), newSolutionTime.toLocalDateTime()).toMillis();
+        if (lastSolutionTime != null) {
+            lastSolutionDurationMs = Duration
+                    .between(lastSolutionTime.toLocalDateTime(), newSolutionTime.toLocalDateTime()).toMillis();
+        }
         lastSolutionTime = newSolutionTime;
     }
 

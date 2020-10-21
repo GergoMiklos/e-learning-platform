@@ -38,6 +38,7 @@ type StudentStatus {
     user: User!
     status: String!
     statusChangedTime: String!
+    lastSolutionTime: String!
     correctSolutions: Int!
     allSolutions: Int!
     solvedTasks: Int!
