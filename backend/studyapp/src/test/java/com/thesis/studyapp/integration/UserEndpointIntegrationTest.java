@@ -63,7 +63,7 @@ public class UserEndpointIntegrationTest {
         @Bean
         public Neo4j initDatabase() {
             return Neo4jBuilders.newInProcessBuilder()
-                    .withDisabledServer() // No need for http
+                    .withDisabledServer()
                     .withFixture(""
                             + String.format("CREATE (user:User {name:'%s', code: '%s'})\n", USER_FULL_NAME, USER_CODE) // id=0
                     )
