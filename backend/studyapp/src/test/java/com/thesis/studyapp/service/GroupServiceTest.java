@@ -43,11 +43,11 @@ public class GroupServiceTest {
     @Mock
     private DateUtil mockDateUtil;
 
-    private GroupService groupService;
+    private DefaultGroupService groupService;
 
     @BeforeEach
     void setUpService() {
-        groupService = new GroupService(mockGroupRepository, mockUserRepository, mockAuthenticationUtil, mockDateUtil);
+        groupService = new DefaultGroupService(mockGroupRepository, mockUserRepository, mockAuthenticationUtil, mockDateUtil);
     }
 
     @Test

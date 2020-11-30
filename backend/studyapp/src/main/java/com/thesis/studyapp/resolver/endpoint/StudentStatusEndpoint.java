@@ -4,6 +4,7 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import com.thesis.studyapp.model.StudentStatus;
+import com.thesis.studyapp.service.DefaultStudentStatusService;
 import com.thesis.studyapp.service.StudentStatusService;
 import com.thesis.studyapp.util.StatusSubscriptionUtil;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,12 @@ public class StudentStatusEndpoint implements GraphQLQueryResolver, GraphQLMutat
     private final StatusSubscriptionUtil statusSubscriptionUtil;
     private final StudentStatusService studentStatusService;
 
-    public Publisher<StudentStatus> testStatusChanges(Long testId) {
-        return statusSubscriptionUtil.getPublisher(testId);
+    public Publisher<StudentStatus> testStatusChangesByTest(Long testId) {
+        return statusSubscriptionUtil.getPublisherByTest(testId);
+    }
+
+    public Publisher<StudentStatus> testStatusChangesByUser(Long userId) {
+        return statusSubscriptionUtil.getPublisherByUser(userId);
     }
 
     public StudentStatus studentStatus(Long studentStatusId) {

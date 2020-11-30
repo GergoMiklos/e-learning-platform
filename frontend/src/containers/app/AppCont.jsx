@@ -2,58 +2,49 @@ import React, { Suspense, lazy } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { useAuthentication } from '../../AuthService';
 
-import LoadingComp from '../common/LoadingComp';
-import NavBarComp from './NavBarComp';
-import NotFoundPageComp from '../common/NotFoundPageComp';
+import LoadingComp from '../../components/common/LoadingComp';
+import NavBarComp from '../../components/app/NavBarComp';
+import NotFoundPageComp from '../../components/common/NotFoundPageComp';
 
 const StudentPageCont = lazy(() =>
-  import('../../containers/student-page/StudentPageCont')
+  import('../student-page/StudentPageCont')
 );
 const TeacherPageCont = lazy(() =>
-  import('../../containers/teacher-page/TeacherPageCont')
+  import('../teacher-page/TeacherPageCont')
 );
 const StudentGroupPageCont = lazy(() =>
-  import('../../containers/student-group-page/StudentGroupPageCont')
+  import('../student-group-page/StudentGroupPageCont')
 );
 const StudentLiveTestPageCont = lazy(() =>
-  import('../../containers/student-livetest-page/StudentLiveTestPageCont')
+  import('../student-livetest-page/StudentLiveTestPageCont')
 );
 const TeacherGroupPageCont = lazy(() =>
-  import('../../containers/teacher-group-page/TeacherGroupPageCont')
+  import('../teacher-group-page/TeacherGroupPageCont')
 );
 const EditGroupPageCont = lazy(() =>
-  import('../../containers/edit-group-page/EditGroupPageCont')
+  import('../edit-group-page/EditGroupPageCont')
 );
 const EditTestPageCont = lazy(() =>
-  import('../../containers/edit-test-page/EditTestPageCont')
+  import('../edit-test-page/EditTestPageCont')
 );
 const NewTaskPageCont = lazy(() =>
-  import('../../containers/new-task-page/NewTaskPageCont')
+  import('../new-task-page/NewTaskPageCont')
 );
 const ParentPageCont = lazy(() =>
-  import('../../containers/parent-page/ParentPageCont')
+  import('../parent-page/ParentPageCont')
 );
 const TeacherLiveTestPageCont = lazy(() =>
-  import('../../containers/teacher-livetest-page/TeacherLiveTestPageCont')
+  import('../teacher-livetest-page/TeacherLiveTestPageCont')
 );
 const LoginPageCont = lazy(() =>
-  import('../../containers/login-signup-page/LoginPageCont')
+  import('../login-signup-page/LoginPageCont')
 );
 const SignupPageCont = lazy(() =>
-  import('../../containers/login-signup-page/SignupPageCont')
+  import('../login-signup-page/SignupPageCont')
 );
 
-const style = {
-  backgroundImage:
-    'url(https://i.pinimg.com/originals/06/47/7e/06477ea4fbec33a0ad356f6095460775.gif)',
-  height: '100%',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover',
-};
-
-const AppComp = () => (
-  <div className="bg-secondary min-vh-100 pb-3" style={style}>
+const AppCont = () => (
+  <div className="bg-secondary min-vh-100 pb-3">
     <NavBarComp />
     <Suspense fallback={<LoadingComp />}>
       <Switch>
@@ -89,10 +80,22 @@ const AppComp = () => (
           path="/teacher/group/:groupid"
           component={TeacherGroupPageCont}
         />
-        <PrivateRoute path="/teacher" component={TeacherPageCont} />
-        <PrivateRoute path="/parent" component={ParentPageCont} />
-        <PublicRoute path="/login" component={LoginPageCont} />
-        <PublicRoute path="/register" component={SignupPageCont} />
+        <PrivateRoute 
+          path="/teacher" 
+          component={TeacherPageCont}
+        />
+        <PrivateRoute 
+          path="/parent" 
+          component={ParentPageCont} 
+        />
+        <PublicRoute 
+          path="/login" 
+          component={LoginPageCont} 
+        />
+        <PublicRoute 
+          path="/register" 
+          component={SignupPageCont} 
+        />
         <Route component={NotFoundPageComp} />
       </Switch>
     </Suspense>
@@ -125,4 +128,4 @@ function PublicRoute(props) {
   return <Redirect to="/student" />;
 }
 
-export default AppComp;
+export default AppCont;

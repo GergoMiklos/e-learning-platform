@@ -11,11 +11,11 @@ export default function PercentageComp({
       <strong className="mx-1">
         {all === 0 ? 0 : Math.floor((correct / all) * 100)}%
       </strong>
-      {!onlyPercentage && (
+      {!onlyPercentage && 
         <i>
           ({correct}/{all})
         </i>
-      )}
+      }
     </div>
   );
 }

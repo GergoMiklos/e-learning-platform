@@ -21,5 +21,5 @@ public interface TestTaskRepository extends Neo4jRepository<TestTask, Long>, Obj
     @Query("MATCH (:Test)-[rel:TESTTASK]->(tt:TestTask)" +
             " WHERE id(tt) = $testTaskId" +
             " DELETE rel")
-    boolean deleteFromTest(@Param("testTaskId") Long testTaskId);
+    void deleteFromTest(@Param("testTaskId") Long testTaskId);
 }

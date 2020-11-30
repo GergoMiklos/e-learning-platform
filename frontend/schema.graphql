@@ -75,7 +75,7 @@ type StudentTaskStatus {
 }
 
 type Subscription {
-    testStatusChanges(testId: ID!): StudentStatus!
+    testStatusChangesByTest(testId: ID!): StudentStatus!
 }
 
 type Task {

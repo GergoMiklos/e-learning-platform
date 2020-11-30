@@ -24,11 +24,11 @@ public class UserServiceTest {
     @Mock
     private UserRepository mockUserRepository;
 
-    private UserService userService;
+    private DefaultUserService userService;
 
     @BeforeEach
     void setUpService() {
-        userService = new UserService(mockUserRepository);
+        userService = new DefaultUserService(mockUserRepository);
     }
 
     @Test

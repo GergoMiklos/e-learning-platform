@@ -6,6 +6,7 @@ import com.thesis.studyapp.dto.LoginInputDto;
 import com.thesis.studyapp.dto.RegisterInputDto;
 import com.thesis.studyapp.dto.TokenDto;
 import com.thesis.studyapp.service.AuthService;
+import com.thesis.studyapp.service.DefaultAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.thesis.studyapp.security.config;
+package com.thesis.studyapp.security.configuration;
 
 import com.thesis.studyapp.security.jwt.AuthTokenFilter;
 import com.thesis.studyapp.security.jwt.JwtUtil;

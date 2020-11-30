@@ -4,6 +4,7 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.security.annotation.Authenticated;
+import com.thesis.studyapp.service.DefaultUserService;
 import com.thesis.studyapp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

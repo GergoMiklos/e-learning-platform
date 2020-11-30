@@ -18,7 +18,7 @@ export default function EditGroupPageComp({ group, onNavigateBack }) {
         <h1 className="col-auto">Edit Group</h1>
       </section>
 
-      <EditGroupDetailsCont className="row" group={group} />
+      <EditGroupDetailsCont group={group} />
 
       <EditGroupTeacherListCont groupId={group.id} teachers={group.teachers} />
 

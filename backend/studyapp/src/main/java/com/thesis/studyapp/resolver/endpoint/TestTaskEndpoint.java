@@ -5,6 +5,7 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 import com.thesis.studyapp.dto.TestTaskInputDto;
 import com.thesis.studyapp.model.TestTask;
 import com.thesis.studyapp.security.annotation.Authenticated;
+import com.thesis.studyapp.service.DefaultTestTaskService;
 import com.thesis.studyapp.service.TestTaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

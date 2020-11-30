@@ -11,6 +11,7 @@ const STUDENTSTATUS_QUERY = gql`
       id
       status
       statusChangedTime
+      lastSolutionTime
       correctSolutions
       allSolutions
       solvedTasks

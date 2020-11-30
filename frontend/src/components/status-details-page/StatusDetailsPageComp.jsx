@@ -36,7 +36,7 @@ export default function StatusDetailsPageComp({ studentStatus }) {
           <StatusElementCont
             status={studentStatus.status}
             changedTime={studentStatus.statusChangedTime}
-            solutionTime={studentStatus.solutionTime}
+            solutionTime={studentStatus.lastSolutionTime}
           />
         </dl>
       </section>

@@ -33,7 +33,11 @@ export default function FormComp({
               name="name"
               placeholder="Name"
             />
-            <ErrorMessage className="text-danger" name="name" component="div" />
+            <ErrorMessage 
+              className="text-danger" 
+              name="name" 
+              component="div" 
+            />
           </fieldset>
           <fieldset className="from-group m-3">
             <label>Description</label>

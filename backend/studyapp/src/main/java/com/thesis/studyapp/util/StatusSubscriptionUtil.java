@@ -2,6 +2,7 @@ package com.thesis.studyapp.util;
 
 import com.thesis.studyapp.event.UpdatedStatusEvent;
 import com.thesis.studyapp.model.StudentStatus;
+import com.thesis.studyapp.service.DefaultStudentStatusService;
 import com.thesis.studyapp.service.StudentStatusService;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -42,7 +43,7 @@ public class StatusSubscriptionUtil implements DisposableBean {
      * Start subscription's thread and connect to it
      */
     @Autowired
-    public StatusSubscriptionUtil(StudentStatusService studentStatusService) {
+    public StatusSubscriptionUtil(DefaultStudentStatusService studentStatusService) {
         this.studentStatusService = studentStatusService;
         updatedStatusIds = ConcurrentHashMap.newKeySet();
         executorService = Executors.newSingleThreadScheduledExecutor();
@@ -60,8 +61,15 @@ public class StatusSubscriptionUtil implements DisposableBean {
     /**
      * Subscription for status changes by given test id
      */
-    public Flowable<StudentStatus> getPublisher(Long testId) {
+    public Flowable<StudentStatus> getPublisherByTest(Long testId) {
         return publisher.filter(userTestStatus -> userTestStatus.getTest().getId().equals(testId));
+    }
+
+    /**
+     * Subscription for status changes by given user id
+     */
+    public Flowable<StudentStatus> getPublisherByUser(Long userId) {
+        return publisher.filter(userTestStatus -> userTestStatus.getUser().getId().equals(userId));
     }
 
     /**
@@ -69,7 +77,7 @@ public class StatusSubscriptionUtil implements DisposableBean {
      */
     @EventListener
     public void addNewUpdatedStatus(UpdatedStatusEvent updatedStatusEvent) {
-        updatedStatusIds.add(updatedStatusEvent.getData());
+        updatedStatusIds.add(updatedStatusEvent.getStudentStatusId());
     }
 
     /**

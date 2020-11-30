@@ -1,7 +1,17 @@
 package com.thesis.studyapp.event;
 
-public class UpdatedStatusEvent extends CustomEvent<Long> {
-    public UpdatedStatusEvent(Object source, Long userTestStatusId) {
-        super(source, userTestStatusId);
+import org.springframework.context.ApplicationEvent;
+
+public class UpdatedStatusEvent extends ApplicationEvent {
+
+    private final Long studentStatusId;
+
+    public UpdatedStatusEvent(Object source, Long studentStatusId) {
+        super(source);
+        this.studentStatusId = studentStatusId;
+    }
+
+    public Long getStudentStatusId() {
+        return studentStatusId;
     }
 }

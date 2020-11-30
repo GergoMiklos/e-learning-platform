@@ -1,7 +1,7 @@
 package com.thesis.studyapp.resolver.endpoint;
 
 import com.thesis.studyapp.model.User;
-import com.thesis.studyapp.service.UserService;
+import com.thesis.studyapp.service.DefaultUserService;
 import com.thesis.studyapp.util.TestBeans;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ public class UserEndpointTest {
     public static final User USER = TestBeans.USER;
 
     @Mock
-    private UserService mockUserService;
+    private DefaultUserService mockUserService;
 
     private UserEndpoint userEndpoint;
 

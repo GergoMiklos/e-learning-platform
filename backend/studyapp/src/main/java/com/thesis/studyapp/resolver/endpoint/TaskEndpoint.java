@@ -6,6 +6,7 @@ import com.thesis.studyapp.dto.TaskInputDto;
 import com.thesis.studyapp.dto.TaskSearchResultDto;
 import com.thesis.studyapp.model.Task;
 import com.thesis.studyapp.security.annotation.Authenticated;
+import com.thesis.studyapp.service.DefaultTaskService;
 import com.thesis.studyapp.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

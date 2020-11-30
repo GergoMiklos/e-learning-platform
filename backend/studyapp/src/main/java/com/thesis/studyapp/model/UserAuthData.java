@@ -11,6 +11,7 @@ public class UserAuthData {
     @Id
     @GeneratedValue
     private Long id;
+
     private String username;
     private String password;
 }

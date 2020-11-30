@@ -83,15 +83,6 @@ public class JwtUtil {
         return false;
     }
 
-    public String getJwtSecret() {
-        String jwtSecret = environment.getProperty("JWT_SECRET");
-        if (jwtSecret != null) {
-            return jwtSecret;
-        } else {
-            throw new IllegalStateException("JWT_SECRET is not configured");
-        }
-    }
-
     public String parseJwtFromRequest(HttpServletRequest request) {
         String headerAuth = request.getHeader(AUTHORIZATION_HEADER);
 
@@ -99,6 +90,15 @@ public class JwtUtil {
             return headerAuth.substring(7);
         } else {
             return null;
+        }
+    }
+
+    private String getJwtSecret() {
+        String jwtSecret = environment.getProperty("JWT_SECRET");
+        if (jwtSecret != null) {
+            return jwtSecret;
+        } else {
+            throw new IllegalStateException("JWT_SECRET is not configured");
         }
     }
 }

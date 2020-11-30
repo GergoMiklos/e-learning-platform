@@ -23,12 +23,11 @@ public class GraphQLSecurityAspect {
     private final Logger logger = LoggerFactory.getLogger(GraphQLSecurityAspect.class);
 
     /**
-     * All graphQLResolver methods can be called only by authenticated user.
-     * Exclusions are named in Pointcut expression.
+     * Methods with @Authenticated annotation can be called only by authenticated user.
+     * The particular methods are defined in the Pointcut expression.
      */
-    //@Before("isDefinedInApplication() && (graphQLQueries() || graphQLMutations()) && !notAuthenticatedAnnotation()")
     @Before("authenticated()")
-    public void isAuthenticated() throws Throwable {
+    public void isAuthenticated() {
         if (!authenticationUtil.isAuthenticated()) {
             logger.error("Unauthorized request prohibited");
             throw new UnauthorizedException("Not authenticated");
@@ -36,44 +35,10 @@ public class GraphQLSecurityAspect {
     }
 
     /**
-     * Matches all beans that implement {@link com.coxautodev.graphql.tools.GraphQLResolver}
-     * note: {@code GraphQLMutationResolver}, {@code GraphQLQueryResolver} etc
-     * extend base GraphQLResolver interface
-     */
-    @Pointcut("target(com.coxautodev.graphql.tools.GraphQLResolver)")
-    private void allGraphQLResolverMethods() {
-    }
-
-    @Pointcut("target(com.coxautodev.graphql.tools.GraphQLQueryResolver)")
-    private void graphQLQueries() {
-    }
-
-    @Pointcut("target(com.coxautodev.graphql.tools.GraphQLMutationResolver)")
-    private void graphQLMutations() {
-    }
-
-    @Pointcut("target(com.coxautodev.graphql.tools.GraphQLSubscriptionResolver)")
-    private void graphQLSubscriptions() {
-    }
-
-    /**
-     * Matches all beans in com.mi3o.springgraphqlsecurity package
-     * resolvers must be in this package (subpackages)
-     */
-    @Pointcut("within(com.thesis.studyapp..*)")
-    private void isDefinedInApplication() {
-    }
-
-    /**
-     * Exact method signature which will be excluded from security check
+     *  Methods with @Authenticated annotation will be included to security check
      */
     @Pointcut("@annotation(com.thesis.studyapp.security.annotation.Authenticated)")
     private void authenticated() {
     }
-
-    @Pointcut("@annotation(com.thesis.studyapp.security.annotation.NotAuthenticated)")
-    private void notAuthenticatedAnnotation() {
-    }
-
 
 }

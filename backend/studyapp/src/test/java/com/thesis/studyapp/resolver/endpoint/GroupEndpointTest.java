@@ -1,7 +1,7 @@
 package com.thesis.studyapp.resolver.endpoint;
 
 import com.thesis.studyapp.model.Group;
-import com.thesis.studyapp.service.GroupService;
+import com.thesis.studyapp.service.DefaultGroupService;
 import com.thesis.studyapp.util.TestBeans;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class GroupEndpointTest {
     public static final Group GROUP = TestBeans.GROUP;
 
     @Mock
-    private GroupService mockGroupService;
+    private DefaultGroupService mockGroupService;
 
     private GroupEndpoint groupEndpoint;
 

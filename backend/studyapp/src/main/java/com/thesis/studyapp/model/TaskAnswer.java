@@ -17,5 +17,6 @@ public class TaskAnswer implements HasId {
 
     int number;
     String answer;
-    //   boolean correct;
+
+    //boolean correct;
 }

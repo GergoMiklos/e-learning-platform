@@ -6,6 +6,7 @@ import com.thesis.studyapp.dto.NameDescInputDto;
 import com.thesis.studyapp.model.Group;
 import com.thesis.studyapp.model.User;
 import com.thesis.studyapp.security.annotation.Authenticated;
+import com.thesis.studyapp.service.DefaultGroupService;
 import com.thesis.studyapp.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

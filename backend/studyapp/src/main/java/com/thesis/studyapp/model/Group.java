@@ -24,7 +24,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class Group implements HasId {
     @Id
-    //@GeneratedValue(strategy = CustomIdStrategy.class)
     @GeneratedValue
     private Long id;
 
@@ -46,6 +45,7 @@ public class Group implements HasId {
     @Relationship(type = "GROUPTEACHER", direction = Relationship.INCOMING)
     private Set<User> teachers = new HashSet<>();
     @JsonIgnore
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Relationship(type = "GROUPTEST", direction = Relationship.OUTGOING)
     private Set<Test> tests = new HashSet<>();

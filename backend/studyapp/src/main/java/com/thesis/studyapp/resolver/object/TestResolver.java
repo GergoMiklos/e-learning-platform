@@ -23,7 +23,8 @@ public class TestResolver implements GraphQLResolver<Test> {
     private final DataLoaderUtil dataLoaderUtil;
 
     public CompletableFuture<List<TestTask>> testTasks(Test test) {
-        return dataLoaderUtil.loadData(test.getTestTasks(), DataLoaderUtil.TESTTASK_LOADER)
+        return dataLoaderUtil
+                .loadData(test.getTestTasks(), DataLoaderUtil.TESTTASK_LOADER)
                 .thenApplyAsync((testTasks) -> {
                     testTasks.sort(getTestTaskComparator());
                     return testTasks;
@@ -31,7 +32,8 @@ public class TestResolver implements GraphQLResolver<Test> {
     }
 
     public CompletableFuture<List<StudentStatus>> studentStatuses(Test test) {
-        return dataLoaderUtil.loadData(test.getStudentStatuses(), DataLoaderUtil.STUDENTSTATUS_LOADER)
+        return dataLoaderUtil
+                .loadData(test.getStudentStatuses(), DataLoaderUtil.STUDENTSTATUS_LOADER)
                 .thenApplyAsync((studentStatuses) -> {
                     return studentStatuses.stream()
                             .filter(StudentStatus::isActive)

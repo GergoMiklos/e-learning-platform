@@ -39,7 +39,7 @@ const STUDENTSTATUSES_QUERY = gql`
 
 const STATUS_CHANGE_SUBSCRIPTION = gql`
   subscription onStatusChange($testId: ID!) {
-    testStatusChanges(testId: $testId) {
+    testStatusChangesByTest(testId: $testId) {
       id
       ...StudentStatusDetials
     }
@@ -70,22 +70,22 @@ export default function TeacherLiveTestPageCont() {
           variables: { testId },
           // eslint-disable-next-line consistent-return
           updateQuery: (prev, { subscriptionData }) => {
-            if (!subscriptionData.data?.testStatusChanges || !prev) {
+            if (!subscriptionData.data?.testStatusChangesByTest || !prev) {
               return prev;
             }
 
-            const newUserTestStatus = subscriptionData.data.testStatusChanges;
+            const newUserTestStatus = subscriptionData.data.testStatusChangesByTest;
             if (
-              prev.test.userTestStatuses.some(
+              prev.test.studentStatuses.some(
                 (uts) => uts.id !== newUserTestStatus.id
               )
             ) {
               return {
                 ...prev,
                 test: {
-                  userTestStatuses: [
+                  studentStatuses: [
                     newUserTestStatus,
-                    ...prev.test.userTestStatuses,
+                    ...prev.test.studentStatuses,
                   ],
                 },
               };

@@ -24,7 +24,8 @@ public class GroupResolver implements GraphQLResolver<Group> {
     private final DataLoaderUtil dataLoaderUtil;
 
     public CompletableFuture<List<User>> students(Group group) {
-        return dataLoaderUtil.loadData(group.getStudents(), DataLoaderUtil.USER_LOADER)
+        return dataLoaderUtil
+                .loadData(group.getStudents(), DataLoaderUtil.USER_LOADER)
                 .thenApplyAsync((students) -> {
                     students.sort(getUserComparator());
                     return students;
@@ -32,7 +33,8 @@ public class GroupResolver implements GraphQLResolver<Group> {
     }
 
     public CompletableFuture<List<User>> teachers(Group group) {
-        return dataLoaderUtil.loadData(group.getTeachers(), DataLoaderUtil.USER_LOADER)
+        return dataLoaderUtil
+                .loadData(group.getTeachers(), DataLoaderUtil.USER_LOADER)
                 .thenApplyAsync((teachers) -> {
                     teachers.sort(getUserComparator());
                     return teachers;
@@ -40,7 +42,8 @@ public class GroupResolver implements GraphQLResolver<Group> {
     }
 
     public CompletableFuture<List<Test>> tests(Group group, @Nullable Boolean active) {
-        return dataLoaderUtil.loadData(group.getTests(), DataLoaderUtil.TEST_LOADER)
+        return dataLoaderUtil
+                .loadData(group.getTests(), DataLoaderUtil.TEST_LOADER)
                 .thenApplyAsync((tests) -> {
                     if(active != null) {
                         return tests.stream()

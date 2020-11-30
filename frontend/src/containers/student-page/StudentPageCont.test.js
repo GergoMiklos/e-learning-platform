@@ -157,10 +157,6 @@ describe('StudentPageComponent', () => {
     });
     fireEvent.click(screen.getByRole('button'));
 
-    // userEvent.click(screen.getByRole('button'), {button: 0})
-    // waitNextTick();
-    // screen.debug()
-
     wait(() => expect(mutationRequest.newData).toHaveBeenCalledTimes(1));
 
     // expect(mutationCalled).toBe(false);
