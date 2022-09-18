@@ -1,0 +1,4 @@
+type Subscription {
+    testStatusChangesByTest(testId: ID!): StudentStatus!
+    testStatusChangesByUser(userId: ID!): StudentStatus!
+}

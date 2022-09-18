@@ -1,0 +1,172 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+type Group {
+    code: String!
+    description: String
+    id: ID!
+    name: String!
+    news: String
+    newsChangedDate: String
+    students: [User!]
+    teachers: [User!]
+    tests(active: Boolean): [Test!]
+}
+
+type Mutation {
+    addStudentFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addStudentFromCodeToParent(parentId: ID!, studentCode: String!): User
+    addStudentToGroupFromCode(groupCode: String!, userId: ID!): Group
+    addTaskToTest(level: Int, taskId: ID!, testId: ID!): TestTask!
+    addTeacherFromCodeToGroup(groupId: ID!, userCode: String!): User
+    calculateNextTask(testId: ID!): StudentStatus!
+    checkSolution(solutionNumber: Int!, testId: ID!): TaskSolution!
+    createGroup(input: NameDescInput!, userId: ID!): Group!
+    createTask(taskInput: TaskInput!): Task!
+    createTest(groupId: ID!, input: NameDescInput!): Test!
+    deleteStudentFromGroup(groupId: ID!, userId: ID!): Boolean
+    deleteStudentFromParent(parentId: ID!, studentId: ID!): Boolean
+    deleteTaskFromTest(testTaskId: ID!): Boolean
+    deleteTeacherFromGroup(groupId: ID!, userId: ID!): Boolean
+    editGroup(groupId: ID!, input: NameDescInput!): Group!
+    editGroupNews(groupId: ID!, text: String!): Group!
+    editTest(input: NameDescInput!, testId: ID!): Test!
+    editTestStatus(active: Boolean!, testId: ID!): Test!
+    editTestTasks(testId: ID!, testTaskInputs: [TestTaskInput!]!): [TestTask!]
+    login(input: LoginInput!): Token!
+    register(input: RegisterInput!): Boolean
+}
+
+type Query {
+    group(groupId: ID!): Group!
+    isUsernameAlreadyRegistered(username: String!): Boolean!
+    searchTasks(page: Int!, searchText: String, testId: ID!): TaskSearchResult!
+    studentStatus(studentStatusId: ID!): StudentStatus!
+    test(testId: ID!): Test!
+    user(userId: ID!): User!
+}
+
+type StudentStatus {
+    allSolutions: Int!
+    correctSolutions: Int!
+    currentTestTask: TestTask
+    id: ID!
+    lastSolutionTime: String!
+    solvedTasks: Int!
+    status: String!
+    statusChangedTime: String!
+    studentTaskStatuses: [StudentTaskStatus!]
+    test: Test!
+    user: User!
+}
+
+type StudentTaskStatus {
+    allSolutions: Int!
+    correctSolutions: Int!
+    id: ID!
+    lastSolutionTime: String!
+    testTask: TestTask!
+    wrongSolutionsInRow: Int!
+}
+
+type Subscription {
+    testStatusChangesByTest(testId: ID!): StudentStatus!
+}
+
+type Task {
+    answers: [TaskAnswer!]!
+    id: ID!
+    question: String!
+    solutionNumber: Int!
+    usage: Int!
+}
+
+type TaskAnswer {
+    answer: String!
+    id: ID!
+    number: Int!
+}
+
+type TaskSearchResult {
+    tasks: [Task!]
+    totalElements: Int!
+    totalPages: Int!
+}
+
+type TaskSolution {
+    allSolutions: Int!
+    allTasks: Int!
+    chosenAnswerNumber: Int!
+    correctSolutions: Int!
+    solutionNumber: Int!
+    solvedTasks: Int!
+}
+
+type Test {
+    active: Boolean!
+    allTasks: Int!
+    description: String
+    group: Group!
+    id: ID!
+    name: String!
+    studentStatuses: [StudentStatus!]
+    testTasks: [TestTask!]
+}
+
+type TestTask {
+    allSolutions: Int!
+    correctSolutions: Int!
+    explanation: String
+    id: ID!
+    level: Int!
+    task: Task!
+}
+
+type Token {
+    token: String!
+    type: String!
+    user: User!
+}
+
+type User {
+    code: String!
+    followedStudents: [User!]
+    id: ID!
+    name: String!
+    studentGroups: [Group!]
+    studentStatuses: [StudentStatus!]
+    teacherGroups: [Group!]
+}
+
+input LoginInput {
+    password: String!
+    username: String!
+}
+
+input NameDescInput {
+    description: String!
+    name: String!
+}
+
+input RegisterInput {
+    name: String!
+    password: String!
+    username: String!
+}
+
+input TaskInput {
+    correctAnswer: String!
+    incorrectAnswers: [String!]!
+    question: String!
+}
+
+input TestTaskInput {
+    explanation: String
+    id: ID!
+    level: Int
+}

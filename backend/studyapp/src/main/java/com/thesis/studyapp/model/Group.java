@@ -1,84 +1,74 @@
 package com.thesis.studyapp.model;
 
-import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @NodeEntity
-@Getter @Setter @NoArgsConstructor
-public class Group {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Group implements HasId {
     @Id
-    //@GeneratedValue(strategy = CustomIdStrategy.class)
     @GeneratedValue
     private Long id;
 
-    private String name;
+    @Index(unique = true)
     private String code;
+    private String name;
     private String description;
+    private String news;
+    private ZonedDateTime newsChangedDate;
 
-    @Relationship(type = "GROUPUSER", direction = Relationship.INCOMING)
-    private List<User> users;
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Relationship(type = "GROUPSTUDENT", direction = Relationship.INCOMING)
+    private Set<User> students = new HashSet<>();
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Relationship(type = "GROUPTEACHER", direction = Relationship.INCOMING)
+    private Set<User> teachers = new HashSet<>();
+    @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "GROUPTEST", direction = Relationship.OUTGOING)
+    private Set<Test> tests = new HashSet<>();
 
-    @Relationship(type = "GROUPADMIN", direction = Relationship.INCOMING)
-    private List<User> admins;
-
-    @Relationship(type = "GROUPLIVETEST", direction = Relationship.OUTGOING)
-    private List<LiveTest> liveTests;
-
-    @Relationship(type = "GROUPNEWS", direction = Relationship.OUTGOING)
-    private News news;
-
-    public void addUser(User user) {
-        if (users == null) {
-            users = new ArrayList<>();
+    public void addStudent(User user) {
+        if (students == null) {
+            students = new HashSet<>();
         }
-        users.add(user);
+        students.add(user);
     }
 
-    public void addUsers(List<User> users) {
-        if (this.users == null) {
-            this.users = new ArrayList<>();
+    public void addTeacher(User user) {
+        if (teachers == null) {
+            teachers = new HashSet<>();
         }
-        users.addAll(users);
+        teachers.add(user);
     }
 
-    public void deleteUser(User user) {
-        if(users != null) {
-            users = users.stream()
-                    .filter(u -> u.getId() != user.getId())
-                    .collect(Collectors.toList());
+    public void addTest(Test test) {
+        if (tests == null) {
+            tests = new HashSet<>();
         }
+        tests.add(test);
     }
-
-    public void addAdmin(User user) {
-        if (admins == null) {
-            admins = new ArrayList<>();
-        }
-        admins.add(user);
-    }
-
-    public void deleteAdmin(User user) {
-        if(admins != null) {
-            admins = admins.stream()
-                    .filter(u -> u.getId() != user.getId())
-                    .collect(Collectors.toList());
-        }
-    }
-
-    public void addLiveTest(LiveTest liveTest) {
-        if (liveTests == null) {
-            liveTests = new ArrayList<>();
-        }
-        liveTests.add(liveTest);
-    }
-
 
 }

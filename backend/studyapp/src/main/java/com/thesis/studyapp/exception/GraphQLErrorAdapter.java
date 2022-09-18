@@ -38,7 +38,7 @@ public class GraphQLErrorAdapter implements GraphQLError {
 
     @Override
     public List<Object> getPath() {
-        return null;
+        return graphQLError.getPath();
     }
 
 }

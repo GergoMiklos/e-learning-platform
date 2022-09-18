@@ -1,0 +1,127 @@
+type User {
+    id: ID!
+    code: String!
+    name: String!
+    studentGroups: [Group!]
+    teacherGroups: [Group!]
+    followedStudents: [User!]
+    studentStatuses: [StudentStatus!]
+}
+
+type Group {
+    id: ID!
+    code: String!
+    name: String!
+    description: String
+    news: String
+    newsChangedDate: String
+    students: [User!]
+    teachers: [User!]
+    tests(active: Boolean): [Test!]
+}
+
+type Test {
+    id: ID!
+    name: String!
+    description: String
+    active: Boolean!
+    allTasks: Int!
+    testTasks: [TestTask!]
+    studentStatuses: [StudentStatus!]
+    group: Group!
+}
+
+type StudentStatus {
+    id: ID!
+    currentTestTask: TestTask
+    test: Test!
+    user: User!
+    status: String!
+    statusChangedTime: String!
+    lastSolutionTime: String!
+    correctSolutions: Int!
+    allSolutions: Int!
+    solvedTasks: Int!
+    studentTaskStatuses: [StudentTaskStatus!]
+}
+
+type Task {
+    id: ID!
+    usage: Int!
+    question: String!
+    answers: [TaskAnswer!]!
+    solutionNumber: Int!
+}
+
+type TaskAnswer {
+    id: ID!
+    number: Int!
+    answer: String!
+}
+
+type TaskSolution {
+    chosenAnswerNumber: Int!
+    solutionNumber: Int!
+    allSolutions: Int!
+    correctSolutions: Int!
+    solvedTasks: Int!
+    allTasks: Int!
+}
+
+type TaskSearchResult {
+    totalPages: Int!
+    totalElements: Int!
+    tasks: [Task!]
+}
+
+type TestTask {
+    id: ID!
+    level: Int!
+    explanation: String
+    allSolutions: Int!
+    correctSolutions: Int!
+    task: Task!
+}
+
+type StudentTaskStatus {
+    id: ID!
+    testTask: TestTask!
+    lastSolutionTime: String!
+    correctSolutions: Int!
+    allSolutions: Int!
+    wrongSolutionsInRow: Int!
+}
+
+type Token {
+    token: String!
+    type: String!
+    user: User!
+}
+
+input TestTaskInput {
+    id: ID!
+    level: Int
+    explanation: String
+}
+
+input TaskInput {
+    question: String!
+    correctAnswer: String!
+    incorrectAnswers: [String!]!
+}
+
+input NameDescInput {
+    name: String!
+    description: String!
+}
+
+input LoginInput {
+    username: String!
+    password: String!
+}
+
+input RegisterInput {
+    name: String!
+    username: String!
+    password: String!
+}

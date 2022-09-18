@@ -1,0 +1,21 @@
+{
+  //@imaginary-cloud/react: airbnb and prettier autoconfig
+  "extends": ["@imaginary-cloud/react", "react-app"],
+  // more configuration options here!
+  "rules": {
+    "react/button-has-type": 0,
+    "jsx-a11y/no-noninteractive-element-interactions": 0,
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/label-has-associated-control": 0,
+    "jsx-a11y/no-static-element-interactions": 0,
+    "quotes": ["error", "single"],
+
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto",
+        "singleQuote": true
+      }
+    ]
+  }
+}

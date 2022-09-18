@@ -1,0 +1,8 @@
+type Query {
+    user(userId: ID!): User!
+    group(groupId: ID!): Group!
+    test(testId: ID!): Test!
+    studentStatus(studentStatusId: ID!): StudentStatus!
+    searchTasks(testId: ID!, searchText: String, page: Int!): TaskSearchResult!
+    isUsernameAlreadyRegistered(username: String!): Boolean!
+}

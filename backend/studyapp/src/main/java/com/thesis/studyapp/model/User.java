@@ -1,82 +1,93 @@
 package com.thesis.studyapp.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 import org.neo4j.ogm.annotation.GeneratedValue;
 import org.neo4j.ogm.annotation.Id;
+import org.neo4j.ogm.annotation.Index;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @NodeEntity
-@Getter @Setter @NoArgsConstructor
-public class User {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User implements HasId {
     @Id
     @GeneratedValue
     private Long id;
 
-    private String name;
+    @Index(unique = true)
     private String code;
-    private String email;
-    private String password;
+    private String name;
+
+    @Relationship(type = "AUTHDATA", direction = Relationship.OUTGOING)
+    private UserAuthData authData;
 
     @JsonIgnore
-    @Relationship(type = "GROUPUSER", direction = Relationship.OUTGOING)
-    private List<Group> groups;
-
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "GROUPSTUDENT", direction = Relationship.OUTGOING)
+    private Set<Group> studentGroups = new HashSet<>();
     @JsonIgnore
-    @Relationship(type = "GROUPADMIN", direction = Relationship.OUTGOING)
-    private List<Group> managedGroups;
-
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "GROUPTEACHER", direction = Relationship.OUTGOING)
+    private Set<Group> teacherGroups = new HashSet<>();
     @JsonIgnore
-    @Relationship(type = "TASKOWNER", direction = Relationship.INCOMING)
-    private List<Task> createdTasks;
-
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "USERSTATUS", direction = Relationship.OUTGOING)
+    private Set<StudentStatus> studentStatuses = new HashSet<>();
     @JsonIgnore
-    @Relationship(type = "TESTOWNER", direction = Relationship.INCOMING)
-    private List<Test> createdTests;
-
+    @EqualsAndHashCode.Exclude
+    @Relationship(type = "STUDENTPARENT", direction = Relationship.OUTGOING)
+    private Set<User> followedStudents = new HashSet<>();
     @JsonIgnore
-    @Relationship(type = "USERSTATE", direction = Relationship.INCOMING)
-    private List<LiveTestState> liveTestStates;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @Relationship(type = "STUDENTPARENT", direction = Relationship.INCOMING)
+    private Set<User> parents = new HashSet<>();
 
-    public void addGroup(Group group) {
-        if (groups == null) {
-            groups = new ArrayList<>();
+    public void addStudentGroup(Group group) {
+        if (studentGroups == null) {
+            studentGroups = new HashSet<>();
         }
-        groups.add(group);
+        studentGroups.add(group);
     }
 
-    public void addManagedGroup(Group group) {
-        if (managedGroups == null) {
-            managedGroups = new ArrayList<>();
+    public void addTeacherGroup(Group group) {
+        if (teacherGroups == null) {
+            teacherGroups = new HashSet<>();
         }
-        managedGroups.add(group);
+        teacherGroups.add(group);
     }
 
-    public void addLiveTestState(LiveTestState liveTestState) {
-        if (liveTestStates == null) {
-            liveTestStates = new ArrayList<>();
+    public void addUserTestStatus(StudentStatus studentStatus) {
+        if (studentStatuses == null) {
+            studentStatuses = new HashSet<>();
         }
-        liveTestStates.add(liveTestState);
+        studentStatuses.add(studentStatus);
     }
 
-    public void addCreatedTask(Task task) {
-        if (createdTasks == null) {
-            createdTasks = new ArrayList<>();
+    public void addParent(User user) {
+        if (parents == null) {
+            parents = new HashSet<>();
         }
-        createdTasks.add(task);
+        parents.add(user);
     }
 
-    public void addCreatedTest(Test test) {
-        if (createdTests == null) {
-            createdTests = new ArrayList<>();
+    public void addFollowedStudent(User user) {
+        if (followedStudents == null) {
+            followedStudents = new HashSet<>();
         }
-        createdTests.add(test);
+        followedStudents.add(user);
     }
 
 

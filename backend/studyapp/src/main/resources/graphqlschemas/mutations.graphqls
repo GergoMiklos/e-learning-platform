@@ -1,0 +1,30 @@
+type Mutation {
+    register(input: RegisterInput!): Boolean
+    login(input: LoginInput!): Token!
+
+    createGroup(userId: ID!, input: NameDescInput!): Group!
+    editGroup(groupId: ID!, input: NameDescInput!): Group!
+    editGroupNews(groupId: ID!, text: String!): Group!
+
+    addStudentFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addTeacherFromCodeToGroup(groupId: ID!, userCode: String!): User
+    addStudentToGroupFromCode(userId: ID!, groupCode: String!): Group
+    deleteTeacherFromGroup(userId: ID!, groupId: ID!): Boolean
+    deleteStudentFromGroup(userId: ID!, groupId: ID!): Boolean
+
+    addStudentFromCodeToParent(parentId: ID!, studentCode: String!): User
+    deleteStudentFromParent(parentId: ID!, studentId: ID!): Boolean
+
+    createTest(groupId: ID!, input: NameDescInput!): Test!
+    editTest(testId: ID!, input: NameDescInput!): Test!
+    editTestStatus(testId: ID!, active: Boolean!): Test!
+
+    createTask(taskInput: TaskInput!): Task!
+    addTaskToTest(testId: ID!, taskId: ID!, level: Int): TestTask!
+    deleteTaskFromTest(testTaskId: ID!): Boolean
+    editTestTasks(testId: ID!, testTaskInputs: [TestTaskInput!]!): [TestTask!]
+
+    checkSolution(testId: ID!, solutionNumber: Int!): TaskSolution!
+    calculateNextTask(testId: ID!): StudentStatus!
+
+}
