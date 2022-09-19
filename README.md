@@ -3,7 +3,7 @@ Gergo Miklos
 ---
 This my BSc thesis project from 2019, and also my first full-stack web application.
 
-_The discription here is the official project documentation, therefore it is Hungarian._
+_The description here is from the official project documentation, therefore it is Hungarian._
 
 ---
 
